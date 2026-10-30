@@ -1,0 +1,6 @@
+<img
+  src="/kaaba-header.jpg"
+  alt="Kaaba and Masjid al Haram"
+  className="absolute inset-0 h-full w-full object-cover object-center"
+  crossOrigin="anonymous"
+/>
