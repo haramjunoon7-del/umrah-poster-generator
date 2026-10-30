@@ -622,14 +622,14 @@ export default function Home() {
   }
 
   const shownPoster: SavedPoster = activePoster || {
-    id: "preview",
-    title,
-    theme,
-    flight,
-    packages,
-    services,
-    createdAt: new Date().toISOString(),
-  };
+  id: "preview",
+  title,
+  theme,
+  flight,
+  packages,
+  services,
+  createdAt: "",
+};
 
   const posterTheme = themes[shownPoster.theme || "royal"];
 
