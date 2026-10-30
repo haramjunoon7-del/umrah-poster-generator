@@ -1602,7 +1602,28 @@ export default function Home() {
             clear karne se pehle Download Backup use karein.
           </p>
         </section>
-      </div>
+            </div>
+
+      {/* WEBSITE FOOTER */}
+      <footer className="border-t-4 border-[#d6ad62] bg-gradient-to-r from-[#101f35] via-[#17395e] to-[#244c75] px-4 py-7 text-center text-white shadow-inner">
+        <p className="text-sm font-black tracking-widest text-[#e3bd72]">
+          HARAM JUNOON TRAVELS & TOURS
+        </p>
+
+        <div className="mx-auto my-4 h-px max-w-xs bg-[#d6ad62]/60" />
+
+        <p className="text-xs font-bold tracking-widest text-white/80">
+          SYSTEM DESIGNED & DEVELOPED BY
+        </p>
+
+        <h2 className="mt-2 text-xl font-black tracking-wider text-[#e3bd72]">
+          AMEER HAMZA
+        </h2>
+
+        <p className="mt-3 text-[11px] text-white/60">
+          © 2026 All Rights Reserved.
+        </p>
+      </footer>
     </main>
   );
 }
