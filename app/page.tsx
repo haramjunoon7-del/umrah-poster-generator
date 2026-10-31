@@ -361,39 +361,26 @@ function SelectField({
 }
 
 const airlineLogos: Record<string, string> = {
-  PIA: "https://www.gstatic.com/flights/airline_logos/70px/PK.png",
-  "Fly Jinnah": "https://www.gstatic.com/flights/airline_logos/70px/9P.png",
-  AirSial: "https://www.gstatic.com/flights/airline_logos/70px/PF.png",
-  Airblue: "https://www.gstatic.com/flights/airline_logos/70px/PA.png",
-  "Riyadh Air": "https://www.gstatic.com/flights/airline_logos/70px/RX.png",
-  Saudia: "https://www.gstatic.com/flights/airline_logos/70px/SV.png",
-  SalamAir: "https://www.gstatic.com/flights/airline_logos/70px/OV.png",
+  PIA: "/airlines/pia.png",
+  Airblue: "/airlines/airblue.png",
+  AirSial: "/airlines/airsial.png",
+  "Fly Jinnah": "/airlines/fly-jinnah.png",
+  Saudia: "/airlines/saudia.png",
+  SalamAir: "/airlines/salam-air.png",
+  "Riyadh Air": "/airlines/riyadh-air.png",
 };
 
 function AirlineLogo({ airline }: { airline: string }) {
-  const [failed, setFailed] = useState(false);
   const logo = airlineLogos[airline];
 
-  useEffect(() => {
-    setFailed(false);
-  }, [airline]);
-
-  if (!logo || failed) {
-    return (
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#DCC99E] bg-white text-xs font-black text-[#79551F]">
-        {airline.slice(0, 2).toUpperCase()}
-      </div>
-    );
-  }
+  if (!logo) return null;
 
   return (
     <img
-  src={logo}
-  alt={airline}
-  crossOrigin="anonymous"
-  onError={() => setFailed(true)}
-  className="h-10 w-10 shrink-0 rounded-xl border border-[#E8D8B7] bg-white object-contain p-1"
-/>
+      src={logo}
+      alt={`${airline} Logo`}
+      className="h-14 w-20 shrink-0 object-contain"
+    />
   );
 }
 
