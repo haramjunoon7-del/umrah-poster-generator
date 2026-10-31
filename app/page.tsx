@@ -264,7 +264,9 @@ function blankPackage(id: string, number: number): PackageData {
 
 function money(value: string | number) {
   const number = Number(String(value).replace(/,/g, ""));
+
   if (!Number.isFinite(number)) return String(value);
+
   return `PKR ${number.toLocaleString("en-PK")}`;
 }
 
@@ -295,6 +297,7 @@ function timeText(value: string) {
 
   return `${displayHour}:${minutes || "00"} ${suffix}`;
 }
+
 function Field({
   label,
   value,
@@ -313,6 +316,7 @@ function Field({
       <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600">
         {label}
       </span>
+
       <input
         type={type}
         value={value}
@@ -340,6 +344,7 @@ function SelectField({
       <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600">
         {label}
       </span>
+
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
@@ -435,7 +440,12 @@ export default function Home() {
   useEffect(() => {
     if (!hydrated) return;
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedPosters));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(savedPosters));
+    } catch (error) {
+      console.error("Saved poster storage error:", error);
+      setMessage("Could not save data in browser storage.");
+    }
   }, [savedPosters, hydrated]);
 
   function updateFlight(key: keyof FlightData, value: string) {
@@ -539,7 +549,7 @@ export default function Home() {
       flight: { ...flight },
       packages: packages.map((pkg) => ({ ...pkg })),
       services,
-      createdAt: "",
+      createdAt: new Date().toISOString(),
     };
 
     setSavedPosters((current) => {
@@ -636,9 +646,26 @@ export default function Home() {
     setMessage("");
 
     try {
-      const blob = await toBlob(target, {
+      await document.fonts.ready;
+
+      const images = Array.from(target.querySelectorAll("img"));
+
+      await Promise.all(
+        images.map((img) => {
+          if (img.complete) {
+            return Promise.resolve();
+          }
+
+          return new Promise<void>((resolve) => {
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+          });
+        }),
+      );
+
+      const options = {
         pixelRatio: 2,
-        backgroundColor: "#f7f7f3",
+        backgroundColor: "#F7F7F3",
         cacheBust: true,
         width: target.scrollWidth,
         height: target.scrollHeight,
@@ -648,35 +675,50 @@ export default function Home() {
           height: "auto",
           overflow: "visible",
         },
-      });
-
-      if (!blob) {
-        throw new Error("Could not create poster image.");
-      }
+      };
 
       if (
         navigator.clipboard &&
         typeof ClipboardItem !== "undefined" &&
         window.isSecureContext
       ) {
-        await navigator.clipboard.write([
-          new ClipboardItem({
-            "image/png": blob,
-          }),
-        ]);
+        const imagePromise = toBlob(target, options).then((blob) => {
+          if (!blob) {
+            throw new Error("Could not create poster image.");
+          }
+
+          return blob;
+        });
+
+        const clipboardItem = new ClipboardItem({
+          "image/png": imagePromise,
+        });
+
+        await navigator.clipboard.write([clipboardItem]);
 
         setMessage(
-          "Poster image copied. Paste it in WhatsApp.",
+          "Poster image copied! Paste it into WhatsApp.",
         );
       } else {
+        const blob = await toBlob(target, options);
+
+        if (!blob) {
+          throw new Error("Could not create poster image.");
+        }
+
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
 
         link.href = url;
         link.download = `${title || "umrah-poster"}.png`;
-        link.click();
 
-        URL.revokeObjectURL(url);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        window.setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 1000);
 
         setMessage("Poster image downloaded.");
       }
@@ -684,7 +726,7 @@ export default function Home() {
       console.error("Poster copy error:", error);
 
       setMessage(
-        "Image copy failed. Please use localhost or HTTPS and try again.",
+        "Copy failed. Please allow clipboard permission or use Download.",
       );
     } finally {
       setCopying(false);
@@ -704,7 +746,10 @@ export default function Home() {
 
     link.href = url;
     link.download = "haram-junoon-posters-backup.json";
+
+    document.body.appendChild(link);
     link.click();
+    link.remove();
 
     URL.revokeObjectURL(url);
   }
@@ -734,7 +779,8 @@ export default function Home() {
   const routeText = `${flight.origin || "Origin"} → ${
     flight.destination || "Destination"
   }`;
-    return (
+
+  return (
     <main className="min-h-screen bg-[#F4F5F7] text-slate-800">
       <header className="border-b border-[#D8C18F] bg-[#171A16] px-4 py-5 text-white shadow-lg sm:px-8">
         <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-4">
@@ -742,9 +788,11 @@ export default function Home() {
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#D9B66F]">
               Haram Junoon Travels & Tours
             </p>
+
             <h1 className="mt-1 text-2xl font-black tracking-wide sm:text-3xl">
               Umrah Poster Generator
             </h1>
+
             <p className="mt-1 text-xs text-white/60">
               Create, save and manage professional Umrah package posters
             </p>
@@ -925,7 +973,7 @@ export default function Home() {
               />
 
               <Field
-                label="Return Flight"
+                label="Return Flight Number"
                 value={flight.returnFlight}
                 onChange={(value) => updateFlight("returnFlight", value)}
                 placeholder="Return flight number"
@@ -1200,9 +1248,11 @@ export default function Home() {
 
                         <p className="text-xs text-slate-500">
                           {poster.packages.length} package(s) •{" "}
-                          {new Date(
-                            poster.createdAt,
-                          ).toLocaleDateString("en-GB")}
+                          {poster.createdAt
+                            ? new Date(
+                                poster.createdAt,
+                              ).toLocaleDateString("en-GB")
+                            : "Date unavailable"}
                         </p>
                       </div>
 
@@ -1372,35 +1422,32 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {(flight.returnDate ||
-                    flight.returnFlight ||
-                    flight.returnTime) && (
-                    <div className="mt-3 border-t border-dashed border-slate-200 pt-3">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div>
-                          <p className="text-[10px] font-black uppercase tracking-wider text-slate-500">
-                            Return Journey
-                          </p>
+                  {/* RETURN JOURNEY - ALWAYS VISIBLE */}
+                  <div className="mt-3 border-t border-dashed border-slate-200 pt-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                          Return Journey
+                        </p>
 
-                          <p className="text-sm font-black text-slate-800">
-                            {flight.destination || "Destination"} →{" "}
-                            {flight.origin || "Origin"}
-                          </p>
-                        </div>
+                        <p className="text-sm font-black text-slate-800">
+                          {flight.destination || "Destination"} →{" "}
+                          {flight.origin || "Origin"}
+                        </p>
+                      </div>
 
-                        <div className="text-right">
-                          <p className="text-xs font-bold text-slate-700">
-                            {flight.returnFlight || "Return flight"}
-                          </p>
+                      <div className="text-right">
+                        <p className="text-xs font-bold text-slate-700">
+                          {flight.returnFlight || "Return flight number"}
+                        </p>
 
-                          <p className="text-xs font-semibold text-slate-500">
-                            {dateText(flight.returnDate)} •{" "}
-                            {timeText(flight.returnTime)}
-                          </p>
-                        </div>
+                        <p className="text-xs font-semibold text-slate-500">
+                          {dateText(flight.returnDate)} •{" "}
+                          {timeText(flight.returnTime)}
+                        </p>
                       </div>
                     </div>
-                  )}
+                  </div>
                 </div>
 
                 {/* AVAILABLE PACKAGES */}
@@ -1474,16 +1521,8 @@ export default function Home() {
                             {pkg.name || `UP-${110175 + index}`}
                           </p>
 
-                          <p className="mt-1 text-[9px] font-medium leading-tight text-[#777777]">
-                            🕋 Makkah: {pkg.nights || "—"} Nights
-                          </p>
-
-                          <p className="text-[9px] font-medium leading-tight text-[#777777]">
-                            🕌 Madinah: {pkg.nights || "—"} Nights
-                          </p>
-
-                          <p className="text-[9px] font-bold leading-tight text-[#C79A4C]">
-                            Total: {pkg.nights || "—"} Nights
+                          <p className="mt-2 rounded-md bg-[#F2E7D0] px-2 py-1 text-[9px] font-black text-[#8B642D]">
+                            TOTAL: {pkg.nights || "—"} NIGHTS
                           </p>
                         </div>
 
@@ -1507,7 +1546,9 @@ export default function Home() {
                             <p className="mt-1 break-words text-[9px] font-normal leading-snug text-[#777777]">
                               {pkg.makkahDistance
                                 ? `${pkg.makkahDistance} ${
-                                    pkg.makkahDistance.toLowerCase().includes("meter")
+                                    pkg.makkahDistance
+                                      .toLowerCase()
+                                      .includes("meter")
                                       ? ""
                                       : "METER "
                                   }FROM HARAM`
@@ -1536,7 +1577,9 @@ export default function Home() {
                             <p className="mt-1 break-words text-[9px] font-normal leading-snug text-[#777777]">
                               {pkg.madinahDistance
                                 ? `${pkg.madinahDistance} ${
-                                    pkg.madinahDistance.toLowerCase().includes("meter")
+                                    pkg.madinahDistance
+                                      .toLowerCase()
+                                      .includes("meter")
                                       ? ""
                                       : "METER "
                                   }FROM MASJID NABAWI`
