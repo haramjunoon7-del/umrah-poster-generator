@@ -468,44 +468,111 @@ export default function Home() {
     setActivePoster(null);
   }
 
-  function newPoster() {
-    setTitle("UMRAH PACKAGE");
-    setFlight({ ...blankFlight });
-    setPackages([blankPackage(String(Date.now()), 1)]);
-    setTheme("royal");
+  
 
-    setServices(
-      "Visa • Return Ticket • Accommodation • Transport • 21 Days"
-    );
 
+function newPoster() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    const saved: SavedPoster[] = stored ? JSON.parse(stored) : [];
+
+    const latestPoster = [...saved].sort(
+      (a, b) =>
+        new Date(b.createdAt || 0).getTime() -
+        new Date(a.createdAt || 0).getTime()
+    )[0];
+
+    if (latestPoster) {
+      setTitle(latestPoster.title || "UMRAH PACKAGE");
+
+      setFlight({
+        ...blankFlight,
+        ...(latestPoster.flight || {}),
+      });
+
+      setPackages(
+        latestPoster.packages?.length
+          ? latestPoster.packages.map((item, index) => ({
+              ...item,
+              id: `${Date.now()}-${index}`,
+            }))
+          : [blankPackage(String(Date.now()), 1)]
+      );
+
+      setTheme(
+        themes[latestPoster.theme] ? latestPoster.theme : "royal"
+      );
+
+      setServices(
+        latestPoster.services ||
+          "Visa • Return Ticket • Accommodation • Transport • 21 Days"
+      );
+
+      setSavedPosters(saved);
+    } else {
+      setTitle("UMRAH PACKAGE");
+      setFlight({ ...blankFlight });
+      setPackages([blankPackage(String(Date.now()), 1)]);
+      setTheme("royal");
+      setServices(
+        "Visa • Return Ticket • Accommodation • Transport • 21 Days"
+      );
+    }
+
+    // Important: new poster must have a NEW ID
     setEditingId(null);
     setActivePoster(null);
-    setMessage("Naya poster ready hai.");
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  function savePoster() {
-    const poster: SavedPoster = {
-      id: editingId || String(Date.now()),
-      title: title.trim() || "UMRAH PACKAGE",
-      theme,
-      flight: { ...flight },
-      packages: packages.map((item) => ({ ...item })),
-      services,
-      createdAt: new Date().toISOString(),
-    };
-
-    setSavedPosters((old) =>
-      old.some((item) => item.id === poster.id)
-        ? old.map((item) => (item.id === poster.id ? poster : item))
-        : [poster, ...old]
+    setMessage(
+      latestPoster
+        ? "Latest saved poster ki tamam details load ho gayi hain. Ab changes karke naya poster save karein."
+        : "Naya poster ready hai."
     );
 
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (error) {
+    console.error(error);
+    setMessage("Saved poster load nahi ho saka.");
+  }
+}
+
+
+  
+
+function savePoster() {
+  const poster: SavedPoster = {
+    id: editingId || String(Date.now()),
+    title: title.trim() || "UMRAH PACKAGE",
+    theme,
+    flight: { ...flight },
+    packages: packages.map((item) => ({ ...item })),
+    services,
+    createdAt: new Date().toISOString(),
+  };
+
+  const updatedPosters = editingId
+    ? savedPosters.some((item) => item.id === editingId)
+      ? savedPosters.map((item) =>
+          item.id === editingId ? poster : item
+        )
+      : [poster, ...savedPosters]
+    : [poster, ...savedPosters];
+
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(updatedPosters)
+    );
+
+    setSavedPosters(updatedPosters);
     setActivePoster(poster);
     setEditingId(poster.id);
-    setMessage("Poster save ho gaya.");
+    setMessage("Poster successfully save ho gaya.");
+  } catch (error) {
+    console.error(error);
+    setMessage("Poster save nahi ho saka. Browser storage check karein.");
   }
+}
 
   function editPoster(poster: SavedPoster) {
     setTitle(poster.title);
