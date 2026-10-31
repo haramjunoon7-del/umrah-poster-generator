@@ -1,12 +1,21 @@
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 import { toBlob } from "html-to-image";
 
 type PosterTheme =
-  | "royal" | "emerald" | "black" | "cream" | "navy" | "maroon"
-  | "ocean" | "purple" | "sunset" | "teal" | "rose" | "desert";
+  | "royal"
+  | "emerald"
+  | "black"
+  | "cream"
+  | "navy"
+  | "maroon"
+  | "ocean"
+  | "purple"
+  | "sunset"
+  | "teal"
+  | "rose"
+  | "desert";
 
 type FlightData = {
   airline: string;
@@ -65,102 +74,174 @@ const themes: Record<PosterTheme, ThemeDetails> = {
   royal: {
     name: "Royal Blue",
     description: "Royal Blue & Champagne Gold",
-    primary: "#102B4E", secondary: "#245681", accent: "#E6BD70",
-    light: "#F0F5FA", text: "#183B60", border: "#D4B16A",
+    primary: "#102B4E",
+    secondary: "#245681",
+    accent: "#E6BD70",
+    light: "#F0F5FA",
+    text: "#183B60",
+    border: "#D4B16A",
     headerOverlay: "rgba(16,43,78,0.32)",
-    gradient: "linear-gradient(120deg,#102B4E,#245681,#3976A3)",
+    gradient: "linear-gradient(120deg, #102B4E, #245681, #3976A3)",
   },
+
   emerald: {
     name: "Emerald",
     description: "Emerald Green & Gold",
-    primary: "#064638", secondary: "#11745B", accent: "#E2C078",
-    light: "#EDF7F1", text: "#07543F", border: "#B9D9C7",
+    primary: "#064638",
+    secondary: "#11745B",
+    accent: "#E2C078",
+    light: "#EDF7F1",
+    text: "#07543F",
+    border: "#B9D9C7",
     headerOverlay: "rgba(6,70,56,0.32)",
-    gradient: "linear-gradient(120deg,#064638,#11745B,#26916E)",
+    gradient: "linear-gradient(120deg, #064638, #11745B, #26916E)",
   },
+
   black: {
     name: "Black Gold",
     description: "Luxury Black & Gold",
-    primary: "#171717", secondary: "#403525", accent: "#E5BD68",
-    light: "#F6F2E9", text: "#302719", border: "#C6A15C",
+    primary: "#171717",
+    secondary: "#403525",
+    accent: "#E5BD68",
+    light: "#F6F2E9",
+    text: "#302719",
+    border: "#C6A15C",
     headerOverlay: "rgba(0,0,0,0.45)",
-    gradient: "linear-gradient(120deg,#171717,#302719,#70552C)",
+    gradient: "linear-gradient(120deg, #171717, #302719, #70552C)",
   },
+
   cream: {
     name: "Cream",
     description: "Warm Cream & Brown",
-    primary: "#62432B", secondary: "#96704A", accent: "#CDA568",
-    light: "#FBF4E8", text: "#563B27", border: "#D7BD91",
+    primary: "#62432B",
+    secondary: "#96704A",
+    accent: "#CDA568",
+    light: "#FBF4E8",
+    text: "#563B27",
+    border: "#D7BD91",
     headerOverlay: "rgba(72,48,28,0.30)",
-    gradient: "linear-gradient(120deg,#62432B,#96704A,#C49A64)",
+    gradient: "linear-gradient(120deg, #62432B, #96704A, #C49A64)",
   },
+
   navy: {
     name: "Navy Silver",
     description: "Navy & Platinum Silver",
-    primary: "#172A43", secondary: "#425D78", accent: "#D4DFE9",
-    light: "#EFF3F7", text: "#203B58", border: "#B8C6D5",
+    primary: "#172A43",
+    secondary: "#425D78",
+    accent: "#D4DFE9",
+    light: "#EFF3F7",
+    text: "#203B58",
+    border: "#B8C6D5",
     headerOverlay: "rgba(23,42,67,0.38)",
-    gradient: "linear-gradient(120deg,#172A43,#425D78,#718BA5)",
+    gradient: "linear-gradient(120deg, #172A43, #425D78, #718BA5)",
   },
+
   maroon: {
     name: "Maroon",
     description: "Royal Maroon & Gold",
-    primary: "#641D36", secondary: "#913D55", accent: "#E1BD78",
-    light: "#FBF0F2", text: "#70253D", border: "#D2A9AE",
+    primary: "#641D36",
+    secondary: "#913D55",
+    accent: "#E1BD78",
+    light: "#FBF0F2",
+    text: "#70253D",
+    border: "#D2A9AE",
     headerOverlay: "rgba(100,29,54,0.36)",
-    gradient: "linear-gradient(120deg,#641D36,#913D55,#B75D70)",
+    gradient: "linear-gradient(120deg, #641D36, #913D55, #B75D70)",
   },
+
   ocean: {
     name: "Ocean Blue",
     description: "Ocean Blue & Aqua",
-    primary: "#063B55", secondary: "#087E9B", accent: "#8FE3E0",
-    light: "#EAF7F9", text: "#06465F", border: "#9CCFD5",
+    primary: "#063B55",
+    secondary: "#087E9B",
+    accent: "#8FE3E0",
+    light: "#EAF7F9",
+    text: "#06465F",
+    border: "#9CCFD5",
     headerOverlay: "rgba(6,59,85,0.38)",
-    gradient: "linear-gradient(120deg,#063B55,#087E9B,#19A9B0)",
+    gradient: "linear-gradient(120deg, #063B55, #087E9B, #19A9B0)",
   },
+
   purple: {
     name: "Royal Purple",
     description: "Purple & Lavender Gold",
-    primary: "#38205F", secondary: "#7045A0", accent: "#E8C987",
-    light: "#F4EFFB", text: "#43266D", border: "#C8B3E1",
+    primary: "#38205F",
+    secondary: "#7045A0",
+    accent: "#E8C987",
+    light: "#F4EFFB",
+    text: "#43266D",
+    border: "#C8B3E1",
     headerOverlay: "rgba(56,32,95,0.38)",
-    gradient: "linear-gradient(120deg,#38205F,#7045A0,#9871C2)",
+    gradient: "linear-gradient(120deg, #38205F, #7045A0, #9871C2)",
   },
+
   sunset: {
     name: "Sunset",
     description: "Sunset Orange & Coral",
-    primary: "#74351F", secondary: "#C45A38", accent: "#FFD18B",
-    light: "#FFF2E9", text: "#78391F", border: "#E7B99A",
+    primary: "#74351F",
+    secondary: "#C45A38",
+    accent: "#FFD18B",
+    light: "#FFF2E9",
+    text: "#78391F",
+    border: "#E7B99A",
     headerOverlay: "rgba(116,53,31,0.38)",
-    gradient: "linear-gradient(120deg,#74351F,#C45A38,#E98A52)",
+    gradient: "linear-gradient(120deg, #74351F, #C45A38, #E98A52)",
   },
+
   teal: {
     name: "Deep Teal",
     description: "Deep Teal & Turquoise",
-    primary: "#064B4A", secondary: "#07817B", accent: "#B4E6D5",
-    light: "#EAF7F4", text: "#07514E", border: "#A8D6CA",
+    primary: "#064B4A",
+    secondary: "#07817B",
+    accent: "#B4E6D5",
+    light: "#EAF7F4",
+    text: "#07514E",
+    border: "#A8D6CA",
     headerOverlay: "rgba(6,75,74,0.38)",
-    gradient: "linear-gradient(120deg,#064B4A,#07817B,#25A99A)",
+    gradient: "linear-gradient(120deg, #064B4A, #07817B, #25A99A)",
   },
+
   rose: {
     name: "Rose Gold",
     description: "Burgundy & Rose Gold",
-    primary: "#63283D", secondary: "#A34E68", accent: "#EAC39F",
-    light: "#FBF0F2", text: "#702C45", border: "#DDB6BB",
+    primary: "#63283D",
+    secondary: "#A34E68",
+    accent: "#EAC39F",
+    light: "#FBF0F2",
+    text: "#702C45",
+    border: "#DDB6BB",
     headerOverlay: "rgba(99,40,61,0.38)",
-    gradient: "linear-gradient(120deg,#63283D,#A34E68,#C77B88)",
+    gradient: "linear-gradient(120deg, #63283D, #A34E68, #C77B88)",
   },
+
   desert: {
     name: "Desert Sand",
     description: "Desert Sand & Bronze",
-    primary: "#62452D", secondary: "#A77B4D", accent: "#F0D29A",
-    light: "#FAF3E7", text: "#65452A", border: "#D9C19A",
+    primary: "#62452D",
+    secondary: "#A77B4D",
+    accent: "#F0D29A",
+    light: "#FAF3E7",
+    text: "#65452A",
+    border: "#D9C19A",
     headerOverlay: "rgba(98,69,45,0.38)",
-    gradient: "linear-gradient(120deg,#62452D,#A77B4D,#C9A36B)",
+    gradient: "linear-gradient(120deg, #62452D, #A77B4D, #C9A36B)",
   },
 };
 
-const themeOptions = Object.keys(themes) as PosterTheme[];
+const themeOptions: PosterTheme[] = [
+  "royal",
+  "emerald",
+  "black",
+  "cream",
+  "navy",
+  "maroon",
+  "ocean",
+  "purple",
+  "sunset",
+  "teal",
+  "rose",
+  "desert",
+];
 
 const blankFlight: FlightData = {
   airline: "Airblue",
@@ -173,9 +254,6 @@ const blankFlight: FlightData = {
   returnFlight: "",
   returnTime: "",
 };
-
-const defaultServices =
-  "Visa • Return Ticket • Accommodation • Transport • 21 Days";
 
 function blankPackage(id: string, number: number): PackageData {
   return {
@@ -197,7 +275,9 @@ function blankPackage(id: string, number: number): PackageData {
 
 function money(value: string) {
   if (!value?.trim()) return "Rate on request";
+
   const number = Number(value.replace(/,/g, ""));
+
   return Number.isFinite(number)
     ? `${number.toLocaleString("en-PK")}/-`
     : value;
@@ -205,7 +285,9 @@ function money(value: string) {
 
 function dateText(value: string) {
   if (!value) return "Date not added";
+
   const date = new Date(`${value}T00:00:00`);
+
   return Number.isNaN(date.getTime())
     ? value
     : date.toLocaleDateString("en-GB", {
@@ -217,8 +299,13 @@ function dateText(value: string) {
 
 function timeText(value: string) {
   if (!value) return "Time not added";
+
   const [hours, minutes] = value.split(":").map(Number);
-  if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return value;
+
+  if (!Number.isFinite(hours) || !Number.isFinite(minutes)) {
+    return value;
+  }
+
   return `${hours % 12 || 12}:${String(minutes).padStart(2, "0")} ${
     hours >= 12 ? "PM" : "AM"
   }`;
@@ -239,7 +326,10 @@ function Field({
 }) {
   return (
     <label className="block min-w-0 text-sm">
-      <span className="mb-1.5 block font-bold text-slate-700">{label}</span>
+      <span className="mb-1.5 block font-bold text-slate-700">
+        {label}
+      </span>
+
       <input
         type={type}
         value={value}
@@ -264,37 +354,83 @@ function SelectField({
 }) {
   return (
     <label className="block min-w-0 text-sm">
-      <span className="mb-1.5 block font-bold text-slate-700">{label}</span>
+      <span className="mb-1.5 block font-bold text-slate-700">
+        {label}
+      </span>
+
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
         className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none transition focus:border-blue-800"
       >
         {options.map((option) => (
-          <option key={option} value={option}>{option}</option>
+          <option key={option} value={option}>
+            {option}
+          </option>
         ))}
       </select>
     </label>
   );
 }
 
+/* AIRLINE LOGOS */
+
 function getAirlineInfo(name: string) {
   const airline = (name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-  const logos: Record<string, { name: string; src: string; initials: string }> = {
-    pia: { name: "PIA", src: "/airlines/pia.png", initials: "PIA" },
-    flyjinnah: { name: "Fly Jinnah", src: "/airlines/fly-jinnah.png", initials: "FJ" },
-    airsial: { name: "AirSial", src: "/airlines/airsial.png", initials: "AS" },
-    airblue: { name: "Airblue", src: "/airlines/airblue.png", initials: "AB" },
-    riyadhair: { name: "Riyadh Air", src: "/airlines/riyadh-air.png", initials: "RA" },
-    saudia: { name: "Saudia", src: "/airlines/saudia.png", initials: "SV" },
-    saudiaairline: { name: "Saudia", src: "/airlines/saudia.png", initials: "SV" },
-    salamair: { name: "SalamAir", src: "/airlines/salamair.png", initials: "OV" },
+
+  const logos: Record<
+    string,
+    { name: string; src: string; initials: string }
+  > = {
+    pia: {
+      name: "PIA",
+      src: "/airlines/pia.png",
+      initials: "PIA",
+    },
+    flyjinnah: {
+      name: "Fly Jinnah",
+      src: "/airlines/fly-jinnah.png",
+      initials: "FJ",
+    },
+    airsial: {
+      name: "AirSial",
+      src: "/airlines/airsial.png",
+      initials: "AS",
+    },
+    airblue: {
+      name: "Airblue",
+      src: "/airlines/airblue.png",
+      initials: "AB",
+    },
+    riyadhair: {
+      name: "Riyadh Air",
+      src: "/airlines/riyadh-air.png",
+      initials: "RA",
+    },
+    saudia: {
+      name: "Saudia",
+      src: "/airlines/saudia.png",
+      initials: "SV",
+    },
+    saudiaairline: {
+      name: "Saudia",
+      src: "/airlines/saudia.png",
+      initials: "SV",
+    },
+    salamair: {
+      name: "SalamAir",
+      src: "/airlines/salamair.png",
+      initials: "OV",
+    },
   };
-  return logos[airline] || {
-    name: name || "AIRLINE",
-    src: "",
-    initials: (name || "AIR").slice(0, 3).toUpperCase(),
-  };
+
+  return (
+    logos[airline] || {
+      name: name || "AIRLINE",
+      src: "",
+      initials: (name || "AIR").slice(0, 3).toUpperCase(),
+    }
+  );
 }
 
 function AirlineLogo({
@@ -307,7 +443,9 @@ function AirlineLogo({
   const info = getAirlineInfo(airline);
   const [failed, setFailed] = useState(false);
 
-  useEffect(() => setFailed(false), [airline]);
+  useEffect(() => {
+    setFailed(false);
+  }, [airline]);
 
   return (
     <div
@@ -324,94 +462,28 @@ function AirlineLogo({
           onError={() => setFailed(true)}
         />
       ) : (
-        <span className="text-sm font-black text-[#17365d]">{info.initials}</span>
-      )}
-    </div>
-  );
-}
-
-function HotelBlock({
-  city,
-  hotel,
-  category,
-  distance,
-  compact,
-}: {
-  city: "makkah" | "madinah";
-  hotel: string;
-  category: string;
-  distance: string;
-  compact: boolean;
-}) {
-  const makkah = city === "makkah";
-  const color = makkah ? "#8A4B12" : "#08734D";
-  const background = makkah ? "#FFF8E8" : "#EFF8F2";
-  const chipBackground = makkah ? "#F4E2BD" : "#D8EDE0";
-  const chipColor = makkah ? "#75400D" : "#075C45";
-
-  return (
-    <div
-      className="min-w-0 rounded-lg p-2"
-      style={{ background }}
-    >
-      <p
-        className={`${compact ? "text-[9px]" : "text-[11px]"} mb-1 font-black uppercase tracking-wide`}
-        style={{ color }}
-      >
-        {makkah ? "🕋 MAKKAH HOTEL" : "☪ MADINAH HOTEL"}
-      </p>
-      <p
-        className={`hotel-name break-words font-bold leading-snug ${
-          compact ? "text-[10px]" : "text-[12px]"
-        }`}
-        style={{ color }}
-      >
-        {hotel || "Hotel not added"}
-      </p>
-      <p className={`${compact ? "text-[8px]" : "text-[9px]"} mt-1 font-semibold text-slate-600`}>
-        {category}
-      </p>
-      {distance && (
-        <span
-          className={`mt-1 inline-block rounded px-1.5 py-0.5 ${
-            compact ? "text-[7px]" : "text-[8px]"
-          } font-bold`}
-          style={{ background: chipBackground, color: chipColor }}
-        >
-          {distance}
+        <span className="text-sm font-black text-[#17365d]">
+          {info.initials}
         </span>
       )}
     </div>
   );
 }
 
-function RateBlock({
-  label,
-  value,
-  compact,
-}: {
-  label: string;
-  value: string;
-  compact: boolean;
-}) {
-  return (
-    <div className="min-w-0 rounded-md border border-[#ead9b9] bg-[#FFFCF3] px-1 py-1.5 text-center">
-      <p className={`${compact ? "text-[7px]" : "text-[8px]"} font-black tracking-wide text-[#96703B]`}>
-        {label}
-      </p>
-      <p className={`${compact ? "text-[8px]" : "text-[10px]"} mt-0.5 break-words font-black leading-tight tabular-nums text-[#68440E]`}>
-        {value ? money(value) : "—"}
-      </p>
-    </div>
-  );
-}
-
 export default function Home() {
   const [flight, setFlight] = useState<FlightData>({ ...blankFlight });
-  const [packages, setPackages] = useState<PackageData[]>([blankPackage("1", 1)]);
+
+  const [packages, setPackages] = useState<PackageData[]>([
+    blankPackage("1", 1),
+  ]);
+
   const [title, setTitle] = useState("UMRAH PACKAGE");
   const [theme, setTheme] = useState<PosterTheme>("royal");
-  const [services, setServices] = useState(defaultServices);
+
+  const [services, setServices] = useState(
+    "Visa • Return Ticket • Accommodation • Transport • 21 Days"
+  );
+
   const [savedPosters, setSavedPosters] = useState<SavedPoster[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [activePoster, setActivePoster] = useState<SavedPoster | null>(null);
@@ -420,21 +492,25 @@ export default function Home() {
   const [hydrated, setHydrated] = useState(false);
 
   const posterRef = useRef<HTMLDivElement>(null);
+
   const currentTheme = themes[theme];
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
+
       if (stored) {
         const parsed = JSON.parse(stored);
+
         if (Array.isArray(parsed)) {
-          const compatible: SavedPoster[] = parsed.map((poster: SavedPoster) => ({
-            ...poster,
-            theme: themes[poster.theme] ? poster.theme : "royal",
-            flight: { ...blankFlight, ...(poster.flight || {}) },
-            packages: Array.isArray(poster.packages) ? poster.packages : [],
-          }));
-          setSavedPosters(compatible);
+          const compatiblePosters: SavedPoster[] = parsed.map(
+            (poster: SavedPoster) => ({
+              ...poster,
+              theme: themes[poster.theme] ? poster.theme : "royal",
+            })
+          );
+
+          setSavedPosters(compatiblePosters);
         }
       }
     } catch {
@@ -446,6 +522,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!hydrated) return;
+
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(savedPosters));
     } catch {
@@ -458,15 +535,26 @@ export default function Home() {
     setActivePoster(null);
   }
 
-  function updatePackage(id: string, key: keyof PackageData, value: string) {
+  function updatePackage(
+    id: string,
+    key: keyof PackageData,
+    value: string
+  ) {
     setPackages((old) =>
-      old.map((item) => item.id === id ? { ...item, [key]: value } : item)
+      old.map((item) =>
+        item.id === id ? { ...item, [key]: value } : item
+      )
     );
+
     setActivePoster(null);
   }
 
   function addPackage() {
-    setPackages((old) => [...old, blankPackage(`${Date.now()}-${old.length}`, old.length + 1)]);
+    setPackages((old) => [
+      ...old,
+      blankPackage(String(Date.now()), old.length + 1),
+    ]);
+
     setActivePoster(null);
     setMessage("New package add ho gaya.");
   }
@@ -476,48 +564,78 @@ export default function Home() {
       setMessage("Kam az kam aik package zaroor rakhein.");
       return;
     }
+
     setPackages((old) => old.filter((item) => item.id !== id));
     setActivePoster(null);
   }
+
+  /* NEW POSTER - LOAD LATEST SAVED DETAILS */
 
   function newPoster() {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       const saved: SavedPoster[] = stored ? JSON.parse(stored) : [];
-      const latest = [...saved].sort(
-        (a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+
+      const latestPoster = [...saved].sort(
+        (a, b) =>
+          new Date(b.createdAt || 0).getTime() -
+          new Date(a.createdAt || 0).getTime()
       )[0];
 
-      if (latest) {
-        setTitle(latest.title || "UMRAH PACKAGE");
-        setFlight({ ...blankFlight, ...(latest.flight || {}) });
+      if (latestPoster) {
+        setTitle(latestPoster.title || "UMRAH PACKAGE");
+
+        setFlight({
+          ...blankFlight,
+          ...(latestPoster.flight || {}),
+        });
+
         setPackages(
-          latest.packages?.length
-            ? latest.packages.map((item, index) => ({ ...item, id: `${Date.now()}-${index}` }))
+          latestPoster.packages?.length
+            ? latestPoster.packages.map((item, index) => ({
+                ...item,
+                id: `${Date.now()}-${index}`,
+              }))
             : [blankPackage(String(Date.now()), 1)]
         );
-        setTheme(themes[latest.theme] ? latest.theme : "royal");
-        setServices(latest.services || defaultServices);
+
+        setTheme(
+          themes[latestPoster.theme] ? latestPoster.theme : "royal"
+        );
+
+        setServices(
+          latestPoster.services ||
+            "Visa • Return Ticket • Accommodation • Transport • 21 Days"
+        );
+
         setSavedPosters(saved);
       } else {
         setTitle("UMRAH PACKAGE");
         setFlight({ ...blankFlight });
         setPackages([blankPackage(String(Date.now()), 1)]);
         setTheme("royal");
-        setServices(defaultServices);
+        setServices(
+          "Visa • Return Ticket • Accommodation • Transport • 21 Days"
+        );
       }
 
       setEditingId(null);
       setActivePoster(null);
-      setMessage(latest
-        ? "Latest saved poster ki details load ho gayi hain. Changes karke naya poster save karein."
-        : "Naya poster ready hai.");
+
+      setMessage(
+        latestPoster
+          ? "Latest saved poster ki details load ho gayi hain. Changes karke naya poster save karein."
+          : "Naya poster ready hai."
+      );
+
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       console.error(error);
       setMessage("Saved poster load nahi ho saka.");
     }
   }
+
+  /* SAVE POSTER */
 
   function savePoster() {
     const poster: SavedPoster = {
@@ -530,15 +648,21 @@ export default function Home() {
       createdAt: new Date().toISOString(),
     };
 
-    const updated = editingId
+    const updatedPosters = editingId
       ? savedPosters.some((item) => item.id === editingId)
-        ? savedPosters.map((item) => item.id === editingId ? poster : item)
+        ? savedPosters.map((item) =>
+            item.id === editingId ? poster : item
+          )
         : [poster, ...savedPosters]
       : [poster, ...savedPosters];
 
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      setSavedPosters(updated);
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(updatedPosters)
+      );
+
+      setSavedPosters(updatedPosters);
       setActivePoster(poster);
       setEditingId(poster.id);
       setMessage("Poster successfully save ho gaya.");
@@ -550,24 +674,26 @@ export default function Home() {
 
   function editPoster(poster: SavedPoster) {
     setTitle(poster.title);
-    setTheme(themes[poster.theme] ? poster.theme : "royal");
-    setFlight({ ...blankFlight, ...poster.flight });
+    setTheme(poster.theme || "royal");
+    setFlight({ ...poster.flight });
     setPackages(poster.packages.map((item) => ({ ...item })));
-    setServices(poster.services || defaultServices);
+    setServices(poster.services);
     setEditingId(poster.id);
     setActivePoster(null);
     setMessage("Poster edit mode mein open hai.");
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function showPoster(poster: SavedPoster) {
     setTitle(poster.title);
-    setTheme(themes[poster.theme] ? poster.theme : "royal");
-    setFlight({ ...blankFlight, ...poster.flight });
+    setTheme(poster.theme || "royal");
+    setFlight({ ...poster.flight });
     setPackages(poster.packages.map((item) => ({ ...item })));
-    setServices(poster.services || defaultServices);
+    setServices(poster.services);
     setEditingId(poster.id);
     setActivePoster(poster);
+
     document.getElementById("poster-preview")?.scrollIntoView({
       behavior: "smooth",
       block: "start",
@@ -575,25 +701,22 @@ export default function Home() {
   }
 
   function deletePoster(id: string) {
-    if (!window.confirm("Kya aap ye poster delete karna chahte hain?")) return;
-
-    const updated = savedPosters.filter((item) => item.id !== id);
-    setSavedPosters(updated);
-
-    if (editingId === id) {
-      setEditingId(null);
-      setActivePoster(null);
-      setTitle("UMRAH PACKAGE");
-      setFlight({ ...blankFlight });
-      setPackages([blankPackage(String(Date.now()), 1)]);
-      setTheme("royal");
-      setServices(defaultServices);
+    if (!window.confirm("Kya aap ye poster delete karna chahte hain?")) {
+      return;
     }
+
+    setSavedPosters((old) => old.filter((item) => item.id !== id));
+
+    if (editingId === id) newPoster();
+
     setMessage("Poster delete ho gaya.");
   }
 
+  /* COPY POSTER IMAGE */
+
   async function copyPosterImage() {
     const target = posterRef.current;
+
     if (!target) {
       setMessage("Poster preview load hone dein.");
       return;
@@ -604,11 +727,13 @@ export default function Home() {
 
     try {
       await document.fonts.ready;
+
       const blob = await toBlob(target, {
         pixelRatio: 2,
         backgroundColor: "#ffffff",
         cacheBust: true,
       });
+
       if (!blob) throw new Error("Image create nahi hui.");
 
       if (
@@ -616,22 +741,33 @@ export default function Home() {
         typeof ClipboardItem !== "undefined" &&
         typeof navigator.clipboard.write === "function"
       ) {
-        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-        setMessage("Poster image copy ho gayi! WhatsApp mein Ctrl + V karein.");
+        await navigator.clipboard.write([
+          new ClipboardItem({ "image/png": blob }),
+        ]);
+
+        setMessage(
+          "Poster image copy ho gayi! WhatsApp mein Ctrl + V karein."
+        );
       } else {
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
+
         link.href = url;
         link.download = "haram-junoon-umrah-poster.png";
+
         document.body.appendChild(link);
         link.click();
         link.remove();
+
         setTimeout(() => URL.revokeObjectURL(url), 1000);
         setMessage("Poster PNG download ho gayi.");
       }
     } catch (error) {
       console.error(error);
-      setMessage("Copy fail hui. Chrome mein localhost ya HTTPS use karein.");
+
+      setMessage(
+        "Copy fail hui. Chrome mein localhost ya HTTPS use karein."
+      );
     } finally {
       setCopying(false);
     }
@@ -641,11 +777,14 @@ export default function Home() {
     const blob = new Blob([JSON.stringify(savedPosters, null, 2)], {
       type: "application/json",
     });
+
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
+
     link.href = url;
     link.download = "haram-junoon-saved-posters.json";
     link.click();
+
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
@@ -659,37 +798,24 @@ export default function Home() {
     createdAt: "",
   };
 
-  const posterTheme = themes[shownPoster.theme] || themes.royal;
-  const posterPackages = shownPoster.packages || [];
-  const packageCount = posterPackages.length;
+  const posterTheme = themes[shownPoster.theme || "royal"];
 
-  // Compact grid: poster height stays fixed while package cards share the space.
-  const packageColumns =
-    packageCount >= 17 ? 5 :
-    packageCount >= 10 ? 4 :
-    packageCount >= 5 ? 3 : 2;
-
-  const compactPackages = packageCount >= 5;
-  const routeText = `${shownPoster.flight.origin || "MULTAN"} - ${
-    shownPoster.flight.destination || "JEDDAH"
-  } - ${shownPoster.flight.origin || "MULTAN"}`;
+  const routeText = `${
+    shownPoster.flight.origin || "MULTAN"
+  } - ${shownPoster.flight.destination || "JEDDAH"} - ${
+    shownPoster.flight.origin || "MULTAN"
+  }`;
 
   return (
     <main className="min-h-screen bg-[#f1f3f6] text-slate-900">
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
-
         * {
-          font-family: 'Poppins', Arial, Helvetica, sans-serif;
+          font-family: Arial, Helvetica, sans-serif;
         }
 
         .poster-art {
           width: 100%;
           max-width: 980px;
-          height: 1180px;
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
           background: #fff;
           color: #172d50;
         }
@@ -712,62 +838,26 @@ export default function Home() {
         .theme-choice:hover {
           transform: translateY(-2px);
         }
-
-        .poster-package-grid {
-          display: grid;
-          flex: 1;
-          min-height: 0;
-          gap: 8px;
-          align-content: stretch;
-        }
-
-        .poster-package-card {
-          min-width: 0;
-          min-height: 0;
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          border: 1px solid #e3d4b8;
-          border-radius: 10px;
-          background: #fff;
-        }
-
-        .poster-package-content {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 5px;
-          padding: 6px;
-        }
-
-        .poster-package-rates {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 4px;
-          margin-top: auto;
-          padding: 5px 6px 6px;
-        }
-
-        @media (max-width: 640px) {
-          .poster-art {
-            border-radius: 12px;
-          }
-        }
       `}</style>
 
       {/* MAIN HEADER */}
+
       <header className="bg-gradient-to-r from-[#101f35] via-[#17395e] to-[#244c75] px-5 py-7 text-white shadow-xl">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-5">
           <div>
             <p className="text-xs font-black tracking-[0.28em] text-[#e3bd72]">
               HARAM JUNOON TRAVELS & TOURS
             </p>
+
             <h1 className="mt-2 text-3xl font-black sm:text-4xl">
               Umrah Poster Studio
             </h1>
+
             <p className="mt-2 text-sm text-white/70">
               Professional package poster designer
             </p>
           </div>
+
           <button
             onClick={newPoster}
             className="rounded-xl border border-[#e5c47e]/60 bg-gradient-to-r from-[#e9c77e] to-[#bd9144] px-6 py-3 font-black text-[#172b45] shadow-lg transition hover:brightness-105"
@@ -779,13 +869,16 @@ export default function Home() {
 
       <div className="mx-auto grid max-w-[1500px] gap-6 p-4 lg:grid-cols-[0.9fr_1.1fr] sm:p-6">
         {/* LEFT SIDE FORM */}
+
         <section className="space-y-5">
           {/* POSTER DETAILS */}
+
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-5">
               <p className="text-xs font-black tracking-widest text-[#b28a49]">
                 DESIGN SETTINGS
               </p>
+
               <h2 className="mt-1 text-xl font-black text-[#17365d]">
                 Poster Details
               </h2>
@@ -800,6 +893,7 @@ export default function Home() {
                   setActivePoster(null);
                 }}
               />
+
               <Field
                 label="Included Services"
                 value={services}
@@ -810,11 +904,14 @@ export default function Home() {
               />
             </div>
 
+            {/* THEME SELECTOR */}
+
             <div className="mt-6 border-t border-slate-100 pt-5">
               <div className="mb-3">
                 <h3 className="font-black text-[#17365d]">
                   Choose Poster Colour Theme
                 </h3>
+
                 <p className="mt-1 text-xs text-slate-500">
                   Select a design theme for your poster
                 </p>
@@ -824,6 +921,7 @@ export default function Home() {
                 {themeOptions.map((option) => {
                   const item = themes[option];
                   const selected = theme === option;
+
                   return (
                     <button
                       key={option}
@@ -842,14 +940,19 @@ export default function Home() {
                         className="mb-3 h-9 rounded-lg shadow-inner"
                         style={{ background: item.gradient }}
                       />
+
                       <div className="flex items-center justify-between gap-1">
                         <span className="text-xs font-black text-slate-800">
                           {item.name}
                         </span>
+
                         {selected && (
-                          <span className="text-xs font-black text-[#a7792e]">✓</span>
+                          <span className="text-xs font-black text-[#a7792e]">
+                            ✓
+                          </span>
                         )}
                       </div>
+
                       <p className="mt-1 text-[10px] text-slate-500">
                         {item.description}
                       </p>
@@ -861,11 +964,13 @@ export default function Home() {
           </div>
 
           {/* FLIGHT DETAILS */}
+
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-5">
               <p className="text-xs font-black tracking-widest text-[#b28a49]">
                 TRAVEL INFORMATION
               </p>
+
               <h2 className="mt-1 text-xl font-black text-[#17365d]">
                 ✈ Shared Flight Details
               </h2>
@@ -877,48 +982,61 @@ export default function Home() {
                 value={flight.airline}
                 onChange={(v) => updateFlight("airline", v)}
                 options={[
-                  "PIA", "Fly Jinnah", "AirSial", "Airblue",
-                  "Riyadh Air", "Saudia Airline", "SalamAir",
+                  "PIA",
+                  "Fly Jinnah",
+                  "AirSial",
+                  "Airblue",
+                  "Riyadh Air",
+                  "Saudia Airline",
+                  "SalamAir",
                 ]}
               />
+
               <Field
                 label="Outbound Flight Number"
                 value={flight.flightNumber}
                 onChange={(v) => updateFlight("flightNumber", v)}
               />
+
               <Field
                 label="Origin"
                 value={flight.origin}
                 onChange={(v) => updateFlight("origin", v)}
               />
+
               <Field
                 label="Destination"
                 value={flight.destination}
                 onChange={(v) => updateFlight("destination", v)}
               />
+
               <Field
                 label="Departure Date"
                 type="date"
                 value={flight.departureDate}
                 onChange={(v) => updateFlight("departureDate", v)}
               />
+
               <Field
                 label="Departure Time"
                 type="time"
                 value={flight.departureTime}
                 onChange={(v) => updateFlight("departureTime", v)}
               />
+
               <Field
                 label="Return Date"
                 type="date"
                 value={flight.returnDate}
                 onChange={(v) => updateFlight("returnDate", v)}
               />
+
               <Field
                 label="Return Flight Number"
                 value={flight.returnFlight}
                 onChange={(v) => updateFlight("returnFlight", v)}
               />
+
               <Field
                 label="Return Time"
                 type="time"
@@ -929,6 +1047,7 @@ export default function Home() {
           </div>
 
           {/* PACKAGE FORMS */}
+
           {packages.map((pkg, index) => (
             <div
               key={pkg.id}
@@ -945,8 +1064,10 @@ export default function Home() {
                   >
                     PACKAGE {index + 1}
                   </p>
+
                   <h2 className="text-lg font-black">Hotel & Rates</h2>
                 </div>
+
                 <button
                   onClick={() => removePackage(pkg.id)}
                   className="rounded-lg border border-white/40 px-3 py-2 text-sm font-bold transition hover:bg-white/10"
@@ -962,6 +1083,7 @@ export default function Home() {
                     value={pkg.name}
                     onChange={(v) => updatePackage(pkg.id, "name", v)}
                   />
+
                   <Field
                     label="Total Nights"
                     value={pkg.nights}
@@ -969,78 +1091,114 @@ export default function Home() {
                   />
                 </div>
 
+                {/* MAKKAH HOTEL FORM */}
+
                 <div className="rounded-xl border border-amber-200 bg-[#fff8e8] p-4">
                   <h3 className="mb-3 font-black text-[#8A4B12]">
                     🕋 Makkah Hotel
                   </h3>
+
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Field
                       label="Hotel Name"
                       value={pkg.makkahHotel}
-                      onChange={(v) => updatePackage(pkg.id, "makkahHotel", v)}
+                      onChange={(v) =>
+                        updatePackage(pkg.id, "makkahHotel", v)
+                      }
                     />
+
                     <SelectField
                       label="Category"
                       value={pkg.makkahCategory}
-                      onChange={(v) => updatePackage(pkg.id, "makkahCategory", v)}
+                      onChange={(v) =>
+                        updatePackage(pkg.id, "makkahCategory", v)
+                      }
                       options={["Economy", "3 Star", "4 Star", "5 Star"]}
                     />
+
                     <Field
                       label="Distance from Haram"
                       value={pkg.makkahDistance}
-                      onChange={(v) => updatePackage(pkg.id, "makkahDistance", v)}
+                      onChange={(v) =>
+                        updatePackage(pkg.id, "makkahDistance", v)
+                      }
                     />
                   </div>
                 </div>
+
+                {/* MADINAH HOTEL FORM */}
 
                 <div className="rounded-xl border border-emerald-200 bg-[#edf8f1] p-4">
                   <h3 className="mb-3 font-black text-[#08734D]">
                     ☪ Madinah Hotel
                   </h3>
+
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Field
                       label="Hotel Name"
                       value={pkg.madinahHotel}
-                      onChange={(v) => updatePackage(pkg.id, "madinahHotel", v)}
+                      onChange={(v) =>
+                        updatePackage(pkg.id, "madinahHotel", v)
+                      }
                     />
+
                     <SelectField
                       label="Category"
                       value={pkg.madinahCategory}
-                      onChange={(v) => updatePackage(pkg.id, "madinahCategory", v)}
+                      onChange={(v) =>
+                        updatePackage(pkg.id, "madinahCategory", v)
+                      }
                       options={["Economy", "3 Star", "4 Star", "5 Star"]}
                     />
+
                     <Field
                       label="Distance from Masjid Nabawi"
                       value={pkg.madinahDistance}
-                      onChange={(v) => updatePackage(pkg.id, "madinahDistance", v)}
+                      onChange={(v) =>
+                        updatePackage(pkg.id, "madinahDistance", v)
+                      }
                     />
                   </div>
                 </div>
+
+                {/* RATES FORM */}
 
                 <div className="rounded-xl border border-amber-200 bg-[#fffcf3] p-4">
                   <h3 className="mb-3 font-black text-[#72501E]">
                     Package Rates (PKR)
                   </h3>
+
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Field
                       label="Sharing Rate"
                       value={pkg.sharing}
-                      onChange={(v) => updatePackage(pkg.id, "sharing", v)}
+                      onChange={(v) =>
+                        updatePackage(pkg.id, "sharing", v)
+                      }
                     />
+
                     <Field
                       label="Quad Sharing Rate"
                       value={pkg.quad}
-                      onChange={(v) => updatePackage(pkg.id, "quad", v)}
+                      onChange={(v) =>
+                        updatePackage(pkg.id, "quad", v)
+                      }
                     />
+
                     <Field
                       label="Triple Sharing Rate"
                       value={pkg.triple}
-                      onChange={(v) => updatePackage(pkg.id, "triple", v)}
+                      onChange={(v) =>
+                        updatePackage(pkg.id, "triple", v)
+                      }
                     />
+
                     <Field
                       label="Double Sharing Rate"
                       value={pkg.double}
-                      onChange={(v) => updatePackage(pkg.id, "double", v)}
+                      onChange={(v) =>
+                        updatePackage(pkg.id, "double", v)
+                      }
                     />
                   </div>
                 </div>
@@ -1055,6 +1213,8 @@ export default function Home() {
             + Add New Package
           </button>
 
+          {/* SAVE BUTTONS */}
+
           <div className="grid gap-3 sm:grid-cols-2">
             <button
               onClick={savePoster}
@@ -1063,6 +1223,7 @@ export default function Home() {
             >
               {editingId ? "Save Changes" : "Save Poster"}
             </button>
+
             <button
               onClick={newPoster}
               className="rounded-xl bg-gradient-to-r from-[#e9c77e] to-[#bd9144] px-5 py-4 font-black text-[#172b45] shadow-lg transition hover:brightness-105"
@@ -1078,14 +1239,19 @@ export default function Home() {
           )}
 
           {/* SAVED POSTERS */}
+
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-xl font-black text-[#17365d]">Saved Posters</h2>
+                <h2 className="text-xl font-black text-[#17365d]">
+                  Saved Posters
+                </h2>
+
                 <p className="text-sm text-slate-500">
                   {savedPosters.length} saved poster(s)
                 </p>
               </div>
+
               <button
                 disabled={!savedPosters.length}
                 onClick={exportSavedData}
@@ -1104,7 +1270,8 @@ export default function Home() {
             ) : (
               <div className="space-y-3">
                 {savedPosters.map((poster) => {
-                  const savedTheme = themes[poster.theme] || themes.royal;
+                  const savedTheme = themes[poster.theme || "royal"];
+
                   return (
                     <div
                       key={poster.id}
@@ -1114,9 +1281,12 @@ export default function Home() {
                         <p className="break-words font-black text-slate-800">
                           {poster.title}
                         </p>
+
                         <p className="text-sm text-slate-500">
-                          {poster.packages.length} package(s) · {poster.flight.airline}
+                          {poster.packages.length} package(s) ·{" "}
+                          {poster.flight.airline}
                         </p>
+
                         <span
                           className="mt-2 inline-block rounded-md px-2 py-1 text-[10px] font-black text-white"
                           style={{ background: savedTheme.gradient }}
@@ -1124,6 +1294,7 @@ export default function Home() {
                           {savedTheme.name} Theme
                         </span>
                       </div>
+
                       <div className="flex flex-wrap gap-2">
                         <button
                           onClick={() => showPoster(poster)}
@@ -1131,12 +1302,14 @@ export default function Home() {
                         >
                           Preview
                         </button>
+
                         <button
                           onClick={() => editPoster(poster)}
                           className="rounded-lg bg-amber-100 px-3 py-2 text-sm font-bold text-amber-900"
                         >
                           Edit
                         </button>
+
                         <button
                           onClick={() => deletePoster(poster.id)}
                           className="rounded-lg bg-red-100 px-3 py-2 text-sm font-bold text-red-700"
@@ -1153,19 +1326,23 @@ export default function Home() {
         </section>
 
         {/* RIGHT SIDE POSTER PREVIEW */}
+
         <section id="poster-preview" className="min-w-0">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-xs font-black tracking-widest text-[#b28a49]">
                 LIVE DESIGN
               </p>
+
               <h2 className="mt-1 text-xl font-black text-[#17365d]">
                 Poster Preview
               </h2>
+
               <p className="text-sm text-slate-500">
                 {posterTheme.name} · {posterTheme.description}
               </p>
             </div>
+
             <button
               onClick={copyPosterImage}
               disabled={copying}
@@ -1178,20 +1355,22 @@ export default function Home() {
 
           <div
             ref={posterRef}
-            className="poster-art mx-auto rounded-[20px] border shadow-2xl"
+            className="poster-art mx-auto overflow-hidden rounded-[20px] border bg-white shadow-2xl"
             style={{
               borderColor: posterTheme.border,
               boxShadow: "0 18px 50px rgba(15,23,42,0.16)",
             }}
           >
             {/* POSTER HEADER */}
-            <div className="relative h-[245px] shrink-0 overflow-hidden bg-slate-900">
+
+            <div className="relative h-[300px] overflow-hidden bg-slate-900 sm:h-[350px]">
               <img
                 src="https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?auto=format&fit=crop&w=1800&q=90"
                 alt="Masjid al Haram Makkah"
                 crossOrigin="anonymous"
                 className="absolute inset-0 h-full w-full object-cover object-center"
               />
+
               <div
                 className="absolute inset-0"
                 style={{
@@ -1201,7 +1380,7 @@ export default function Home() {
               />
 
               <div
-                className="absolute left-5 top-5 z-20 flex h-[68px] w-[68px] items-center justify-center overflow-hidden rounded-full border-2 bg-white p-1 shadow-xl"
+                className="absolute left-4 top-4 z-20 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 bg-white p-1 shadow-xl sm:left-6 sm:top-5 sm:h-[76px] sm:w-[76px]"
                 style={{ borderColor: posterTheme.accent }}
               >
                 <img
@@ -1212,24 +1391,26 @@ export default function Home() {
               </div>
 
               <div
-                className="absolute right-5 top-5 z-10 rounded-lg border bg-white/95 px-3 py-2 text-[11px] font-black tracking-widest shadow-lg"
+                className="absolute right-4 top-5 z-10 rounded-lg border px-3 py-2 text-xs font-black tracking-widest shadow-lg sm:right-6 sm:px-4 sm:text-sm"
                 style={{
                   borderColor: posterTheme.accent,
+                  background: "rgba(255,255,255,0.96)",
                   color: posterTheme.primary,
                 }}
               >
                 HARAM JUNOON TRAVELS & TOURS
               </div>
 
-              <div className="absolute bottom-0 left-0 right-0 z-10 px-4 pb-4 text-center">
+              <div className="absolute bottom-0 left-0 right-0 z-10 px-3 pb-4 text-center">
                 <p
-                  className="mb-2 text-[10px] font-black tracking-[0.3em]"
+                  className="mb-2 text-[10px] font-black tracking-[0.3em] sm:text-xs"
                   style={{ color: posterTheme.accent }}
                 >
                   YOUR JOURNEY, OUR CARE
                 </p>
+
                 <h2
-                  className="mx-auto inline-block max-w-full break-words rounded-lg border px-5 py-2 text-3xl font-black uppercase shadow-lg"
+                  className="mx-auto inline-block max-w-full break-words rounded-lg border px-5 py-2 text-3xl font-black uppercase shadow-lg sm:text-5xl"
                   style={{
                     background: posterTheme.gradient,
                     borderColor: posterTheme.accent,
@@ -1238,8 +1419,9 @@ export default function Home() {
                 >
                   {shownPoster.title || "UMRAH PACKAGE"}
                 </h2>
+
                 <p
-                  className="mt-2 break-words rounded-md px-2 py-1.5 text-lg font-black uppercase shadow"
+                  className="mt-2 break-words rounded-md px-2 py-2 text-lg font-black uppercase shadow sm:text-2xl"
                   style={{
                     background: "rgba(255,255,255,0.96)",
                     color: posterTheme.text,
@@ -1251,220 +1433,384 @@ export default function Home() {
             </div>
 
             {/* POSTER BODY */}
-            <div className="flex min-h-0 flex-1 flex-col px-4 pb-3 pt-3">
-              {/* SHARED FLIGHT DETAILS */}
+
+            <div className="px-3 pb-4 pt-3 sm:px-5">
               <div
-                className="grid shrink-0 grid-cols-2 gap-2 rounded-xl border p-2"
+                className="rounded-2xl border p-3 sm:p-4"
                 style={{ borderColor: posterTheme.border }}
               >
-                <div className="flex min-w-0 items-center gap-2 rounded-lg border bg-white p-2">
-                  <AirlineLogo
-                    airline={shownPoster.flight.airline}
-                    className="h-12 w-[62px]"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p
-                      className="text-[9px] font-black uppercase tracking-wide"
-                      style={{ color: posterTheme.secondary }}
-                    >
-                      ✈ DEPARTURE FLIGHT
-                    </p>
-                    <p
-                      className="mt-1 break-words text-[10px] font-black uppercase"
-                      style={{ color: posterTheme.text }}
-                    >
-                      {dateText(shownPoster.flight.departureDate)} ·{" "}
-                      {shownPoster.flight.flightNumber || "FLIGHT"}
-                    </p>
-                    <p className="mt-1 break-words text-[9px] font-bold text-slate-600">
-                      {shownPoster.flight.origin} → {shownPoster.flight.destination}
-                    </p>
-                    <p className="mt-1 text-[9px] font-semibold text-slate-600">
-                      ◷ {timeText(shownPoster.flight.departureTime)} · Baggage: 20 KG
-                    </p>
-                  </div>
-                </div>
+                {/* FLIGHT CARDS */}
 
-                <div className="flex min-w-0 items-center gap-2 rounded-lg border bg-white p-2">
-                  <AirlineLogo
-                    airline={shownPoster.flight.airline}
-                    className="h-12 w-[62px]"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p
-                      className="text-[9px] font-black uppercase tracking-wide"
-                      style={{ color: posterTheme.secondary }}
-                    >
-                      ✈ RETURN FLIGHT
-                    </p>
-                    <p
-                      className="mt-1 break-words text-[10px] font-black uppercase"
-                      style={{ color: posterTheme.text }}
-                    >
-                      {dateText(shownPoster.flight.returnDate)} ·{" "}
-                      {shownPoster.flight.returnFlight || "FLIGHT"}
-                    </p>
-                    <p className="mt-1 break-words text-[9px] font-bold text-slate-600">
-                      {shownPoster.flight.destination} → {shownPoster.flight.origin}
-                    </p>
-                    <p className="mt-1 text-[9px] font-semibold text-slate-600">
-                      ◷ {timeText(shownPoster.flight.returnTime)} · Baggage: 20 KG
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* COMPACT PACKAGE GRID */}
-              <div
-                className="mt-3 flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border p-2"
-                style={{
-                  borderColor: posterTheme.border,
-                  background: "#FAFBFC",
-                }}
-              >
-                <div className="mb-2 flex shrink-0 items-center justify-between gap-2">
-                  <p
-                    className="text-[10px] font-black tracking-widest"
-                    style={{ color: posterTheme.primary }}
-                  >
-                    UMRAH PACKAGE OPTIONS
-                  </p>
-                  <p
-                    className="text-[9px] font-black"
-                    style={{ color: posterTheme.secondary }}
-                  >
-                    {packageCount} PACKAGES
-                  </p>
-                </div>
-
-                {packageCount === 0 ? (
-                  <div className="flex flex-1 items-center justify-center text-sm font-bold text-slate-400">
-                    No packages added
-                  </div>
-                ) : (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div
-                    className="poster-package-grid"
-                    style={{
-                      gridTemplateColumns: `repeat(${packageColumns}, minmax(0, 1fr))`,
-                      gridTemplateRows: `repeat(${Math.ceil(packageCount / packageColumns)}, minmax(0, 1fr))`,
-                    }}
+                    className="flex min-w-0 items-center gap-3 rounded-xl border bg-white p-3 shadow-sm"
+                    style={{ borderColor: posterTheme.border }}
                   >
-                    {posterPackages.map((pkg, index) => (
-                      <div key={pkg.id} className="poster-package-card">
-                        <div
-                          className="flex shrink-0 items-center justify-between gap-1 px-2 py-1.5"
-                          style={{ background: posterTheme.gradient }}
-                        >
-                          <p
-                            className={`min-w-0 break-words font-black uppercase text-white ${
-                              compactPackages ? "text-[8px]" : "text-[10px]"
-                            }`}
-                          >
-                            {pkg.name || `PACKAGE ${index + 1}`}
-                          </p>
-                          <span
-                            className={`shrink-0 font-black ${
-                              compactPackages ? "text-[7px]" : "text-[8px]"
-                            }`}
-                            style={{ color: posterTheme.accent }}
-                          >
-                            {pkg.nights ? `${pkg.nights} NIGHTS` : ""}
-                          </span>
-                        </div>
+                    <AirlineLogo
+                      airline={shownPoster.flight.airline}
+                      className="h-14 w-[76px]"
+                    />
 
-                        <div className="poster-package-content">
-                          <HotelBlock
-                            city="makkah"
-                            hotel={pkg.makkahHotel}
-                            category={pkg.makkahCategory}
-                            distance={pkg.makkahDistance}
-                            compact={compactPackages}
-                          />
-                          <HotelBlock
-                            city="madinah"
-                            hotel={pkg.madinahHotel}
-                            category={pkg.madinahCategory}
-                            distance={pkg.madinahDistance}
-                            compact={compactPackages}
-                          />
-                        </div>
+                    <div className="min-w-0 flex-1">
+                      <p
+                        className="text-[10px] font-black uppercase tracking-wider"
+                        style={{ color: posterTheme.secondary }}
+                      >
+                        ✈ DEPARTURE FLIGHT
+                      </p>
 
-                        <div className="poster-package-rates">
-                          <RateBlock label="SHARING" value={pkg.sharing} compact={compactPackages} />
-                          <RateBlock label="QUAD" value={pkg.quad} compact={compactPackages} />
-                          <RateBlock label="TRIPLE" value={pkg.triple} compact={compactPackages} />
-                          <RateBlock label="DOUBLE" value={pkg.double} compact={compactPackages} />
-                        </div>
-                      </div>
-                    ))}
+                      <p
+                        className="mt-1 break-words text-xs font-black uppercase sm:text-sm"
+                        style={{ color: posterTheme.text }}
+                      >
+                        {dateText(shownPoster.flight.departureDate)} ·{" "}
+                        {shownPoster.flight.flightNumber || "FLIGHT"}
+                      </p>
+
+                      <p className="mt-1 break-words text-[10px] font-bold text-slate-600 sm:text-xs">
+                        {shownPoster.flight.origin} →{" "}
+                        {shownPoster.flight.destination}
+                      </p>
+
+                      <p className="mt-1 text-[10px] font-semibold text-slate-600">
+                        ◷ {timeText(shownPoster.flight.departureTime)} ·
+                        Baggage: 20 KG
+                      </p>
+                    </div>
                   </div>
+
+                  <div
+                    className="flex min-w-0 items-center gap-3 rounded-xl border bg-white p-3 shadow-sm"
+                    style={{ borderColor: posterTheme.border }}
+                  >
+                    <AirlineLogo
+                      airline={shownPoster.flight.airline}
+                      className="h-14 w-[76px]"
+                    />
+
+                    <div className="min-w-0 flex-1">
+                      <p
+                        className="text-[10px] font-black uppercase tracking-wider"
+                        style={{ color: posterTheme.secondary }}
+                      >
+                        ✈ RETURN FLIGHT
+                      </p>
+
+                      <p
+                        className="mt-1 break-words text-xs font-black uppercase sm:text-sm"
+                        style={{ color: posterTheme.text }}
+                      >
+                        {dateText(shownPoster.flight.returnDate)} ·{" "}
+                        {shownPoster.flight.returnFlight || "FLIGHT"}
+                      </p>
+
+                      <p className="mt-1 break-words text-[10px] font-bold text-slate-600 sm:text-xs">
+                        {shownPoster.flight.destination} →{" "}
+                        {shownPoster.flight.origin}
+                      </p>
+
+                      <p className="mt-1 text-[10px] font-semibold text-slate-600">
+                        ◷ {timeText(shownPoster.flight.returnTime)} ·
+                        Baggage: 20 KG
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* HOTEL AND RATES TABLE */}
+
+                <div
+                  className="mt-4 overflow-hidden rounded-xl border"
+                  style={{ borderColor: posterTheme.border }}
+                >
+                  <table>
+                    <colgroup>
+                      <col style={{ width: "23%" }} />
+                      <col style={{ width: "23%" }} />
+                      <col style={{ width: "13.5%" }} />
+                      <col style={{ width: "13.5%" }} />
+                      <col style={{ width: "13.5%" }} />
+                      <col style={{ width: "13.5%" }} />
+                    </colgroup>
+
+                    <thead>
+                      <tr
+                        style={{
+                          background: posterTheme.gradient,
+                          color: "#ffffff",
+                        }}
+                      >
+                        <th className="px-1 py-3 text-center text-[8px] font-black sm:px-2 sm:text-[11px]">
+                          MAKKAH HOTEL
+                        </th>
+
+                        <th className="px-1 py-3 text-center text-[8px] font-black sm:px-2 sm:text-[11px]">
+                          MADINAH HOTEL
+                        </th>
+
+                        <th
+                          className="px-1 py-3 text-center text-[8px] font-black sm:text-[10px]"
+                          style={{ color: posterTheme.accent }}
+                        >
+                          SHARING
+                        </th>
+
+                        <th
+                          className="px-1 py-3 text-center text-[8px] font-black sm:text-[10px]"
+                          style={{ color: posterTheme.accent }}
+                        >
+                          QUAD
+                        </th>
+
+                        <th
+                          className="px-1 py-3 text-center text-[8px] font-black sm:text-[10px]"
+                          style={{ color: posterTheme.accent }}
+                        >
+                          TRIPLE
+                        </th>
+
+                        <th
+                          className="px-1 py-3 text-center text-[8px] font-black sm:text-[10px]"
+                          style={{ color: posterTheme.accent }}
+                        >
+                          DOUBLE
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {shownPoster.packages.map((pkg, index) => (
+                        <>
+                          {/* PACKAGE HEADING */}
+
+                          <tr key={`${pkg.id}-heading`}>
+                            <td
+                              colSpan={6}
+                              className="border-t px-3 py-2 text-left"
+                              style={{
+                                background: posterTheme.light,
+                                borderColor: posterTheme.border,
+                              }}
+                            >
+                              <div className="flex items-center justify-between gap-2">
+                                <p
+                                  className="text-[10px] font-black uppercase sm:text-xs"
+                                  style={{ color: posterTheme.primary }}
+                                >
+                                  {pkg.name || `PACKAGE ${index + 1}`}
+                                </p>
+
+                                <p
+                                  className="text-[9px] font-black sm:text-[10px]"
+                                  style={{ color: posterTheme.secondary }}
+                                >
+                                  {pkg.nights ? `${pkg.nights} NIGHTS` : ""}
+                                </p>
+                              </div>
+                            </td>
+                          </tr>
+
+                          {/* HOTEL AND RATE DATA */}
+
+                          <tr
+                            key={`${pkg.id}-data`}
+                            className="bg-white"
+                          >
+                            {/* MAKKAH HOTEL */}
+
+                            <td
+                              className="border-t border-slate-200 px-2 py-3 align-top"
+                              style={{ background: "#FFF8E8" }}
+                            >
+                              <p
+                                className="break-words text-[12px] font-black leading-snug sm:text-[15px]"
+                                style={{ color: "#8A4B12" }}
+                              >
+                                {pkg.makkahHotel || "Hotel not added"}
+                              </p>
+
+                              <p className="mt-1 text-[9px] font-bold text-slate-700 sm:text-xs">
+                                {pkg.makkahCategory}
+                              </p>
+
+                              {pkg.makkahDistance && (
+                                <span
+                                  className="mt-1 inline-block rounded-md px-1.5 py-1 text-[9px] font-black sm:text-[11px]"
+                                  style={{
+                                    background: "#F4E2BD",
+                                    color: "#75400D",
+                                  }}
+                                >
+                                  {pkg.makkahDistance}
+                                </span>
+                              )}
+                            </td>
+
+                            {/* MADINAH HOTEL */}
+
+                            <td
+                              className="border-t border-slate-200 px-2 py-3 align-top"
+                              style={{ background: "#F0F8F2" }}
+                            >
+                              <p
+                                className="break-words text-[12px] font-black leading-snug sm:text-[15px]"
+                                style={{ color: "#08734D" }}
+                              >
+                                {pkg.madinahHotel || "Hotel not added"}
+                              </p>
+
+                              <p className="mt-1 text-[9px] font-bold text-slate-700 sm:text-xs">
+                                {pkg.madinahCategory}
+                              </p>
+
+                              {pkg.madinahDistance && (
+                                <span
+                                  className="mt-1 inline-block rounded-md px-1.5 py-1 text-[9px] font-black sm:text-[11px]"
+                                  style={{
+                                    background: "#D8EDE0",
+                                    color: "#075C45",
+                                  }}
+                                >
+                                  {pkg.madinahDistance}
+                                </span>
+                              )}
+                            </td>
+
+                            {/* SHARING RATE */}
+
+                            <td
+                              className="border-t border-slate-200 px-1 py-3 text-center align-middle"
+                              style={{
+                                background: "#FFFCF3",
+                                color: "#68440E",
+                              }}
+                            >
+                              <span className="break-words text-[10px] font-black leading-tight tabular-nums sm:text-sm">
+                                {pkg.sharing ? money(pkg.sharing) : "—"}
+                              </span>
+                            </td>
+
+                            {/* QUAD RATE */}
+
+                            <td
+                              className="border-t border-slate-200 px-1 py-3 text-center align-middle"
+                              style={{
+                                background: "#FFFCF3",
+                                color: "#68440E",
+                              }}
+                            >
+                              <span className="break-words text-[10px] font-black leading-tight tabular-nums sm:text-sm">
+                                {pkg.quad ? money(pkg.quad) : "—"}
+                              </span>
+                            </td>
+
+                            {/* TRIPLE RATE */}
+
+                            <td
+                              className="border-t border-slate-200 px-1 py-3 text-center align-middle"
+                              style={{
+                                background: "#FFFCF3",
+                                color: "#68440E",
+                              }}
+                            >
+                              <span className="break-words text-[10px] font-black leading-tight tabular-nums sm:text-sm">
+                                {pkg.triple ? money(pkg.triple) : "—"}
+                              </span>
+                            </td>
+
+                            {/* DOUBLE RATE */}
+
+                            <td
+                              className="border-t border-slate-200 px-1 py-3 text-center align-middle"
+                              style={{
+                                background: "#FFFCF3",
+                                color: "#68440E",
+                              }}
+                            >
+                              <span className="break-words text-[10px] font-black leading-tight tabular-nums sm:text-sm">
+                                {pkg.double ? money(pkg.double) : "—"}
+                              </span>
+                            </td>
+                          </tr>
+                        </>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* POSTER FOOTER */}
+
+                <div
+                  className="mt-4 rounded-xl border px-3 py-3"
+                  style={{
+                    background: posterTheme.light,
+                    borderColor: posterTheme.border,
+                  }}
+                >
+                  <p
+                    className="text-center text-[10px] font-bold leading-relaxed sm:text-xs"
+                    style={{ color: posterTheme.text }}
+                  >
+                    ✦ Per person price includes visa, return ticket,
+                    accommodation & transport
+                    {shownPoster.packages[0]?.nights
+                      ? ` • ${shownPoster.packages[0].nights} days`
+                      : ""}
+                  </p>
+                </div>
+
+                {shownPoster.services.trim() && (
+                  <p
+                    className="mt-3 text-center text-[9px] font-black leading-relaxed sm:text-xs"
+                    style={{ color: posterTheme.text }}
+                  >
+                    {shownPoster.services}
+                  </p>
                 )}
-              </div>
 
-              {/* POSTER FOOTER */}
-              <div
-                className="mt-2 shrink-0 rounded-lg border px-3 py-2"
-                style={{
-                  background: posterTheme.light,
-                  borderColor: posterTheme.border,
-                }}
-              >
-                <p
-                  className="text-center text-[9px] font-bold leading-relaxed"
-                  style={{ color: posterTheme.text }}
+                <div
+                  className="mt-3 border-t pt-2 text-center"
+                  style={{ borderColor: posterTheme.border }}
                 >
-                  ✦ Per person price includes visa, return ticket, accommodation & transport
-                  {posterPackages[0]?.nights
-                    ? ` • ${posterPackages[0].nights} days`
-                    : ""}
-                </p>
-              </div>
+                  <p
+                    className="text-[9px] font-black tracking-widest sm:text-[10px]"
+                    style={{ color: posterTheme.text }}
+                  >
+                    HARAM JUNOON TRAVELS & TOURS
+                  </p>
 
-              {shownPoster.services.trim() && (
-                <p
-                  className="mt-2 shrink-0 text-center text-[8px] font-black leading-relaxed"
-                  style={{ color: posterTheme.text }}
-                >
-                  {shownPoster.services}
-                </p>
-              )}
-
-              <div
-                className="mt-2 shrink-0 border-t pt-1.5 text-center"
-                style={{ borderColor: posterTheme.border }}
-              >
-                <p
-                  className="text-[9px] font-black tracking-widest"
-                  style={{ color: posterTheme.text }}
-                >
-                  HARAM JUNOON TRAVELS & TOURS
-                </p>
-                <p className="mt-0.5 text-[8px] font-semibold text-slate-500">
-                  YOUR JOURNEY, OUR CARE
-                </p>
+                  <p className="mt-1 text-[8px] font-semibold text-slate-500">
+                    YOUR JOURNEY, OUR CARE
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
           <p className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-xs leading-5 text-slate-500">
-            Saved posters isi browser mein store hote hain. Browser data clear
-            karne se pehle Download Backup use karein.
+            Saved posters isi browser mein store hote hain. Browser data
+            clear karne se pehle Download Backup use karein.
           </p>
         </section>
       </div>
 
       {/* WEBSITE FOOTER */}
+
       <footer className="border-t-4 border-[#d6ad62] bg-gradient-to-r from-[#101f35] via-[#17395e] to-[#244c75] px-4 py-7 text-center text-white shadow-inner">
         <p className="text-sm font-black tracking-widest text-[#e3bd72]">
           HARAM JUNOON TRAVELS & TOURS
         </p>
+
         <div className="mx-auto my-4 h-px max-w-xs bg-[#d6ad62]/60" />
+
         <p className="text-xs font-bold tracking-widest text-white/80">
           SYSTEM DESIGNED & DEVELOPED BY
         </p>
+
         <h2 className="mt-2 text-xl font-black tracking-wider text-[#e3bd72]">
           AMEER HAMZA
         </h2>
+
         <p className="mt-3 text-[11px] text-white/60">
           © 2026 All Rights Reserved.
         </p>
