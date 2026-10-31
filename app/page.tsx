@@ -1,7 +1,6 @@
-
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toBlob } from "html-to-image";
 
 type PosterTheme =
@@ -56,166 +55,176 @@ type SavedPoster = {
   createdAt: string;
 };
 
+type ThemeDetails = {
+  name: string;
+  description: string;
+  primary: string;
+  secondary: string;
+  accent: string;
+  light: string;
+  text: string;
+  border: string;
+  headerOverlay: string;
+  gradient: string;
+};
+
 const STORAGE_KEY = "haram-junoon-saved-posters-v1";
 
-const themes: Record<
-  PosterTheme,
-  {
-    name: string;
-    description: string;
-    primary: string;
-    secondary: string;
-    accent: string;
-    light: string;
-    text: string;
-    border: string;
-    headerOverlay: string;
-    gradient: string;
-  }
-> = {
+const themes: Record<PosterTheme, ThemeDetails> = {
   royal: {
     name: "Royal Blue",
     description: "Royal Blue & Champagne Gold",
-    primary: "#102A43",
-    secondary: "#1F5A85",
-    accent: "#E0B45C",
-    light: "#FFF9ED",
-    text: "#102A43",
-    border: "#D5AD58",
-    headerOverlay: "rgba(16,42,67,0.32)",
-    gradient: "linear-gradient(120deg,#102A43,#1F5A85,#D5AD58)",
+    primary: "#102B4E",
+    secondary: "#245681",
+    accent: "#E6BD70",
+    light: "#F0F5FA",
+    text: "#183B60",
+    border: "#D4B16A",
+    headerOverlay: "rgba(16,43,78,0.32)",
+    gradient: "linear-gradient(120deg, #102B4E, #245681, #3976A3)",
   },
+
   emerald: {
     name: "Emerald",
     description: "Emerald Green & Gold",
-    primary: "#064E3B",
-    secondary: "#16836A",
-    accent: "#E4C477",
-    light: "#F0F8F3",
-    text: "#064E3B",
-    border: "#C9A65C",
-    headerOverlay: "rgba(6,78,59,0.32)",
-    gradient: "linear-gradient(120deg,#064E3B,#16836A,#C9A65C)",
+    primary: "#064638",
+    secondary: "#11745B",
+    accent: "#E2C078",
+    light: "#EDF7F1",
+    text: "#07543F",
+    border: "#B9D9C7",
+    headerOverlay: "rgba(6,70,56,0.32)",
+    gradient: "linear-gradient(120deg, #064638, #11745B, #26916E)",
   },
+
   black: {
     name: "Black Gold",
     description: "Luxury Black & Gold",
     primary: "#171717",
-    secondary: "#51402A",
-    accent: "#E2B95F",
-    light: "#FBF7EF",
-    text: "#201A12",
+    secondary: "#403525",
+    accent: "#E5BD68",
+    light: "#F6F2E9",
+    text: "#302719",
     border: "#C6A15C",
     headerOverlay: "rgba(0,0,0,0.45)",
-    gradient: "linear-gradient(120deg,#171717,#51402A,#DDB45D)",
+    gradient: "linear-gradient(120deg, #171717, #302719, #70552C)",
   },
+
   cream: {
     name: "Cream",
     description: "Warm Cream & Brown",
-    primary: "#6A4328",
-    secondary: "#A46D3D",
-    accent: "#C99A54",
-    light: "#FFF8EA",
-    text: "#56351F",
+    primary: "#62432B",
+    secondary: "#96704A",
+    accent: "#CDA568",
+    light: "#FBF4E8",
+    text: "#563B27",
     border: "#D7BD91",
     headerOverlay: "rgba(72,48,28,0.30)",
-    gradient: "linear-gradient(120deg,#6A4328,#A46D3D,#D8B77A)",
+    gradient: "linear-gradient(120deg, #62432B, #96704A, #C49A64)",
   },
+
   navy: {
     name: "Navy Silver",
     description: "Navy & Platinum Silver",
-    primary: "#142C45",
-    secondary: "#45627D",
-    accent: "#C9D5E0",
-    light: "#F3F6F9",
-    text: "#142C45",
+    primary: "#172A43",
+    secondary: "#425D78",
+    accent: "#D4DFE9",
+    light: "#EFF3F7",
+    text: "#203B58",
     border: "#B8C6D5",
-    headerOverlay: "rgba(20,44,69,0.38)",
-    gradient: "linear-gradient(120deg,#142C45,#45627D,#AEBFCE)",
+    headerOverlay: "rgba(23,42,67,0.38)",
+    gradient: "linear-gradient(120deg, #172A43, #425D78, #718BA5)",
   },
+
   maroon: {
     name: "Maroon",
     description: "Royal Maroon & Gold",
-    primary: "#641E35",
-    secondary: "#963E56",
-    accent: "#E0B86C",
-    light: "#FFF3F3",
-    text: "#641E35",
+    primary: "#641D36",
+    secondary: "#913D55",
+    accent: "#E1BD78",
+    light: "#FBF0F2",
+    text: "#70253D",
     border: "#D2A9AE",
-    headerOverlay: "rgba(100,30,53,0.36)",
-    gradient: "linear-gradient(120deg,#641E35,#963E56,#E0B86C)",
+    headerOverlay: "rgba(100,29,54,0.36)",
+    gradient: "linear-gradient(120deg, #641D36, #913D55, #B75D70)",
   },
+
   ocean: {
-    name: "Royal Ocean",
-    description: "Ocean Blue Gradient",
-    primary: "#102A43",
-    secondary: "#2876A8",
-    accent: "#E4C477",
-    light: "#EFF7FC",
-    text: "#102A43",
-    border: "#9BC4DE",
-    headerOverlay: "rgba(16,42,67,0.34)",
-    gradient: "linear-gradient(120deg,#102A43,#2876A8,#54A6C8)",
+    name: "Ocean Blue",
+    description: "Ocean Blue & Aqua",
+    primary: "#063B55",
+    secondary: "#087E9B",
+    accent: "#8FE3E0",
+    light: "#EAF7F9",
+    text: "#06465F",
+    border: "#9CCFD5",
+    headerOverlay: "rgba(6,59,85,0.38)",
+    gradient: "linear-gradient(120deg, #063B55, #087E9B, #19A9B0)",
   },
+
   purple: {
     name: "Royal Purple",
-    description: "Purple & Lavender Gradient",
-    primary: "#25245D",
-    secondary: "#6256A6",
-    accent: "#D6C5F0",
-    light: "#F5F1FC",
-    text: "#30245D",
-    border: "#C7B9EA",
-    headerOverlay: "rgba(37,36,93,0.36)",
-    gradient: "linear-gradient(120deg,#25245D,#6256A6,#A995D7)",
+    description: "Purple & Lavender Gold",
+    primary: "#38205F",
+    secondary: "#7045A0",
+    accent: "#E8C987",
+    light: "#F4EFFB",
+    text: "#43266D",
+    border: "#C8B3E1",
+    headerOverlay: "rgba(56,32,95,0.38)",
+    gradient: "linear-gradient(120deg, #38205F, #7045A0, #9871C2)",
   },
+
   sunset: {
-    name: "Sunset Luxury",
-    description: "Burgundy & Rose Gold",
-    primary: "#702B36",
-    secondary: "#B65B50",
-    accent: "#F0C38B",
-    light: "#FFF4EF",
-    text: "#702B36",
-    border: "#D9A18D",
-    headerOverlay: "rgba(112,43,54,0.36)",
-    gradient: "linear-gradient(120deg,#702B36,#B65B50,#E7A879)",
+    name: "Sunset",
+    description: "Sunset Orange & Coral",
+    primary: "#74351F",
+    secondary: "#C45A38",
+    accent: "#FFD18B",
+    light: "#FFF2E9",
+    text: "#78391F",
+    border: "#E7B99A",
+    headerOverlay: "rgba(116,53,31,0.38)",
+    gradient: "linear-gradient(120deg, #74351F, #C45A38, #E98A52)",
   },
+
   teal: {
-    name: "Islamic Teal",
-    description: "Deep Teal & Champagne",
-    primary: "#064B50",
-    secondary: "#14858A",
-    accent: "#E6C77B",
-    light: "#EFF9F8",
-    text: "#064B50",
-    border: "#9ACDCA",
-    headerOverlay: "rgba(6,75,80,0.36)",
-    gradient: "linear-gradient(120deg,#064B50,#14858A,#80BEB2)",
+    name: "Deep Teal",
+    description: "Deep Teal & Turquoise",
+    primary: "#064B4A",
+    secondary: "#07817B",
+    accent: "#B4E6D5",
+    light: "#EAF7F4",
+    text: "#07514E",
+    border: "#A8D6CA",
+    headerOverlay: "rgba(6,75,74,0.38)",
+    gradient: "linear-gradient(120deg, #064B4A, #07817B, #25A99A)",
   },
+
   rose: {
     name: "Rose Gold",
-    description: "Rose & Soft Gold",
-    primary: "#713B52",
-    secondary: "#B36D82",
-    accent: "#EAC49D",
-    light: "#FFF4F6",
-    text: "#713B52",
-    border: "#E0B7C3",
-    headerOverlay: "rgba(113,59,82,0.36)",
-    gradient: "linear-gradient(120deg,#713B52,#B36D82,#EAC49D)",
+    description: "Burgundy & Rose Gold",
+    primary: "#63283D",
+    secondary: "#A34E68",
+    accent: "#EAC39F",
+    light: "#FBF0F2",
+    text: "#702C45",
+    border: "#DDB6BB",
+    headerOverlay: "rgba(99,40,61,0.38)",
+    gradient: "linear-gradient(120deg, #63283D, #A34E68, #C77B88)",
   },
+
   desert: {
     name: "Desert Sand",
-    description: "Desert Brown & Sand Gold",
-    primary: "#56351F",
-    secondary: "#A46D3D",
-    accent: "#E7C58A",
-    light: "#FFF8EA",
-    text: "#56351F",
-    border: "#D8B77A",
-    headerOverlay: "rgba(86,53,31,0.34)",
-    gradient: "linear-gradient(120deg,#56351F,#A46D3D,#E7C58A)",
+    description: "Desert Sand & Bronze",
+    primary: "#62452D",
+    secondary: "#A77B4D",
+    accent: "#F0D29A",
+    light: "#FAF3E7",
+    text: "#65452A",
+    border: "#D9C19A",
+    headerOverlay: "rgba(98,69,45,0.38)",
+    gradient: "linear-gradient(120deg, #62452D, #A77B4D, #C9A36B)",
   },
 };
 
@@ -829,41 +838,6 @@ export default function Home() {
         .theme-choice:hover {
           transform: translateY(-2px);
         }
-
-        .hotel-name {
-          font-size: 13px;
-          line-height: 1.35;
-          font-weight: 900;
-          overflow-wrap: anywhere;
-        }
-
-        .rate-value {
-          font-size: 11px;
-          line-height: 1.35;
-          font-weight: 900;
-          overflow-wrap: anywhere;
-          font-variant-numeric: tabular-nums;
-        }
-
-        @media (min-width: 640px) {
-          .hotel-name {
-            font-size: 16px;
-          }
-
-          .rate-value {
-            font-size: 14px;
-          }
-        }
-
-        @media (max-width: 380px) {
-          .hotel-name {
-            font-size: 11px;
-          }
-
-          .rate-value {
-            font-size: 9px;
-          }
-        }
       `}</style>
 
       {/* MAIN HEADER */}
@@ -939,7 +913,7 @@ export default function Home() {
                 </h3>
 
                 <p className="mt-1 text-xs text-slate-500">
-                  12 professional solid and gradient designs
+                  Select a design theme for your poster
                 </p>
               </div>
 
@@ -963,7 +937,7 @@ export default function Home() {
                       }`}
                     >
                       <div
-                        className="mb-3 h-9 overflow-hidden rounded-lg shadow-inner"
+                        className="mb-3 h-9 rounded-lg shadow-inner"
                         style={{ background: item.gradient }}
                       />
 
@@ -1119,8 +1093,8 @@ export default function Home() {
 
                 {/* MAKKAH HOTEL FORM */}
 
-                <div className="rounded-xl border border-emerald-200 bg-[#f0f8f2] p-4">
-                  <h3 className="mb-3 font-black text-[#07543F]">
+                <div className="rounded-xl border border-amber-200 bg-[#fff8e8] p-4">
+                  <h3 className="mb-3 font-black text-[#8A4B12]">
                     🕋 Makkah Hotel
                   </h3>
 
@@ -1154,8 +1128,8 @@ export default function Home() {
 
                 {/* MADINAH HOTEL FORM */}
 
-                <div className="rounded-xl border border-blue-200 bg-[#f0f5fc] p-4">
-                  <h3 className="mb-3 font-black text-[#17477D]">
+                <div className="rounded-xl border border-emerald-200 bg-[#edf8f1] p-4">
+                  <h3 className="mb-3 font-black text-[#08734D]">
                     ☪ Madinah Hotel
                   </h3>
 
@@ -1566,37 +1540,37 @@ export default function Home() {
                           color: "#ffffff",
                         }}
                       >
-                        <th className="px-1 py-3 text-center text-[9px] font-black sm:px-2 sm:text-[11px]">
+                        <th className="px-1 py-3 text-center text-[8px] font-black sm:px-2 sm:text-[11px]">
                           MAKKAH HOTEL
                         </th>
 
-                        <th className="px-1 py-3 text-center text-[9px] font-black sm:px-2 sm:text-[11px]">
+                        <th className="px-1 py-3 text-center text-[8px] font-black sm:px-2 sm:text-[11px]">
                           MADINAH HOTEL
                         </th>
 
                         <th
-                          className="px-1 py-3 text-center text-[9px] font-black sm:text-[11px]"
+                          className="px-1 py-3 text-center text-[8px] font-black sm:text-[10px]"
                           style={{ color: posterTheme.accent }}
                         >
                           SHARING
                         </th>
 
                         <th
-                          className="px-1 py-3 text-center text-[9px] font-black sm:text-[11px]"
+                          className="px-1 py-3 text-center text-[8px] font-black sm:text-[10px]"
                           style={{ color: posterTheme.accent }}
                         >
                           QUAD
                         </th>
 
                         <th
-                          className="px-1 py-3 text-center text-[9px] font-black sm:text-[11px]"
+                          className="px-1 py-3 text-center text-[8px] font-black sm:text-[10px]"
                           style={{ color: posterTheme.accent }}
                         >
                           TRIPLE
                         </th>
 
                         <th
-                          className="px-1 py-3 text-center text-[9px] font-black sm:text-[11px]"
+                          className="px-1 py-3 text-center text-[8px] font-black sm:text-[10px]"
                           style={{ color: posterTheme.accent }}
                         >
                           DOUBLE
@@ -1606,10 +1580,10 @@ export default function Home() {
 
                     <tbody>
                       {shownPoster.packages.map((pkg, index) => (
-                        <Fragment key={pkg.id}>
+                        <>
                           {/* PACKAGE HEADING */}
 
-                          <tr>
+                          <tr key={`${pkg.id}-heading`}>
                             <td
                               colSpan={6}
                               className="border-t px-3 py-2 text-left"
@@ -1638,21 +1612,24 @@ export default function Home() {
 
                           {/* HOTEL AND RATE DATA */}
 
-                          <tr className="bg-white">
+                          <tr
+                            key={`${pkg.id}-data`}
+                            className="bg-white"
+                          >
                             {/* MAKKAH HOTEL */}
 
                             <td
                               className="border-t border-slate-200 px-2 py-3 align-top"
-                              style={{ background: "#FFF5E5" }}
+                              style={{ background: "#FFF8E8" }}
                             >
                               <p
-                                className="hotel-name"
-                                style={{ color: "#87450F" }}
+                                className="break-words text-[12px] font-black leading-snug sm:text-[15px]"
+                                style={{ color: "#8A4B12" }}
                               >
                                 {pkg.makkahHotel || "Hotel not added"}
                               </p>
 
-                              <p className="mt-1 text-[10px] font-black text-slate-700 sm:text-xs">
+                              <p className="mt-1 text-[9px] font-bold text-slate-700 sm:text-xs">
                                 {pkg.makkahCategory}
                               </p>
 
@@ -1660,8 +1637,8 @@ export default function Home() {
                                 <span
                                   className="mt-1 inline-block rounded-md px-1.5 py-1 text-[9px] font-black sm:text-[11px]"
                                   style={{
-                                    background: "#F3DDB7",
-                                    color: "#70400F",
+                                    background: "#F4E2BD",
+                                    color: "#75400D",
                                   }}
                                 >
                                   {pkg.makkahDistance}
@@ -1673,16 +1650,16 @@ export default function Home() {
 
                             <td
                               className="border-t border-slate-200 px-2 py-3 align-top"
-                              style={{ background: "#EAF7EF" }}
+                              style={{ background: "#F0F8F2" }}
                             >
                               <p
-                                className="hotel-name"
-                                style={{ color: "#086341" }}
+                                className="break-words text-[12px] font-black leading-snug sm:text-[15px]"
+                                style={{ color: "#08734D" }}
                               >
                                 {pkg.madinahHotel || "Hotel not added"}
                               </p>
 
-                              <p className="mt-1 text-[10px] font-black text-slate-700 sm:text-xs">
+                              <p className="mt-1 text-[9px] font-bold text-slate-700 sm:text-xs">
                                 {pkg.madinahCategory}
                               </p>
 
@@ -1690,8 +1667,8 @@ export default function Home() {
                                 <span
                                   className="mt-1 inline-block rounded-md px-1.5 py-1 text-[9px] font-black sm:text-[11px]"
                                   style={{
-                                    background: "#CDEBD9",
-                                    color: "#07543F",
+                                    background: "#D8EDE0",
+                                    color: "#075C45",
                                   }}
                                 >
                                   {pkg.madinahDistance}
@@ -1705,10 +1682,10 @@ export default function Home() {
                               className="border-t border-slate-200 px-1 py-3 text-center align-middle"
                               style={{
                                 background: "#FFFCF3",
-                                color: "#704713",
+                                color: "#68440E",
                               }}
                             >
-                              <span className="rate-value">
+                              <span className="break-words text-[10px] font-black leading-tight tabular-nums sm:text-sm">
                                 {pkg.sharing ? money(pkg.sharing) : "—"}
                               </span>
                             </td>
@@ -1719,10 +1696,10 @@ export default function Home() {
                               className="border-t border-slate-200 px-1 py-3 text-center align-middle"
                               style={{
                                 background: "#FFFCF3",
-                                color: "#704713",
+                                color: "#68440E",
                               }}
                             >
-                              <span className="rate-value">
+                              <span className="break-words text-[10px] font-black leading-tight tabular-nums sm:text-sm">
                                 {pkg.quad ? money(pkg.quad) : "—"}
                               </span>
                             </td>
@@ -1733,10 +1710,10 @@ export default function Home() {
                               className="border-t border-slate-200 px-1 py-3 text-center align-middle"
                               style={{
                                 background: "#FFFCF3",
-                                color: "#704713",
+                                color: "#68440E",
                               }}
                             >
-                              <span className="rate-value">
+                              <span className="break-words text-[10px] font-black leading-tight tabular-nums sm:text-sm">
                                 {pkg.triple ? money(pkg.triple) : "—"}
                               </span>
                             </td>
@@ -1747,15 +1724,15 @@ export default function Home() {
                               className="border-t border-slate-200 px-1 py-3 text-center align-middle"
                               style={{
                                 background: "#FFFCF3",
-                                color: "#704713",
+                                color: "#68440E",
                               }}
                             >
-                              <span className="rate-value">
+                              <span className="break-words text-[10px] font-black leading-tight tabular-nums sm:text-sm">
                                 {pkg.double ? money(pkg.double) : "—"}
                               </span>
                             </td>
                           </tr>
-                        </Fragment>
+                        </>
                       ))}
                     </tbody>
                   </table>
