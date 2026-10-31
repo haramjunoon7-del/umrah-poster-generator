@@ -1623,7 +1623,7 @@ export default function Home() {
                               style={{ background: "#FFF8E8" }}
                             >
                               <p
-                                className="break-words text-[10px] font-medium leading-snug sm:text-[12px] tracking-normal"
+                                className="break-words text-[12px] font-black leading-snug sm:text-[15px]"
                                 style={{ color: "#8A4B12" }}
                               >
                                 {pkg.makkahHotel || "Hotel not added"}
