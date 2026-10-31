@@ -1653,7 +1653,7 @@ export default function Home() {
                               style={{ background: "#F0F8F2" }}
                             >
                               <p
-                                className="break-words text-[11px] font-black leading-snug sm:text-[15px]"
+                                className="break-words text-[11px] font-black leading-snug sm:text-[13px]"
                                 style={{ color: "#08734D" }}
                               >
                                 {pkg.madinahHotel || "Hotel not added"}
