@@ -78,153 +78,142 @@ const themes: Record<PosterTheme, ThemeDetails> = {
     secondary: "#245681",
     accent: "#E6BD70",
     light: "#F0F5FA",
-    text: "#183B60",
-    border: "#D4B16A",
-    headerOverlay: "rgba(16,43,78,0.32)",
-    gradient: "linear-gradient(120deg, #102B4E, #245681, #3976A3)",
+    text: "#102B4E",
+    border: "#D8C18F",
+    headerOverlay: "rgba(8, 25, 45, 0.78)",
+    gradient: "linear-gradient(135deg, #102B4E, #245681)",
   },
-
   emerald: {
-    name: "Emerald",
+    name: "Emerald Green",
     description: "Emerald Green & Gold",
-    primary: "#064638",
-    secondary: "#11745B",
-    accent: "#E2C078",
-    light: "#EDF7F1",
-    text: "#07543F",
-    border: "#B9D9C7",
-    headerOverlay: "rgba(6,70,56,0.32)",
-    gradient: "linear-gradient(120deg, #064638, #11745B, #26916E)",
+    primary: "#064E3B",
+    secondary: "#08734D",
+    accent: "#D6B56D",
+    light: "#F0F7F2",
+    text: "#064E3B",
+    border: "#C7DCCB",
+    headerOverlay: "rgba(4, 45, 34, 0.78)",
+    gradient: "linear-gradient(135deg, #064E3B, #08734D)",
   },
-
   black: {
     name: "Black Gold",
     description: "Luxury Black & Gold",
     primary: "#171717",
-    secondary: "#403525",
-    accent: "#E5BD68",
-    light: "#F6F2E9",
-    text: "#302719",
-    border: "#C6A15C",
-    headerOverlay: "rgba(0,0,0,0.45)",
-    gradient: "linear-gradient(120deg, #171717, #302719, #70552C)",
+    secondary: "#333333",
+    accent: "#D6AE59",
+    light: "#F7F5EF",
+    text: "#191919",
+    border: "#D8C18F",
+    headerOverlay: "rgba(0, 0, 0, 0.82)",
+    gradient: "linear-gradient(135deg, #111111, #38342B)",
   },
-
   cream: {
-    name: "Cream",
-    description: "Warm Cream & Brown",
-    primary: "#62432B",
-    secondary: "#96704A",
-    accent: "#CDA568",
-    light: "#FBF4E8",
-    text: "#563B27",
-    border: "#D7BD91",
-    headerOverlay: "rgba(72,48,28,0.30)",
-    gradient: "linear-gradient(120deg, #62432B, #96704A, #C49A64)",
+    name: "Cream Gold",
+    description: "Elegant Cream & Gold",
+    primary: "#6F4B22",
+    secondary: "#9A713C",
+    accent: "#C79A4C",
+    light: "#FBF8F0",
+    text: "#49351E",
+    border: "#E5D4B3",
+    headerOverlay: "rgba(45, 32, 18, 0.72)",
+    gradient: "linear-gradient(135deg, #6F4B22, #A77C3F)",
   },
-
   navy: {
-    name: "Navy Silver",
-    description: "Navy & Platinum Silver",
-    primary: "#172A43",
-    secondary: "#425D78",
-    accent: "#D4DFE9",
-    light: "#EFF3F7",
-    text: "#203B58",
-    border: "#B8C6D5",
-    headerOverlay: "rgba(23,42,67,0.38)",
-    gradient: "linear-gradient(120deg, #172A43, #425D78, #718BA5)",
+    name: "Midnight Navy",
+    description: "Midnight Navy & Gold",
+    primary: "#111C3A",
+    secondary: "#263D68",
+    accent: "#DDBB70",
+    light: "#F3F5FA",
+    text: "#111C3A",
+    border: "#D5D9E3",
+    headerOverlay: "rgba(8, 14, 34, 0.82)",
+    gradient: "linear-gradient(135deg, #111C3A, #263D68)",
   },
-
   maroon: {
-    name: "Maroon",
-    description: "Royal Maroon & Gold",
-    primary: "#641D36",
-    secondary: "#913D55",
-    accent: "#E1BD78",
-    light: "#FBF0F2",
-    text: "#70253D",
-    border: "#D2A9AE",
-    headerOverlay: "rgba(100,29,54,0.36)",
-    gradient: "linear-gradient(120deg, #641D36, #913D55, #B75D70)",
+    name: "Royal Maroon",
+    description: "Maroon & Champagne",
+    primary: "#641D32",
+    secondary: "#8B3048",
+    accent: "#D8B778",
+    light: "#FBF4F5",
+    text: "#641D32",
+    border: "#E4C9CE",
+    headerOverlay: "rgba(55, 8, 23, 0.8)",
+    gradient: "linear-gradient(135deg, #641D32, #8B3048)",
   },
-
   ocean: {
     name: "Ocean Blue",
-    description: "Ocean Blue & Aqua",
-    primary: "#063B55",
-    secondary: "#087E9B",
-    accent: "#8FE3E0",
-    light: "#EAF7F9",
-    text: "#06465F",
-    border: "#9CCFD5",
-    headerOverlay: "rgba(6,59,85,0.38)",
-    gradient: "linear-gradient(120deg, #063B55, #087E9B, #19A9B0)",
+    description: "Ocean Blue & Gold",
+    primary: "#075985",
+    secondary: "#0E7490",
+    accent: "#E5BE72",
+    light: "#F0F8FB",
+    text: "#075985",
+    border: "#C9E1E9",
+    headerOverlay: "rgba(3, 45, 68, 0.78)",
+    gradient: "linear-gradient(135deg, #075985, #0E7490)",
   },
-
   purple: {
     name: "Royal Purple",
-    description: "Purple & Lavender Gold",
-    primary: "#38205F",
-    secondary: "#7045A0",
-    accent: "#E8C987",
-    light: "#F4EFFB",
-    text: "#43266D",
-    border: "#C8B3E1",
-    headerOverlay: "rgba(56,32,95,0.38)",
-    gradient: "linear-gradient(120deg, #38205F, #7045A0, #9871C2)",
+    description: "Purple & Gold",
+    primary: "#4C1D75",
+    secondary: "#6B35A0",
+    accent: "#D9B66F",
+    light: "#F7F3FA",
+    text: "#4C1D75",
+    border: "#DED0EA",
+    headerOverlay: "rgba(35, 12, 55, 0.8)",
+    gradient: "linear-gradient(135deg, #4C1D75, #6B35A0)",
   },
-
   sunset: {
     name: "Sunset",
-    description: "Sunset Orange & Coral",
-    primary: "#74351F",
-    secondary: "#C45A38",
-    accent: "#FFD18B",
-    light: "#FFF2E9",
-    text: "#78391F",
-    border: "#E7B99A",
-    headerOverlay: "rgba(116,53,31,0.38)",
-    gradient: "linear-gradient(120deg, #74351F, #C45A38, #E98A52)",
+    description: "Warm Sunset & Gold",
+    primary: "#873B24",
+    secondary: "#B65A35",
+    accent: "#E8C27A",
+    light: "#FFF6EF",
+    text: "#873B24",
+    border: "#EBD3C2",
+    headerOverlay: "rgba(70, 24, 12, 0.76)",
+    gradient: "linear-gradient(135deg, #873B24, #B65A35)",
   },
-
   teal: {
-    name: "Deep Teal",
-    description: "Deep Teal & Turquoise",
-    primary: "#064B4A",
-    secondary: "#07817B",
-    accent: "#B4E6D5",
-    light: "#EAF7F4",
-    text: "#07514E",
-    border: "#A8D6CA",
-    headerOverlay: "rgba(6,75,74,0.38)",
-    gradient: "linear-gradient(120deg, #064B4A, #07817B, #25A99A)",
+    name: "Teal",
+    description: "Teal & Champagne Gold",
+    primary: "#115E59",
+    secondary: "#0F766E",
+    accent: "#D8B66E",
+    light: "#F0F8F7",
+    text: "#115E59",
+    border: "#C8E0DD",
+    headerOverlay: "rgba(4, 47, 45, 0.8)",
+    gradient: "linear-gradient(135deg, #115E59, #0F766E)",
   },
-
   rose: {
-    name: "Rose Gold",
-    description: "Burgundy & Rose Gold",
-    primary: "#63283D",
-    secondary: "#A34E68",
-    accent: "#EAC39F",
-    light: "#FBF0F2",
-    text: "#702C45",
-    border: "#DDB6BB",
-    headerOverlay: "rgba(99,40,61,0.38)",
-    gradient: "linear-gradient(120deg, #63283D, #A34E68, #C77B88)",
+    name: "Rose",
+    description: "Rose & Gold",
+    primary: "#8B3A62",
+    secondary: "#AD527A",
+    accent: "#E0BC82",
+    light: "#FCF4F7",
+    text: "#8B3A62",
+    border: "#EBD0DD",
+    headerOverlay: "rgba(65, 16, 40, 0.78)",
+    gradient: "linear-gradient(135deg, #8B3A62, #AD527A)",
   },
-
   desert: {
     name: "Desert Sand",
-    description: "Desert Sand & Bronze",
-    primary: "#62452D",
-    secondary: "#A77B4D",
-    accent: "#F0D29A",
-    light: "#FAF3E7",
-    text: "#65452A",
-    border: "#D9C19A",
-    headerOverlay: "rgba(98,69,45,0.38)",
-    gradient: "linear-gradient(120deg, #62452D, #A77B4D, #C9A36B)",
+    description: "Desert Sand & Gold",
+    primary: "#76512D",
+    secondary: "#A47742",
+    accent: "#D7B36D",
+    light: "#FAF6ED",
+    text: "#76512D",
+    border: "#E6D8BD",
+    headerOverlay: "rgba(53, 34, 15, 0.76)",
+    gradient: "linear-gradient(135deg, #76512D, #A47742)",
   },
 };
 
@@ -258,7 +247,7 @@ const blankFlight: FlightData = {
 function blankPackage(id: string, number: number): PackageData {
   return {
     id,
-    name: `Package ${number}`,
+    name: `Package No. ${number}`,
     nights: "21",
     makkahHotel: "",
     makkahCategory: "3 Star",
@@ -273,69 +262,57 @@ function blankPackage(id: string, number: number): PackageData {
   };
 }
 
-function money(value: string) {
-  if (!value?.trim()) return "Rate on request";
-
-  const number = Number(value.replace(/,/g, ""));
-
-  return Number.isFinite(number)
-    ? `${number.toLocaleString("en-PK")}/-`
-    : value;
+function money(value: string | number) {
+  const number = Number(String(value).replace(/,/g, ""));
+  if (!Number.isFinite(number)) return String(value);
+  return `PKR ${number.toLocaleString("en-PK")}`;
 }
 
 function dateText(value: string) {
   if (!value) return "Date not added";
-
   const date = new Date(`${value}T00:00:00`);
-
-  return Number.isNaN(date.getTime())
-    ? value
-    : date.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      });
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 function timeText(value: string) {
   if (!value) return "Time not added";
-
-  const [hours, minutes] = value.split(":").map(Number);
-
-  if (!Number.isFinite(hours) || !Number.isFinite(minutes)) {
-    return value;
-  }
-
-  return `${hours % 12 || 12}:${String(minutes).padStart(2, "0")} ${
-    hours >= 12 ? "PM" : "AM"
-  }`;
+  const [hours, minutes] = value.split(":");
+  const hour = Number(hours);
+  if (!Number.isFinite(hour)) return value;
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const displayHour = hour % 12 || 12;
+  return `${displayHour}:${minutes || "00"} ${suffix}`;
 }
 
 function Field({
   label,
   value,
   onChange,
-  type = "text",
   placeholder = "",
+  type = "text",
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  type?: string;
   placeholder?: string;
+  type?: string;
 }) {
   return (
-    <label className="block min-w-0 text-sm">
-      <span className="mb-1.5 block font-bold text-slate-700">
+    <label className="block">
+      <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600">
         {label}
       </span>
-
       <input
         type={type}
         value={value}
-        placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none transition focus:border-blue-800 focus:ring-2 focus:ring-blue-100"
+        placeholder={placeholder}
+        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#C79A4C] focus:ring-2 focus:ring-[#C79A4C]/15"
       />
     </label>
   );
@@ -353,15 +330,14 @@ function SelectField({
   options: string[];
 }) {
   return (
-    <label className="block min-w-0 text-sm">
-      <span className="mb-1.5 block font-bold text-slate-700">
+    <label className="block">
+      <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600">
         {label}
       </span>
-
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none transition focus:border-blue-800"
+        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#C79A4C] focus:ring-2 focus:ring-[#C79A4C]/15"
       >
         {options.map((option) => (
           <option key={option} value={option}>
@@ -373,148 +349,69 @@ function SelectField({
   );
 }
 
-/* AIRLINE LOGOS */
+const airlineLogos: Record<string, string> = {
+  PIA: "https://www.gstatic.com/flights/airline_logos/70px/PK.png",
+  "Fly Jinnah": "https://www.gstatic.com/flights/airline_logos/70px/9P.png",
+  AirSial: "https://www.gstatic.com/flights/airline_logos/70px/PF.png",
+  Airblue: "https://www.gstatic.com/flights/airline_logos/70px/PA.png",
+  "Riyadh Air": "https://www.gstatic.com/flights/airline_logos/70px/RX.png",
+  Saudia: "https://www.gstatic.com/flights/airline_logos/70px/SV.png",
+  SalamAir: "https://www.gstatic.com/flights/airline_logos/70px/OV.png",
+};
 
-function getAirlineInfo(name: string) {
-  const airline = (name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-
-  const logos: Record<
-    string,
-    { name: string; src: string; initials: string }
-  > = {
-    pia: {
-      name: "PIA",
-      src: "/airlines/pia.png",
-      initials: "PIA",
-    },
-    flyjinnah: {
-      name: "Fly Jinnah",
-      src: "/airlines/fly-jinnah.png",
-      initials: "FJ",
-    },
-    airsial: {
-      name: "AirSial",
-      src: "/airlines/airsial.png",
-      initials: "AS",
-    },
-    airblue: {
-      name: "Airblue",
-      src: "/airlines/airblue.png",
-      initials: "AB",
-    },
-    riyadhair: {
-      name: "Riyadh Air",
-      src: "/airlines/riyadh-air.png",
-      initials: "RA",
-    },
-    saudia: {
-      name: "Saudia",
-      src: "/airlines/saudia.png",
-      initials: "SV",
-    },
-    saudiaairline: {
-      name: "Saudia",
-      src: "/airlines/saudia.png",
-      initials: "SV",
-    },
-    salamair: {
-      name: "SalamAir",
-      src: "/airlines/salamair.png",
-      initials: "OV",
-    },
-  };
-
-  return (
-    logos[airline] || {
-      name: name || "AIRLINE",
-      src: "",
-      initials: (name || "AIR").slice(0, 3).toUpperCase(),
-    }
-  );
-}
-
-function AirlineLogo({
-  airline,
-  className = "",
-}: {
-  airline: string;
-  className?: string;
-}) {
-  const info = getAirlineInfo(airline);
+function AirlineLogo({ airline }: { airline: string }) {
   const [failed, setFailed] = useState(false);
+  const logo = airlineLogos[airline];
 
   useEffect(() => {
     setFailed(false);
   }, [airline]);
 
+  if (!logo || failed) {
+    return (
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#DCC99E] bg-white text-xs font-black text-[#79551F]">
+        {airline.slice(0, 2).toUpperCase()}
+      </div>
+    );
+  }
+
   return (
-    <div
-      className={`flex shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 ${className}`}
-      title={info.name}
-    >
-      {info.src && !failed ? (
-        <img
-          src={info.src}
-          alt={`${info.name} official logo`}
-          crossOrigin="anonymous"
-          referrerPolicy="no-referrer"
-          className="h-full w-full scale-110 object-contain"
-          onError={() => setFailed(true)}
-        />
-      ) : (
-        <span className="text-sm font-black text-[#17365d]">
-          {info.initials}
-        </span>
-      )}
-    </div>
+    <img
+      src={logo}
+      alt={airline}
+      onError={() => setFailed(true)}
+      className="h-10 w-10 shrink-0 rounded-xl border border-[#E8D8B7] bg-white object-contain p-1"
+    />
   );
 }
 
 export default function Home() {
-  const [flight, setFlight] = useState<FlightData>({ ...blankFlight });
-
+  const [flight, setFlight] = useState<FlightData>(blankFlight);
   const [packages, setPackages] = useState<PackageData[]>([
-    blankPackage("1", 1),
+    blankPackage("package-1", 1),
   ]);
-
   const [title, setTitle] = useState("UMRAH PACKAGE");
   const [theme, setTheme] = useState<PosterTheme>("royal");
-
   const [services, setServices] = useState(
-    "Visa • Return Ticket • Accommodation • Transport • 21 Days"
+    "Visa • Return Ticket • Accommodation • Transport • 21 Days",
   );
-
   const [savedPosters, setSavedPosters] = useState<SavedPoster[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [activePoster, setActivePoster] = useState<SavedPoster | null>(null);
   const [message, setMessage] = useState("");
   const [copying, setCopying] = useState(false);
   const [hydrated, setHydrated] = useState(false);
-
   const posterRef = useRef<HTMLDivElement>(null);
-
-  const currentTheme = themes[theme];
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-
-      if (stored) {
-        const parsed = JSON.parse(stored);
-
-        if (Array.isArray(parsed)) {
-          const compatiblePosters: SavedPoster[] = parsed.map(
-            (poster: SavedPoster) => ({
-              ...poster,
-              theme: themes[poster.theme] ? poster.theme : "royal",
-            })
-          );
-
-          setSavedPosters(compatiblePosters);
-        }
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) setSavedPosters(parsed);
       }
-    } catch {
-      setMessage("Saved posters load nahi ho sake.");
+    } catch (error) {
+      console.error("Saved poster loading error:", error);
     } finally {
       setHydrated(true);
     }
@@ -522,203 +419,165 @@ export default function Home() {
 
   useEffect(() => {
     if (!hydrated) return;
-
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(savedPosters));
-    } catch {
-      setMessage("Storage full hai. Download Backup use karein.");
-    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedPosters));
   }, [savedPosters, hydrated]);
 
   function updateFlight(key: keyof FlightData, value: string) {
-    setFlight((old) => ({ ...old, [key]: value }));
+    setFlight((current) => ({ ...current, [key]: value }));
     setActivePoster(null);
   }
 
   function updatePackage(
     id: string,
     key: keyof PackageData,
-    value: string
+    value: string,
   ) {
-    setPackages((old) =>
-      old.map((item) =>
-        item.id === id ? { ...item, [key]: value } : item
-      )
+    setPackages((current) =>
+      current.map((pkg) =>
+        pkg.id === id ? { ...pkg, [key]: value } : pkg,
+      ),
     );
-
     setActivePoster(null);
   }
 
   function addPackage() {
-    setPackages((old) => [
-      ...old,
-      blankPackage(String(Date.now()), old.length + 1),
+    setPackages((current) => [
+      ...current,
+      blankPackage(
+        `package-${Date.now()}-${current.length}`,
+        current.length + 1,
+      ),
     ]);
-
     setActivePoster(null);
-    setMessage("New package add ho gaya.");
   }
 
   function removePackage(id: string) {
     if (packages.length <= 1) {
-      setMessage("Kam az kam aik package zaroor rakhein.");
+      setMessage("At least one package is required.");
       return;
     }
-
-    setPackages((old) => old.filter((item) => item.id !== id));
+    setPackages((current) => current.filter((pkg) => pkg.id !== id));
     setActivePoster(null);
   }
 
-  /* NEW POSTER - LOAD LATEST SAVED DETAILS */
-
   function newPoster() {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      const saved: SavedPoster[] = stored ? JSON.parse(stored) : [];
+    const latest = savedPosters[0];
 
-      const latestPoster = [...saved].sort(
-        (a, b) =>
-          new Date(b.createdAt || 0).getTime() -
-          new Date(a.createdAt || 0).getTime()
-      )[0];
-
-      if (latestPoster) {
-        setTitle(latestPoster.title || "UMRAH PACKAGE");
-
-        setFlight({
-          ...blankFlight,
-          ...(latestPoster.flight || {}),
-        });
-
-        setPackages(
-          latestPoster.packages?.length
-            ? latestPoster.packages.map((item, index) => ({
-                ...item,
-                id: `${Date.now()}-${index}`,
-              }))
-            : [blankPackage(String(Date.now()), 1)]
-        );
-
-        setTheme(
-          themes[latestPoster.theme] ? latestPoster.theme : "royal"
-        );
-
-        setServices(
-          latestPoster.services ||
-            "Visa • Return Ticket • Accommodation • Transport • 21 Days"
-        );
-
-        setSavedPosters(saved);
-      } else {
-        setTitle("UMRAH PACKAGE");
-        setFlight({ ...blankFlight });
-        setPackages([blankPackage(String(Date.now()), 1)]);
-        setTheme("royal");
-        setServices(
-          "Visa • Return Ticket • Accommodation • Transport • 21 Days"
-        );
-      }
-
-      setEditingId(null);
-      setActivePoster(null);
-
-      setMessage(
-        latestPoster
-          ? "Latest saved poster ki details load ho gayi hain. Changes karke naya poster save karein."
-          : "Naya poster ready hai."
+    if (latest) {
+      setTitle(latest.title);
+      setTheme(latest.theme);
+      setFlight({ ...latest.flight });
+      setPackages(
+        latest.packages.map((pkg, index) => ({
+          ...pkg,
+          id: `package-${Date.now()}-${index}`,
+        })),
       );
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch (error) {
-      console.error(error);
-      setMessage("Saved poster load nahi ho saka.");
+      setServices(latest.services);
+    } else {
+      setTitle("UMRAH PACKAGE");
+      setTheme("royal");
+      setFlight({ ...blankFlight });
+      setPackages([blankPackage(`package-${Date.now()}`, 1)]);
+      setServices(
+        "Visa • Return Ticket • Accommodation • Transport • 21 Days",
+      );
     }
+
+    setEditingId(null);
+    setActivePoster(null);
+    setMessage("New poster form is ready.");
   }
 
-  /* SAVE POSTER */
-
   function savePoster() {
+    if (!title.trim()) {
+      setMessage("Please enter poster title.");
+      return;
+    }
+
+    if (packages.length === 0) {
+      setMessage("Please add at least one package.");
+      return;
+    }
+
     const poster: SavedPoster = {
-      id: editingId || String(Date.now()),
-      title: title.trim() || "UMRAH PACKAGE",
+      id: editingId || `poster-${Date.now()}`,
+      title: title.trim(),
       theme,
       flight: { ...flight },
-      packages: packages.map((item) => ({ ...item })),
+      packages: packages.map((pkg) => ({ ...pkg })),
       services,
       createdAt: new Date().toISOString(),
     };
 
-    const updatedPosters = editingId
-      ? savedPosters.some((item) => item.id === editingId)
-        ? savedPosters.map((item) =>
-            item.id === editingId ? poster : item
-          )
-        : [poster, ...savedPosters]
-      : [poster, ...savedPosters];
+    setSavedPosters((current) => {
+      if (editingId) {
+        return current.map((item) =>
+          item.id === editingId ? poster : item,
+        );
+      }
+      return [poster, ...current];
+    });
 
-    try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(updatedPosters)
-      );
-
-      setSavedPosters(updatedPosters);
-      setActivePoster(poster);
-      setEditingId(poster.id);
-      setMessage("Poster successfully save ho gaya.");
-    } catch (error) {
-      console.error(error);
-      setMessage("Poster save nahi ho saka. Browser storage check karein.");
-    }
+    setEditingId(poster.id);
+    setActivePoster(poster);
+    setMessage(
+      editingId ? "Poster updated successfully." : "Poster saved successfully.",
+    );
   }
 
   function editPoster(poster: SavedPoster) {
     setTitle(poster.title);
-    setTheme(poster.theme || "royal");
+    setTheme(poster.theme);
     setFlight({ ...poster.flight });
-    setPackages(poster.packages.map((item) => ({ ...item })));
+    setPackages(
+      poster.packages.map((pkg, index) => ({
+        ...pkg,
+        id: `package-${Date.now()}-${index}`,
+      })),
+    );
     setServices(poster.services);
     setEditingId(poster.id);
-    setActivePoster(null);
-    setMessage("Poster edit mode mein open hai.");
-
+    setActivePoster(poster);
+    setMessage("Poster loaded for editing.");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function showPoster(poster: SavedPoster) {
     setTitle(poster.title);
-    setTheme(poster.theme || "royal");
+    setTheme(poster.theme);
     setFlight({ ...poster.flight });
-    setPackages(poster.packages.map((item) => ({ ...item })));
+    setPackages(
+      poster.packages.map((pkg, index) => ({
+        ...pkg,
+        id: `package-${Date.now()}-${index}`,
+      })),
+    );
     setServices(poster.services);
     setEditingId(poster.id);
     setActivePoster(poster);
-
-    document.getElementById("poster-preview")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    setMessage("Saved poster preview loaded.");
   }
 
   function deletePoster(id: string) {
-    if (!window.confirm("Kya aap ye poster delete karna chahte hain?")) {
+    if (!window.confirm("Are you sure you want to delete this poster?")) {
       return;
     }
 
-    setSavedPosters((old) => old.filter((item) => item.id !== id));
+    setSavedPosters((current) => current.filter((poster) => poster.id !== id));
 
-    if (editingId === id) newPoster();
+    if (editingId === id) {
+      setEditingId(null);
+      setActivePoster(null);
+    }
 
-    setMessage("Poster delete ho gaya.");
+    setMessage("Poster deleted.");
   }
-
-  /* COPY POSTER IMAGE */
 
   async function copyPosterImage() {
     const target = posterRef.current;
-
     if (!target) {
-      setMessage("Poster preview load hone dein.");
+      setMessage("Poster preview is not ready.");
       return;
     }
 
@@ -726,47 +585,44 @@ export default function Home() {
     setMessage("");
 
     try {
-      await document.fonts.ready;
-
       const blob = await toBlob(target, {
         pixelRatio: 2,
-        backgroundColor: "#ffffff",
+        backgroundColor: "#f7f7f3",
         cacheBust: true,
+        width: target.scrollWidth,
+        height: target.scrollHeight,
+        style: {
+          width: `${target.scrollWidth}px`,
+          maxWidth: "none",
+          height: "auto",
+          overflow: "visible",
+        },
       });
 
-      if (!blob) throw new Error("Image create nahi hui.");
+      if (!blob) throw new Error("Could not create poster image.");
 
       if (
         navigator.clipboard &&
         typeof ClipboardItem !== "undefined" &&
-        typeof navigator.clipboard.write === "function"
+        window.isSecureContext
       ) {
         await navigator.clipboard.write([
           new ClipboardItem({ "image/png": blob }),
         ]);
-
-        setMessage(
-          "Poster image copy ho gayi! WhatsApp mein Ctrl + V karein."
-        );
+        setMessage("Poster image copied. Paste it in WhatsApp.");
       } else {
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
-
         link.href = url;
-        link.download = "haram-junoon-umrah-poster.png";
-
-        document.body.appendChild(link);
+        link.download = `${title || "umrah-poster"}.png`;
         link.click();
-        link.remove();
-
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-        setMessage("Poster PNG download ho gayi.");
+        URL.revokeObjectURL(url);
+        setMessage("Poster image downloaded.");
       }
     } catch (error) {
-      console.error(error);
-
+      console.error("Poster copy error:", error);
       setMessage(
-        "Copy fail hui. Chrome mein localhost ya HTTPS use karein."
+        "Image copy failed. Please use localhost or HTTPS and try again.",
       );
     } finally {
       setCopying(false);
@@ -777,1044 +633,810 @@ export default function Home() {
     const blob = new Blob([JSON.stringify(savedPosters, null, 2)], {
       type: "application/json",
     });
-
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-
     link.href = url;
-    link.download = "haram-junoon-saved-posters.json";
+    link.download = "haram-junoon-posters-backup.json";
     link.click();
-
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    URL.revokeObjectURL(url);
   }
 
-  const shownPoster: SavedPoster = activePoster || {
-    id: "preview",
-    title,
-    theme,
-    flight,
-    packages,
-    services,
-    createdAt: "",
-  };
+  const shownPoster: SavedPoster = activePoster
+    ? {
+        ...activePoster,
+        title,
+        theme,
+        flight,
+        packages,
+        services,
+      }
+    : {
+        id: "preview",
+        title,
+        theme,
+        flight,
+        packages,
+        services,
+        createdAt: new Date().toISOString(),
+      };
 
-  const posterTheme = themes[shownPoster.theme || "royal"];
-
-  const routeText = `${
-    shownPoster.flight.origin || "MULTAN"
-  } - ${shownPoster.flight.destination || "JEDDAH"} - ${
-    shownPoster.flight.origin || "MULTAN"
-  }`;
+  const posterTheme = themes[shownPoster.theme] || themes.royal;
+  const routeText = `${flight.origin || "Origin"} → ${flight.destination || "Destination"}`;
 
   return (
-    <main className="min-h-screen bg-[#f1f3f6] text-slate-900">
-      <style jsx global>{`
-        * {
-          font-family: Arial, Helvetica, sans-serif;
-        }
-
-        .poster-art {
-          width: 100%;
-          max-width: 980px;
-          background: #fff;
-          color: #172d50;
-        }
-
-        .poster-art table {
-          border-collapse: collapse;
-          width: 100%;
-          table-layout: fixed;
-        }
-
-        .poster-art th,
-        .poster-art td {
-          overflow-wrap: anywhere;
-        }
-
-        .theme-choice {
-          transition: all 0.2s ease;
-        }
-
-        .theme-choice:hover {
-          transform: translateY(-2px);
-        }
-      `}</style>
-
-      {/* MAIN HEADER */}
-
-      <header className="bg-gradient-to-r from-[#101f35] via-[#17395e] to-[#244c75] px-5 py-7 text-white shadow-xl">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-5">
+    <main className="min-h-screen bg-[#F4F5F7] text-slate-800">
+      <header className="border-b border-[#D8C18F] bg-[#171A16] px-4 py-5 text-white shadow-lg sm:px-8">
+        <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-black tracking-[0.28em] text-[#e3bd72]">
-              HARAM JUNOON TRAVELS & TOURS
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#D9B66F]">
+              Haram Junoon Travels & Tours
             </p>
-
-            <h1 className="mt-2 text-3xl font-black sm:text-4xl">
-              Umrah Poster Studio
+            <h1 className="mt-1 text-2xl font-black tracking-wide sm:text-3xl">
+              Umrah Poster Generator
             </h1>
-
-            <p className="mt-2 text-sm text-white/70">
-              Professional package poster designer
+            <p className="mt-1 text-xs text-white/60">
+              Create, save and manage professional Umrah package posters
             </p>
           </div>
-
-          <button
-            onClick={newPoster}
-            className="rounded-xl border border-[#e5c47e]/60 bg-gradient-to-r from-[#e9c77e] to-[#bd9144] px-6 py-3 font-black text-[#172b45] shadow-lg transition hover:brightness-105"
-          >
-            + New Poster
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={newPoster}
+              className="rounded-xl border border-white/20 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-white/10"
+            >
+              + New Poster
+            </button>
+            <button
+              onClick={exportSavedData}
+              className="rounded-xl bg-[#C79A4C] px-4 py-2.5 text-sm font-black text-[#20170B] transition hover:bg-[#E0B967]"
+            >
+              Export Backup
+            </button>
+          </div>
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-[1500px] gap-6 p-4 lg:grid-cols-[0.9fr_1.1fr] sm:p-6">
-        {/* LEFT SIDE FORM */}
-
+      <div className="mx-auto grid max-w-[1500px] grid-cols-1 gap-6 p-4 lg:grid-cols-[440px_minmax(0,1fr)] lg:p-6">
         <section className="space-y-5">
-          {/* POSTER DETAILS */}
-
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="mb-5">
-              <p className="text-xs font-black tracking-widest text-[#b28a49]">
-                DESIGN SETTINGS
-              </p>
-
-              <h2 className="mt-1 text-xl font-black text-[#17365d]">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-black text-slate-800">
                 Poster Details
               </h2>
+              {editingId && (
+                <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">
+                  Editing saved poster
+                </span>
+              )}
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-4">
               <Field
-                label="Poster Heading"
+                label="Poster Title"
                 value={title}
-                onChange={(v) => {
-                  setTitle(v);
+                onChange={(value) => {
+                  setTitle(value);
                   setActivePoster(null);
                 }}
+                placeholder="Enter poster title"
               />
+
+              <label className="block">
+                <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600">
+                  Poster Theme
+                </span>
+                <select
+                  value={theme}
+                  onChange={(event) => {
+                    setTheme(event.target.value as PosterTheme);
+                    setActivePoster(null);
+                  }}
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-[#C79A4C]"
+                >
+                  {themeOptions.map((key) => (
+                    <option key={key} value={key}>
+                      {themes[key].name} — {themes[key].description}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
               <Field
-                label="Included Services"
+                label="Services"
                 value={services}
-                onChange={(v) => {
-                  setServices(v);
+                onChange={(value) => {
+                  setServices(value);
                   setActivePoster(null);
                 }}
+                placeholder="Visa • Ticket • Hotel • Transport"
               />
-            </div>
 
-            {/* THEME SELECTOR */}
-
-            <div className="mt-6 border-t border-slate-100 pt-5">
-              <div className="mb-3">
-                <h3 className="font-black text-[#17365d]">
-                  Choose Poster Colour Theme
-                </h3>
-
-                <p className="mt-1 text-xs text-slate-500">
-                  Select a design theme for your poster
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {themeOptions.map((option) => {
-                  const item = themes[option];
-                  const selected = theme === option;
-
-                  return (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => {
-                        setTheme(option);
-                        setActivePoster(null);
-                      }}
-                      className={`theme-choice rounded-xl border-2 p-3 text-left ${
-                        selected
-                          ? "border-[#bd9144] bg-amber-50 shadow-md"
-                          : "border-slate-200 bg-white hover:border-slate-400"
-                      }`}
-                    >
-                      <div
-                        className="mb-3 h-9 rounded-lg shadow-inner"
-                        style={{ background: item.gradient }}
-                      />
-
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="text-xs font-black text-slate-800">
-                          {item.name}
-                        </span>
-
-                        {selected && (
-                          <span className="text-xs font-black text-[#a7792e]">
-                            ✓
-                          </span>
-                        )}
-                      </div>
-
-                      <p className="mt-1 text-[10px] text-slate-500">
-                        {item.description}
-                      </p>
-                    </button>
-                  );
-                })}
+              <div className="grid grid-cols-3 gap-2">
+                {themeOptions.map((key) => (
+                  <button
+                    key={key}
+                    onClick={() => {
+                      setTheme(key);
+                      setActivePoster(null);
+                    }}
+                    className={`rounded-xl border p-2 text-left transition ${
+                      theme === key
+                        ? "border-[#C79A4C] bg-[#FBF5E9] ring-2 ring-[#C79A4C]/20"
+                        : "border-slate-200 hover:border-[#C79A4C]"
+                    }`}
+                  >
+                    <span
+                      className="mb-1 block h-5 rounded-md"
+                      style={{ background: themes[key].gradient }}
+                    />
+                    <span className="text-[10px] font-bold text-slate-700">
+                      {themes[key].name}
+                    </span>
+                  </button>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* FLIGHT DETAILS */}
-
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="mb-5">
-              <p className="text-xs font-black tracking-widest text-[#b28a49]">
-                TRAVEL INFORMATION
-              </p>
-
-              <h2 className="mt-1 text-xl font-black text-[#17365d]">
-                ✈ Shared Flight Details
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-black text-slate-800">
+                Flight Details
               </h2>
+              <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
+                Shared flight
+              </span>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <SelectField
-                label="Select Airline"
+                label="Airline"
                 value={flight.airline}
-                onChange={(v) => updateFlight("airline", v)}
+                onChange={(value) => updateFlight("airline", value)}
                 options={[
+                  "Airblue",
                   "PIA",
                   "Fly Jinnah",
                   "AirSial",
-                  "Airblue",
                   "Riyadh Air",
-                  "Saudia Airline",
+                  "Saudia",
                   "SalamAir",
                 ]}
               />
-
               <Field
-                label="Outbound Flight Number"
+                label="Flight Number"
                 value={flight.flightNumber}
-                onChange={(v) => updateFlight("flightNumber", v)}
+                onChange={(value) => updateFlight("flightNumber", value)}
+                placeholder="PA-123"
               />
-
               <Field
                 label="Origin"
                 value={flight.origin}
-                onChange={(v) => updateFlight("origin", v)}
+                onChange={(value) => updateFlight("origin", value)}
+                placeholder="Multan"
               />
-
               <Field
                 label="Destination"
                 value={flight.destination}
-                onChange={(v) => updateFlight("destination", v)}
+                onChange={(value) => updateFlight("destination", value)}
+                placeholder="Jeddah"
               />
-
               <Field
                 label="Departure Date"
                 type="date"
                 value={flight.departureDate}
-                onChange={(v) => updateFlight("departureDate", v)}
+                onChange={(value) => updateFlight("departureDate", value)}
               />
-
               <Field
                 label="Departure Time"
                 type="time"
                 value={flight.departureTime}
-                onChange={(v) => updateFlight("departureTime", v)}
+                onChange={(value) => updateFlight("departureTime", value)}
               />
-
               <Field
                 label="Return Date"
                 type="date"
                 value={flight.returnDate}
-                onChange={(v) => updateFlight("returnDate", v)}
+                onChange={(value) => updateFlight("returnDate", value)}
               />
-
               <Field
-                label="Return Flight Number"
+                label="Return Flight"
                 value={flight.returnFlight}
-                onChange={(v) => updateFlight("returnFlight", v)}
+                onChange={(value) => updateFlight("returnFlight", value)}
+                placeholder="Return flight number"
               />
-
               <Field
                 label="Return Time"
                 type="time"
                 value={flight.returnTime}
-                onChange={(v) => updateFlight("returnTime", v)}
+                onChange={(value) => updateFlight("returnTime", value)}
               />
             </div>
           </div>
 
-          {/* PACKAGE FORMS */}
-
-          {packages.map((pkg, index) => (
-            <div
-              key={pkg.id}
-              className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
-            >
-              <div
-                className="flex items-center justify-between p-4 text-white"
-                style={{ background: currentTheme.gradient }}
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-black text-slate-800">
+                  Package Details
+                </h2>
+                <p className="text-xs text-slate-500">
+                  Add multiple hotel and rate options
+                </p>
+              </div>
+              <button
+                onClick={addPackage}
+                className="rounded-xl bg-gradient-to-r from-[#9A6B2C] to-[#D4AD63] px-4 py-2.5 text-sm font-black text-white shadow-md transition hover:brightness-105"
               >
-                <div>
-                  <p
-                    className="text-xs font-black tracking-widest"
-                    style={{ color: currentTheme.accent }}
-                  >
-                    PACKAGE {index + 1}
-                  </p>
+                + Add New Package
+              </button>
+            </div>
 
-                  <h2 className="text-lg font-black">Hotel & Rates</h2>
+            {packages.map((pkg, index) => (
+              <div
+                key={pkg.id}
+                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+              >
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="font-black text-[#8A642E]">
+                    Package {index + 1}
+                  </h3>
+                  <button
+                    onClick={() => removePackage(pkg.id)}
+                    className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50"
+                  >
+                    Remove
+                  </button>
                 </div>
 
-                <button
-                  onClick={() => removePackage(pkg.id)}
-                  className="rounded-lg border border-white/40 px-3 py-2 text-sm font-bold transition hover:bg-white/10"
-                >
-                  Remove
-                </button>
-              </div>
-
-              <div className="space-y-4 p-5">
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <Field
-                    label="Package Name"
+                    label="Package Name / Code"
                     value={pkg.name}
-                    onChange={(v) => updatePackage(pkg.id, "name", v)}
+                    onChange={(value) =>
+                      updatePackage(pkg.id, "name", value)
+                    }
+                    placeholder="Package No. 1"
                   />
-
                   <Field
                     label="Total Nights"
                     value={pkg.nights}
-                    onChange={(v) => updatePackage(pkg.id, "nights", v)}
+                    onChange={(value) =>
+                      updatePackage(pkg.id, "nights", value)
+                    }
+                    placeholder="21"
                   />
                 </div>
 
-                {/* MAKKAH HOTEL FORM */}
+                <div className="my-5 border-t border-dashed border-slate-200" />
 
-                <div className="rounded-xl border border-amber-200 bg-[#fff8e8] p-4">
-                  <h3 className="mb-3 font-black text-[#8A4B12]">
-                    🕋 Makkah Hotel
-                  </h3>
-
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <Field
-                      label="Hotel Name"
-                      value={pkg.makkahHotel}
-                      onChange={(v) =>
-                        updatePackage(pkg.id, "makkahHotel", v)
-                      }
-                    />
-
-                    <SelectField
-                      label="Category"
-                      value={pkg.makkahCategory}
-                      onChange={(v) =>
-                        updatePackage(pkg.id, "makkahCategory", v)
-                      }
-                      options={["Economy", "3 Star", "4 Star", "5 Star"]}
-                    />
-
-                    <Field
-                      label="Distance from Haram"
-                      value={pkg.makkahDistance}
-                      onChange={(v) =>
-                        updatePackage(pkg.id, "makkahDistance", v)
-                      }
-                    />
-                  </div>
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="text-lg">🕋</span>
+                  <h4 className="font-black text-[#8A4B12]">
+                    Makkah Hotel
+                  </h4>
                 </div>
 
-                {/* MADINAH HOTEL FORM */}
-
-                <div className="rounded-xl border border-emerald-200 bg-[#edf8f1] p-4">
-                  <h3 className="mb-3 font-black text-[#08734D]">
-                    ☪ Madinah Hotel
-                  </h3>
-
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <Field
-                      label="Hotel Name"
-                      value={pkg.madinahHotel}
-                      onChange={(v) =>
-                        updatePackage(pkg.id, "madinahHotel", v)
-                      }
-                    />
-
-                    <SelectField
-                      label="Category"
-                      value={pkg.madinahCategory}
-                      onChange={(v) =>
-                        updatePackage(pkg.id, "madinahCategory", v)
-                      }
-                      options={["Economy", "3 Star", "4 Star", "5 Star"]}
-                    />
-
-                    <Field
-                      label="Distance from Masjid Nabawi"
-                      value={pkg.madinahDistance}
-                      onChange={(v) =>
-                        updatePackage(pkg.id, "madinahDistance", v)
-                      }
-                    />
-                  </div>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <Field
+                    label="Hotel Name"
+                    value={pkg.makkahHotel}
+                    onChange={(value) =>
+                      updatePackage(pkg.id, "makkahHotel", value)
+                    }
+                    placeholder="Makkah hotel name"
+                  />
+                  <SelectField
+                    label="Hotel Category"
+                    value={pkg.makkahCategory}
+                    onChange={(value) =>
+                      updatePackage(pkg.id, "makkahCategory", value)
+                    }
+                    options={[
+                      "Economy",
+                      "3 Star",
+                      "4 Star",
+                      "5 Star",
+                    ]}
+                  />
+                  <Field
+                    label="Distance from Haram"
+                    value={pkg.makkahDistance}
+                    onChange={(value) =>
+                      updatePackage(pkg.id, "makkahDistance", value)
+                    }
+                    placeholder="500 Meter"
+                  />
                 </div>
 
-                {/* RATES FORM */}
+                <div className="my-5 border-t border-dashed border-slate-200" />
 
-                <div className="rounded-xl border border-amber-200 bg-[#fffcf3] p-4">
-                  <h3 className="mb-3 font-black text-[#72501E]">
-                    Package Rates (PKR)
-                  </h3>
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="text-lg">🕌</span>
+                  <h4 className="font-black text-[#08734D]">
+                    Madinah Hotel
+                  </h4>
+                </div>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <Field
-                      label="Sharing Rate"
-                      value={pkg.sharing}
-                      onChange={(v) =>
-                        updatePackage(pkg.id, "sharing", v)
-                      }
-                    />
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <Field
+                    label="Hotel Name"
+                    value={pkg.madinahHotel}
+                    onChange={(value) =>
+                      updatePackage(pkg.id, "madinahHotel", value)
+                    }
+                    placeholder="Madinah hotel name"
+                  />
+                  <SelectField
+                    label="Hotel Category"
+                    value={pkg.madinahCategory}
+                    onChange={(value) =>
+                      updatePackage(pkg.id, "madinahCategory", value)
+                    }
+                    options={[
+                      "Economy",
+                      "3 Star",
+                      "4 Star",
+                      "5 Star",
+                    ]}
+                  />
+                  <Field
+                    label="Distance from Masjid Nabawi"
+                    value={pkg.madinahDistance}
+                    onChange={(value) =>
+                      updatePackage(pkg.id, "madinahDistance", value)
+                    }
+                    placeholder="800 Meter"
+                  />
+                </div>
 
-                    <Field
-                      label="Quad Sharing Rate"
-                      value={pkg.quad}
-                      onChange={(v) =>
-                        updatePackage(pkg.id, "quad", v)
-                      }
-                    />
+                <div className="my-5 border-t border-dashed border-slate-200" />
 
-                    <Field
-                      label="Triple Sharing Rate"
-                      value={pkg.triple}
-                      onChange={(v) =>
-                        updatePackage(pkg.id, "triple", v)
-                      }
-                    />
+                <h4 className="mb-3 font-black text-slate-800">
+                  Package Rates (PKR)
+                </h4>
 
-                    <Field
-                      label="Double Sharing Rate"
-                      value={pkg.double}
-                      onChange={(v) =>
-                        updatePackage(pkg.id, "double", v)
-                      }
-                    />
-                  </div>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  <Field
+                    label="Sharing"
+                    value={pkg.sharing}
+                    onChange={(value) =>
+                      updatePackage(pkg.id, "sharing", value)
+                    }
+                    placeholder="226299"
+                  />
+                  <Field
+                    label="Quad"
+                    value={pkg.quad}
+                    onChange={(value) =>
+                      updatePackage(pkg.id, "quad", value)
+                    }
+                    placeholder="230899"
+                  />
+                  <Field
+                    label="Triple"
+                    value={pkg.triple}
+                    onChange={(value) =>
+                      updatePackage(pkg.id, "triple", value)
+                    }
+                    placeholder="238399"
+                  />
+                  <Field
+                    label="Double"
+                    value={pkg.double}
+                    onChange={(value) =>
+                      updatePackage(pkg.id, "double", value)
+                    }
+                    placeholder="253499"
+                  />
                 </div>
               </div>
-            </div>
-          ))}
-
-          <button
-            onClick={addPackage}
-            className="w-full rounded-xl border-2 border-dashed border-[#23466d] bg-white p-4 font-black text-[#17365d] transition hover:bg-blue-50"
-          >
-            + Add New Package
-          </button>
-
-          {/* SAVE BUTTONS */}
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            <button
-              onClick={savePoster}
-              className="rounded-xl px-5 py-4 font-black text-white shadow-lg transition hover:brightness-110"
-              style={{ background: currentTheme.gradient }}
-            >
-              {editingId ? "Save Changes" : "Save Poster"}
-            </button>
-
-            <button
-              onClick={newPoster}
-              className="rounded-xl bg-gradient-to-r from-[#e9c77e] to-[#bd9144] px-5 py-4 font-black text-[#172b45] shadow-lg transition hover:brightness-105"
-            >
-              + Create New Poster
-            </button>
+            ))}
           </div>
 
-          {message && (
-            <p className="rounded-xl border border-blue-200 bg-white p-3 text-sm font-semibold text-[#17365d]">
-              {message}
-            </p>
-          )}
-
-          {/* SAVED POSTERS */}
+          <div className="sticky bottom-3 z-20 rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-xl backdrop-blur">
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={savePoster}
+                className="rounded-xl bg-[#173E30] px-4 py-3 text-sm font-black text-white transition hover:bg-[#20543F]"
+              >
+                {editingId ? "Update Poster" : "Save Poster"}
+              </button>
+              <button
+                onClick={copyPosterImage}
+                disabled={copying}
+                className="rounded-xl bg-gradient-to-r from-[#A87935] to-[#D5B16B] px-4 py-3 text-sm font-black text-white transition hover:brightness-105 disabled:opacity-60"
+              >
+                {copying ? "Preparing Image..." : "Copy Poster Image"}
+              </button>
+            </div>
+            {message && (
+              <p className="mt-2 text-center text-xs font-semibold text-slate-600">
+                {message}
+              </p>
+            )}
+          </div>
 
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <div>
-                <h2 className="text-xl font-black text-[#17365d]">
+                <h2 className="text-lg font-black text-slate-800">
                   Saved Posters
                 </h2>
-
-                <p className="text-sm text-slate-500">
+                <p className="text-xs text-slate-500">
                   {savedPosters.length} saved poster(s)
                 </p>
               </div>
-
               <button
-                disabled={!savedPosters.length}
                 onClick={exportSavedData}
-                className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-bold transition hover:bg-slate-50 disabled:opacity-40"
+                className="text-xs font-bold text-[#936A2E] underline"
               >
                 Download Backup
               </button>
             </div>
 
-            {!hydrated ? (
-              <p>Loading...</p>
-            ) : savedPosters.length === 0 ? (
-              <p className="rounded-lg bg-slate-50 p-4 text-sm text-slate-500">
-                Abhi koi poster save nahi hua.
-              </p>
+            {!savedPosters.length ? (
+              <div className="rounded-xl border border-dashed border-slate-300 p-6 text-center text-sm text-slate-500">
+                No saved posters yet.
+              </div>
             ) : (
               <div className="space-y-3">
-                {savedPosters.map((poster) => {
-                  const savedTheme = themes[poster.theme || "royal"];
-
-                  return (
-                    <div
-                      key={poster.id}
-                      className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 p-3"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <p className="break-words font-black text-slate-800">
+                {savedPosters.map((poster) => (
+                  <div
+                    key={poster.id}
+                    className="rounded-xl border border-slate-200 p-3"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <p className="font-black text-slate-800">
                           {poster.title}
                         </p>
-
-                        <p className="text-sm text-slate-500">
-                          {poster.packages.length} package(s) ·{" "}
-                          {poster.flight.airline}
+                        <p className="text-xs text-slate-500">
+                          {poster.packages.length} package(s) •{" "}
+                          {new Date(poster.createdAt).toLocaleDateString(
+                            "en-GB",
+                          )}
                         </p>
-
-                        <span
-                          className="mt-2 inline-block rounded-md px-2 py-1 text-[10px] font-black text-white"
-                          style={{ background: savedTheme.gradient }}
-                        >
-                          {savedTheme.name} Theme
-                        </span>
                       </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        <button
-                          onClick={() => showPoster(poster)}
-                          className="rounded-lg bg-blue-100 px-3 py-2 text-sm font-bold text-blue-900"
-                        >
-                          Preview
-                        </button>
-
-                        <button
-                          onClick={() => editPoster(poster)}
-                          className="rounded-lg bg-amber-100 px-3 py-2 text-sm font-bold text-amber-900"
-                        >
-                          Edit
-                        </button>
-
-                        <button
-                          onClick={() => deletePoster(poster.id)}
-                          className="rounded-lg bg-red-100 px-3 py-2 text-sm font-bold text-red-700"
-                        >
-                          Delete
-                        </button>
-                      </div>
+                      <span className="rounded-full bg-[#F8F0E1] px-2.5 py-1 text-[10px] font-bold text-[#87612B]">
+                        {themes[poster.theme]?.name || "Royal Blue"}
+                      </span>
                     </div>
-                  );
-                })}
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <button
+                        onClick={() => showPoster(poster)}
+                        className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50"
+                      >
+                        Preview
+                      </button>
+                      <button
+                        onClick={() => editPoster(poster)}
+                        className="rounded-lg border border-[#D8BD8A] px-3 py-1.5 text-xs font-bold text-[#805B25] hover:bg-[#FBF5E9]"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deletePoster(poster.id)}
+                        className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
         </section>
 
-        {/* RIGHT SIDE POSTER PREVIEW */}
-
-        <section id="poster-preview" className="min-w-0">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <section className="min-w-0">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <div>
-              <p className="text-xs font-black tracking-widest text-[#b28a49]">
-                LIVE DESIGN
-              </p>
-
-              <h2 className="mt-1 text-xl font-black text-[#17365d]">
-                Poster Preview
+              <h2 className="text-xl font-black text-slate-800">
+                Live Poster Preview
               </h2>
-
-              <p className="text-sm text-slate-500">
-                {posterTheme.name} · {posterTheme.description}
+              <p className="text-xs text-slate-500">
+                This is the image that will be copied or downloaded
               </p>
             </div>
-
             <button
               onClick={copyPosterImage}
               disabled={copying}
-              className="rounded-xl px-4 py-3 text-sm font-black text-white shadow-lg transition hover:brightness-110 disabled:opacity-60"
-              style={{ background: posterTheme.gradient }}
+              className="rounded-xl bg-[#173E30] px-4 py-2.5 text-sm font-black text-white shadow transition hover:bg-[#20543F] disabled:opacity-60"
             >
-              {copying ? "Preparing Image..." : "▣ Copy Poster Image"}
+              {copying ? "Preparing..." : "Copy Image"}
             </button>
           </div>
 
-          <div
-            ref={posterRef}
-            className="poster-art mx-auto overflow-hidden rounded-[20px] border bg-white shadow-2xl"
-            style={{
-              borderColor: posterTheme.border,
-              boxShadow: "0 18px 50px rgba(15,23,42,0.16)",
-            }}
-          >
-            {/* POSTER HEADER */}
-
-            <div className="relative h-[300px] overflow-hidden bg-slate-900 sm:h-[350px]">
-              <img
-                src="https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?auto=format&fit=crop&w=1800&q=90"
-                alt="Masjid al Haram Makkah"
-                crossOrigin="anonymous"
-                className="absolute inset-0 h-full w-full object-cover object-center"
-              />
-
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-lg sm:p-4">
+            <div
+              ref={posterRef}
+              className="mx-auto w-full min-w-[760px] overflow-hidden bg-[#F7F7F3]"
+              style={{
+                color: posterTheme.text,
+                border: `1px solid ${posterTheme.border}`,
+                fontFamily: "Arial, Helvetica, sans-serif",
+              }}
+            >
               <div
-                className="absolute inset-0"
+                className="relative overflow-hidden px-8 py-8 text-center text-white"
                 style={{
-                  background: `linear-gradient(to bottom, ${posterTheme.headerOverlay}, rgba(0,0,0,0.05) 42%, ${posterTheme.primary} 100%)`,
-                  opacity: 0.95,
-                }}
-              />
-
-              <div
-                className="absolute left-4 top-4 z-20 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 bg-white p-1 shadow-xl sm:left-6 sm:top-5 sm:h-[76px] sm:w-[76px]"
-                style={{ borderColor: posterTheme.accent }}
-              >
-                <img
-                  src="/haram-junoon-logo.png"
-                  alt="Haram Junoon Logo"
-                  className="h-full w-full rounded-full object-contain"
-                />
-              </div>
-
-              <div
-                className="absolute right-4 top-5 z-10 rounded-lg border px-3 py-2 text-xs font-black tracking-widest shadow-lg sm:right-6 sm:px-4 sm:text-sm"
-                style={{
-                  borderColor: posterTheme.accent,
-                  background: "rgba(255,255,255,0.96)",
-                  color: posterTheme.primary,
+                  backgroundImage: `linear-gradient(${posterTheme.headerOverlay}, ${posterTheme.headerOverlay}), url('https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?auto=format&fit=crop&w=1800&q=85')`,
+                  backgroundPosition: "center",
+                  backgroundSize: "cover",
                 }}
               >
-                HARAM JUNOON TRAVELS & TOURS
-              </div>
-
-              <div className="absolute bottom-0 left-0 right-0 z-10 px-3 pb-4 text-center">
-                <p
-                  className="mb-2 text-[10px] font-black tracking-[0.3em] sm:text-xs"
-                  style={{ color: posterTheme.accent }}
-                >
-                  YOUR JOURNEY, OUR CARE
-                </p>
-
-                <h2
-                  className="mx-auto inline-block max-w-full break-words rounded-lg border px-5 py-2 text-3xl font-black uppercase shadow-lg sm:text-5xl"
-                  style={{
-                    background: posterTheme.gradient,
-                    borderColor: posterTheme.accent,
-                    color: "#ffffff",
-                  }}
-                >
-                  {shownPoster.title || "UMRAH PACKAGE"}
-                </h2>
-
-                <p
-                  className="mt-2 break-words rounded-md px-2 py-2 text-lg font-black uppercase shadow sm:text-2xl"
-                  style={{
-                    background: "rgba(255,255,255,0.96)",
-                    color: posterTheme.text,
-                  }}
-                >
-                  {routeText}
-                </p>
-              </div>
-            </div>
-
-            {/* POSTER BODY */}
-
-            <div className="px-3 pb-4 pt-3 sm:px-5">
-              <div
-                className="rounded-2xl border p-3 sm:p-4"
-                style={{ borderColor: posterTheme.border }}
-              >
-                {/* FLIGHT CARDS */}
-
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div
-                    className="flex min-w-0 items-center gap-3 rounded-xl border bg-white p-3 shadow-sm"
-                    style={{ borderColor: posterTheme.border }}
-                  >
-                    <AirlineLogo
-                      airline={shownPoster.flight.airline}
-                      className="h-14 w-[76px]"
-                    />
-
-                    <div className="min-w-0 flex-1">
-                      <p
-                        className="text-[10px] font-black uppercase tracking-wider"
-                        style={{ color: posterTheme.secondary }}
-                      >
-                        ✈ DEPARTURE FLIGHT
-                      </p>
-
-                      <p
-                        className="mt-1 break-words text-xs font-black uppercase sm:text-sm"
-                        style={{ color: posterTheme.text }}
-                      >
-                        {dateText(shownPoster.flight.departureDate)} ·{" "}
-                        {shownPoster.flight.flightNumber || "FLIGHT"}
-                      </p>
-
-                      <p className="mt-1 break-words text-[10px] font-bold text-slate-600 sm:text-xs">
-                        {shownPoster.flight.origin} →{" "}
-                        {shownPoster.flight.destination}
-                      </p>
-
-                      <p className="mt-1 text-[10px] font-semibold text-slate-600">
-                        ◷ {timeText(shownPoster.flight.departureTime)} ·
-                        Baggage: 20 KG
-                      </p>
-                    </div>
-                  </div>
-
-                  <div
-                    className="flex min-w-0 items-center gap-3 rounded-xl border bg-white p-3 shadow-sm"
-                    style={{ borderColor: posterTheme.border }}
-                  >
-                    <AirlineLogo
-                      airline={shownPoster.flight.airline}
-                      className="h-14 w-[76px]"
-                    />
-
-                    <div className="min-w-0 flex-1">
-                      <p
-                        className="text-[10px] font-black uppercase tracking-wider"
-                        style={{ color: posterTheme.secondary }}
-                      >
-                        ✈ RETURN FLIGHT
-                      </p>
-
-                      <p
-                        className="mt-1 break-words text-xs font-black uppercase sm:text-sm"
-                        style={{ color: posterTheme.text }}
-                      >
-                        {dateText(shownPoster.flight.returnDate)} ·{" "}
-                        {shownPoster.flight.returnFlight || "FLIGHT"}
-                      </p>
-
-                      <p className="mt-1 break-words text-[10px] font-bold text-slate-600 sm:text-xs">
-                        {shownPoster.flight.destination} →{" "}
-                        {shownPoster.flight.origin}
-                      </p>
-
-                      <p className="mt-1 text-[10px] font-semibold text-slate-600">
-                        ◷ {timeText(shownPoster.flight.returnTime)} ·
-                        Baggage: 20 KG
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* HOTEL AND RATES TABLE */}
-
-                <div
-                  className="mt-4 overflow-hidden rounded-xl border"
-                  style={{ borderColor: posterTheme.border }}
-                >
-                  <table>
-                    <colgroup>
-                      <col style={{ width: "23%" }} />
-                      <col style={{ width: "23%" }} />
-                      <col style={{ width: "13.5%" }} />
-                      <col style={{ width: "13.5%" }} />
-                      <col style={{ width: "13.5%" }} />
-                      <col style={{ width: "13.5%" }} />
-                    </colgroup>
-
-                    <thead>
-                      <tr
-                        style={{
-                          background: posterTheme.gradient,
-                          color: "#ffffff",
-                        }}
-                      >
-                        <th className="px-1 py-3 text-center text-[8px] font-black sm:px-2 sm:text-[11px]">
-                          MAKKAH HOTEL
-                        </th>
-
-                        <th className="px-1 py-3 text-center text-[8px] font-black sm:px-2 sm:text-[11px]">
-                          MADINAH HOTEL
-                        </th>
-
-                        <th
-                          className="px-1 py-3 text-center text-[8px] font-black sm:text-[10px]"
-                          style={{ color: posterTheme.accent }}
-                        >
-                          SHARING
-                        </th>
-
-                        <th
-                          className="px-1 py-3 text-center text-[8px] font-black sm:text-[10px]"
-                          style={{ color: posterTheme.accent }}
-                        >
-                          QUAD
-                        </th>
-
-                        <th
-                          className="px-1 py-3 text-center text-[8px] font-black sm:text-[10px]"
-                          style={{ color: posterTheme.accent }}
-                        >
-                          TRIPLE
-                        </th>
-
-                        <th
-                          className="px-1 py-3 text-center text-[8px] font-black sm:text-[10px]"
-                          style={{ color: posterTheme.accent }}
-                        >
-                          DOUBLE
-                        </th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      {shownPoster.packages.map((pkg, index) => (
-                        <>
-                          {/* PACKAGE HEADING */}
-
-                          <tr key={`${pkg.id}-heading`}>
-                            <td
-                              colSpan={6}
-                              className="border-t px-3 py-2 text-left"
-                              style={{
-                                background: posterTheme.light,
-                                borderColor: posterTheme.border,
-                              }}
-                            >
-                              <div className="flex items-center justify-between gap-2">
-                                <p
-                                  className="text-[10px] font-black uppercase sm:text-xs"
-                                  style={{ color: posterTheme.primary }}
-                                >
-                                  {pkg.name || `PACKAGE ${index + 1}`}
-                                </p>
-
-                                <p
-                                  className="text-[9px] font-black sm:text-[10px]"
-                                  style={{ color: posterTheme.secondary }}
-                                >
-                                  {pkg.nights ? `${pkg.nights} NIGHTS` : ""}
-                                </p>
-                              </div>
-                            </td>
-                          </tr>
-
-                          {/* HOTEL AND RATE DATA */}
-
-                          <tr
-                            key={`${pkg.id}-data`}
-                            className="bg-white"
-                          >
-                            {/* MAKKAH HOTEL */}
-
-                            <td
-                              className="border-t border-slate-200 px-2 py-3 align-top"
-                              style={{ background: "#FFF8E8" }}
-                            >
-                              <p
-                                className="break-words text-[14px] font-semibold leading-snug sm:text-[15px]"
-                                style={{ color: "#ca9d48" }}
-                              >
-                                {pkg.makkahHotel || "Hotel not added"}
-                              </p>
-
-                              <p className="mt-1 text-[9px] font-bold text-slate-700 sm:text-xs">
-                                {pkg.makkahCategory}
-                              </p>
-
-                              {pkg.makkahDistance && (
-                                <span
-                                  className="mt-1 inline-block rounded-md px-1.5 py-1 text-[9px] font-black sm:text-[11px]"
-                                  style={{
-                                    background: "#F4E2BD",
-                                    color: "#75400D",
-                                  }}
-                                >
-                                  {pkg.makkahDistance}
-                                </span>
-                              )}
-                            </td>
-
-                            {/* MADINAH HOTEL */}
-
-                            <td
-                              className="border-t border-slate-200 px-2 py-3 align-top"
-                              style={{ background: "#F0F8F2" }}
-                            >
-                              <p
-                                className="break-words text-[14px] font-semibold leading-snug sm:text-[15px]"
-                                style={{ color: "#08734D" }}
-                              >
-                                {pkg.madinahHotel || "Hotel not added"}
-                              </p>
-
-                              <p className="mt-1 text-[9px] font-bold text-slate-700 sm:text-xs">
-                                {pkg.madinahCategory}
-                              </p>
-
-                              {pkg.madinahDistance && (
-                                <span
-                                  className="mt-1 inline-block rounded-md px-1.5 py-1 text-[9px] font-black sm:text-[11px]"
-                                  style={{
-                                    background: "#D8EDE0",
-                                    color: "#075C45",
-                                  }}
-                                >
-                                  {pkg.madinahDistance}
-                                </span>
-                              )}
-                            </td>
-
-                            {/* SHARING RATE */}
-
-                            <td
-                              className="border-t border-slate-200 px-1 py-3 text-center align-middle"
-                              style={{
-                                background: "#FFFCF3",
-                                color: "#68440E",
-                              }}
-                            >
-                              <span className="break-words text-[11.5px] font-black leading-tight tabular-nums sm:text-[16px]">
-                                {pkg.sharing ? money(pkg.sharing) : "—"}
-                              </span>
-                            </td>
-
-                            {/* QUAD RATE */}
-
-                            <td
-                              className="border-t border-slate-200 px-1 py-3 text-center align-middle"
-                              style={{
-                                background: "#FFFCF3",
-                                color: "#68440E",
-                              }}
-                            >
-                              <span className="break-words text-[11.5px] font-black leading-tight tabular-nums sm:text-[16px]">
-                                {pkg.quad ? money(pkg.quad) : "—"}
-                              </span>
-                            </td>
-
-                            {/* TRIPLE RATE */}
-
-                            <td
-                              className="border-t border-slate-200 px-1 py-3 text-center align-middle"
-                              style={{
-                                background: "#FFFCF3",
-                                color: "#68440E",
-                              }}
-                            >
-                              <span className="break-words text-[11.5px] font-black leading-tight tabular-nums sm:text-[16px]">
-                                {pkg.triple ? money(pkg.triple) : "—"}
-                              </span>
-                            </td>
-
-                            {/* DOUBLE RATE */}
-
-                            <td
-                              className="border-t border-slate-200 px-1 py-3 text-center align-middle"
-                              style={{
-                                background: "#FFFCF3",
-                                color: "#68440E",
-                              }}
-                            >
-                              <span className="break-words text-[11.5px] font-black leading-tight tabular-nums sm:text-[16px]">
-                                {pkg.double ? money(pkg.double) : "—"}
-                              </span>
-                            </td>
-                          </tr>
-                        </>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* POSTER FOOTER */}
-
-                <div
-                  className="mt-4 rounded-xl border px-3 py-3"
-                  style={{
-                    background: posterTheme.light,
-                    borderColor: posterTheme.border,
-                  }}
-                >
-                  <p
-                    className="text-center text-[10px] font-bold leading-relaxed sm:text-xs"
-                    style={{ color: posterTheme.text }}
-                  >
-                    ✦ Per person price includes visa, return ticket,
-                    accommodation & transport
-                    {shownPoster.packages[0]?.nights
-                      ? ` • ${shownPoster.packages[0].nights} days`
-                      : ""}
-                  </p>
-                </div>
-
-                {shownPoster.services.trim() && (
-                  <p
-                    className="mt-3 text-center text-[9px] font-black leading-relaxed sm:text-xs"
-                    style={{ color: posterTheme.text }}
-                  >
-                    {shownPoster.services}
-                  </p>
-                )}
-
-                <div
-                  className="mt-3 border-t pt-2 text-center"
-                  style={{ borderColor: posterTheme.border }}
-                >
-                  <p
-                    className="text-[9px] font-black tracking-widest sm:text-[10px]"
-                    style={{ color: posterTheme.text }}
-                  >
+                <div className="relative z-10">
+                  <img
+                    src="/haram-junoon-logo.png"
+                    alt="Haram Junoon Travels & Tours"
+                    className="mx-auto mb-3 h-16 w-16 rounded-full border-2 border-[#D9B66F] bg-white object-contain p-1"
+                    onError={(event) => {
+                      event.currentTarget.style.display = "none";
+                    }}
+                  />
+                  <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#E8C981]">
                     HARAM JUNOON TRAVELS & TOURS
                   </p>
-
-                  <p className="mt-1 text-[8px] font-semibold text-slate-500">
+                  <h1 className="mt-2 text-4xl font-black uppercase tracking-wide text-white">
+                    {shownPoster.title || "UMRAH PACKAGE"}
+                  </h1>
+                  <div
+                    className="mx-auto mt-3 h-1 w-24 rounded-full"
+                    style={{ background: posterTheme.accent }}
+                  />
+                  <p className="mt-3 text-sm font-semibold tracking-wide text-white/90">
                     YOUR JOURNEY, OUR CARE
+                  </p>
+                  <p className="mt-3 text-xs font-semibold text-white/85">
+                    {shownPoster.services}
+                  </p>
+                </div>
+              </div>
+
+              <div className="px-5 py-5">
+                <div
+                  className="mb-4 rounded-xl p-4"
+                  style={{
+                    background: "#FFFFFF",
+                    border: `1px solid ${posterTheme.border}`,
+                  }}
+                >
+                  <div className="mb-3 flex items-center justify-between">
+                    <h2
+                      className="text-sm font-black uppercase tracking-wider"
+                      style={{ color: posterTheme.primary }}
+                    >
+                      Flight Details
+                    </h2>
+                    <span className="text-[10px] font-bold text-slate-500">
+                      SHARED FLIGHT
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+                    <div className="flex items-center gap-3">
+                      <AirlineLogo airline={flight.airline} />
+                      <div>
+                        <p className="text-sm font-black text-slate-800">
+                          {flight.airline || "Airline"}
+                        </p>
+                        <p className="text-xs font-semibold text-slate-500">
+                          {flight.flightNumber || "Flight number"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-center">
+                      <p className="text-base font-black text-slate-800">
+                        {routeText}
+                      </p>
+                      <p className="mt-1 text-[10px] font-semibold text-slate-500">
+                        OUTBOUND JOURNEY
+                      </p>
+                    </div>
+
+                    <div className="text-right">
+                      <p className="text-xs font-bold text-slate-700">
+                        {dateText(flight.departureDate)}
+                      </p>
+                      <p className="text-xs font-semibold text-slate-500">
+                        {timeText(flight.departureTime)}
+                      </p>
+                    </div>
+                  </div>
+
+                  {(flight.returnDate ||
+                    flight.returnFlight ||
+                    flight.returnTime) && (
+                    <div className="mt-3 border-t border-dashed border-slate-200 pt-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                            Return Journey
+                          </p>
+                          <p className="text-sm font-black text-slate-800">
+                            {flight.destination || "Destination"} →{" "}
+                            {flight.origin || "Origin"}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs font-bold text-slate-700">
+                            {flight.returnFlight || "Return flight"}
+                          </p>
+                          <p className="text-xs font-semibold text-slate-500">
+                            {dateText(flight.returnDate)} •{" "}
+                            {timeText(flight.returnTime)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="mb-3 flex items-center justify-between">
+                  <h2
+                    className="text-base font-black uppercase tracking-wider"
+                    style={{ color: posterTheme.primary }}
+                  >
+                    Available Umrah Packages
+                  </h2>
+                  <span
+                    className="rounded-full px-3 py-1 text-[10px] font-black"
+                    style={{
+                      color: posterTheme.primary,
+                      background: `${posterTheme.accent}35`,
+                    }}
+                  >
+                    {packages.length} PACKAGES
+                  </span>
+                </div>
+
+                {/* HOTEL AND RATES TABLE - REFERENCE IMAGE LAYOUT */}
+                <div
+                  className="overflow-hidden rounded-lg"
+                  style={{
+                    border: "1px solid #E8D8B7",
+                    background: "#FFFFFF",
+                  }}
+                >
+                  <div
+                    className="grid grid-cols-[14%_25%_25%_9%_9%_9%_9%] items-center gap-0 border-b px-2 py-3"
+                    style={{
+                      background: "#F7F3E9",
+                      borderColor: "#E8D8B7",
+                    }}
+                  >
+                    {[
+                      "Package",
+                      "Makkah Hotel",
+                      "Madinah Hotel",
+                      "Sharing",
+                      "Quad",
+                      "Triple",
+                      "Double",
+                    ].map((heading) => (
+                      <div
+                        key={heading}
+                        className="px-1 text-center text-[10px] font-black text-[#173E30] sm:text-[11px]"
+                      >
+                        {heading}
+                      </div>
+                    ))}
+                  </div>
+
+                  {packages.map((pkg, index) => (
+                    <div key={pkg.id}>
+                      <div
+                        className="grid grid-cols-[14%_25%_25%_9%_9%_9%_9%] items-center gap-0 px-2 py-3"
+                        style={{
+                          background: "#FFFFFF",
+                          borderBottom: "1px dashed #E8D8B7",
+                        }}
+                      >
+                        <div className="px-1">
+                          <p className="break-words text-[10px] font-black text-[#174B38] sm:text-[11px]">
+                            {pkg.name || `UP-${110175 + index}`}
+                          </p>
+                          <p className="mt-1 text-[9px] font-medium text-slate-500">
+                            🕋 Makkah: {pkg.nights || "—"} Nights
+                          </p>
+                          <p className="text-[9px] font-medium text-slate-500">
+                            🕌 Madinah: {pkg.nights || "—"} Nights
+                          </p>
+                          <p className="text-[9px] font-black text-[#C79A4C]">
+                            Total: {pkg.nights || "—"} Nights
+                          </p>
+                        </div>
+
+                        <div className="flex min-w-0 items-start gap-2 px-1">
+                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[#E8D8B7] bg-[#FBF8F0] text-sm shadow-sm">
+                            🕋
+                          </div>
+                          <div className="min-w-0">
+                            <p
+                              className="break-words text-[10px] font-semibold leading-snug sm:text-[11px]"
+                              style={{ color: "#174B38" }}
+                            >
+                              {(pkg.makkahHotel || "HOTEL NOT ADDED").toUpperCase()}
+                            </p>
+                            <p className="mt-1 break-words text-[9px] font-medium leading-snug text-slate-500">
+                              {pkg.makkahDistance
+                                ? `${pkg.makkahDistance} FROM HARAM`
+                                : pkg.makkahCategory || "Makkah Hotel"}
+                            </p>
+                            <p className="mt-1 text-[8px] font-semibold text-slate-400">
+                              {pkg.makkahCategory}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex min-w-0 items-start gap-2 px-1">
+                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[#E8D8B7] bg-[#FBF8F0] text-sm shadow-sm">
+                            🕌
+                          </div>
+                          <div className="min-w-0">
+                            <p
+                              className="break-words text-[10px] font-semibold leading-snug sm:text-[11px]"
+                              style={{ color: "#174B38" }}
+                            >
+                              {(pkg.madinahHotel || "HOTEL NOT ADDED").toUpperCase()}
+                            </p>
+                            <p className="mt-1 break-words text-[9px] font-medium leading-snug text-slate-500">
+                              {pkg.madinahDistance
+                                ? `${pkg.madinahDistance} FROM MASJID NABAWI`
+                                : pkg.madinahCategory || "Madinah Hotel"}
+                            </p>
+                            <p className="mt-1 text-[8px] font-semibold text-slate-400">
+                              {pkg.madinahCategory}
+                            </p>
+                          </div>
+                        </div>
+
+                        {[pkg.sharing, pkg.quad, pkg.triple, pkg.double].map(
+                          (rate, rateIndex) => (
+                            <div
+                              key={`${pkg.id}-rate-${rateIndex}`}
+                              className="px-0.5 text-center"
+                            >
+                              <span className="break-words text-[10px] font-bold leading-tight tabular-nums text-[#174B38] sm:text-[11px]">
+                                {rate ? money(rate) : "—"}
+                              </span>
+                            </div>
+                          ),
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div
+                  className="mt-5 rounded-xl px-4 py-3 text-center"
+                  style={{
+                    background: posterTheme.gradient,
+                    color: "#FFFFFF",
+                  }}
+                >
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/80">
+                    Contact Us For Booking & Details
+                  </p>
+                  <p className="mt-1 text-lg font-black tracking-wide">
+                    03137183111 • 03216837494 • 03128992016
+                  </p>
+                  <p className="mt-1 text-xs font-semibold text-white/85">
+                    haramjunoontravels@gmail.com
+                  </p>
+                </div>
+
+                <div className="mt-4 border-t pt-3 text-center" style={{ borderColor: posterTheme.border }}>
+                  <p className="text-[9px] font-semibold tracking-wide text-slate-500">
+                    SYSTEM DESIGNED & DEVELOPED BY AMEER HAMZA
                   </p>
                 </div>
               </div>
             </div>
           </div>
-
-          <p className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-xs leading-5 text-slate-500">
-            Saved posters isi browser mein store hote hain. Browser data
-            clear karne se pehle Download Backup use karein.
-          </p>
         </section>
       </div>
-
-      {/* WEBSITE FOOTER */}
-
-      <footer className="border-t-4 border-[#d6ad62] bg-gradient-to-r from-[#101f35] via-[#17395e] to-[#244c75] px-4 py-7 text-center text-white shadow-inner">
-        <p className="text-sm font-black tracking-widest text-[#e3bd72]">
-          HARAM JUNOON TRAVELS & TOURS
-        </p>
-
-        <div className="mx-auto my-4 h-px max-w-xs bg-[#d6ad62]/60" />
-
-        <p className="text-xs font-bold tracking-widest text-white/80">
-          SYSTEM DESIGNED & DEVELOPED BY
-        </p>
-
-        <h2 className="mt-2 text-xl font-black tracking-wider text-[#e3bd72]">
-          AMEER HAMZA
-        </h2>
-
-        <p className="mt-3 text-[11px] text-white/60">
-          © 2026 All Rights Reserved.
-        </p>
-      </footer>
     </main>
   );
 }
