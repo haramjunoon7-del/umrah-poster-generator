@@ -539,7 +539,7 @@ export default function Home() {
       flight: { ...flight },
       packages: packages.map((pkg) => ({ ...pkg })),
       services,
-      createdAt: new Date().toISOString(),
+      createdAt: "",
     };
 
     setSavedPosters((current) => {
@@ -725,7 +725,7 @@ export default function Home() {
         flight,
         packages,
         services,
-        createdAt: new Date().toISOString(),
+        createdAt: "",
       };
 
   const posterTheme =
