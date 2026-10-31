@@ -1623,7 +1623,7 @@ export default function Home() {
                               style={{ background: "#FFF8E8" }}
                             >
                               <p
-                                className="break-words text-[12px] font-black leading-snug sm:text-[15px]"
+                                className="break-words text-[10px] font-medium leading-snug tracking-normal sm:text-[12px]"
                                 style={{ color: "#8A4B12" }}
                               >
                                 {pkg.makkahHotel || "Hotel not added"}
@@ -1653,7 +1653,7 @@ export default function Home() {
                               style={{ background: "#F0F8F2" }}
                             >
                               <p
-                                className="break-words text-[11px] font-black leading-snug sm:text-[13px]"
+                                className="break-words text-[10px] font-medium leading-snug tracking-normal sm:text-[12px]"
                                 style={{ color: "#08734D" }}
                               >
                                 {pkg.madinahHotel || "Hotel not added"}
@@ -1685,7 +1685,7 @@ export default function Home() {
                                 color: "#68440E",
                               }}
                             >
-                              <span className="break-words text-[10px] font-black leading-tight tabular-nums sm:text-sm">
+                              <span className="break-words text-[11.5px] font-black leading-tight tabular-nums sm:text-[16px]">
                                 {pkg.sharing ? money(pkg.sharing) : "—"}
                               </span>
                             </td>
@@ -1699,7 +1699,7 @@ export default function Home() {
                                 color: "#68440E",
                               }}
                             >
-                              <span className="break-words text-[10px] font-black leading-tight tabular-nums sm:text-sm">
+                              <span className="break-words text-[11.5px] font-black leading-tight tabular-nums sm:text-[16px]">
                                 {pkg.quad ? money(pkg.quad) : "—"}
                               </span>
                             </td>
@@ -1713,7 +1713,7 @@ export default function Home() {
                                 color: "#68440E",
                               }}
                             >
-                              <span className="break-words text-[10px] font-black leading-tight tabular-nums sm:text-sm">
+                              <span className="break-words text-[11.5px] font-black leading-tight tabular-nums sm:text-[16px]">
                                 {pkg.triple ? money(pkg.triple) : "—"}
                               </span>
                             </td>
@@ -1727,7 +1727,7 @@ export default function Home() {
                                 color: "#68440E",
                               }}
                             >
-                              <span className="break-words text-[10px] font-black leading-tight tabular-nums sm:text-sm">
+                              <span className="break-words text-[11.5px] font-black leading-tight tabular-nums sm:text-[16px]">
                                 {pkg.double ? money(pkg.double) : "—"}
                               </span>
                             </td>
