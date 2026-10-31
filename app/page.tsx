@@ -388,11 +388,12 @@ function AirlineLogo({ airline }: { airline: string }) {
 
   return (
     <img
-      src={logo}
-      alt={airline}
-      onError={() => setFailed(true)}
-      className="h-10 w-10 shrink-0 rounded-xl border border-[#E8D8B7] bg-white object-contain p-1"
-    />
+  src={logo}
+  alt={airline}
+  crossOrigin="anonymous"
+  onError={() => setFailed(true)}
+  className="h-10 w-10 shrink-0 rounded-xl border border-[#E8D8B7] bg-white object-contain p-1"
+/>
   );
 }
 
@@ -634,6 +635,7 @@ export default function Home() {
     setMessage("Poster deleted.");
   }
 
+  
   async function copyPosterImage() {
     const target = posterRef.current;
 
@@ -645,93 +647,97 @@ export default function Home() {
     setCopying(true);
     setMessage("");
 
+    const options = {
+      pixelRatio: 2,
+      backgroundColor: "#F7F7F3",
+      cacheBust: true,
+      width: target.scrollWidth,
+      height: target.scrollHeight,
+      style: {
+        width: `${target.scrollWidth}px`,
+        maxWidth: "none",
+        height: "auto",
+        overflow: "visible",
+      },
+    };
+
+    function downloadImage(blob: Blob) {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = `${title || "umrah-poster"}.png`;
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      window.setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 3000);
+    }
+
     try {
-      await document.fonts.ready;
-
-      const images = Array.from(target.querySelectorAll("img"));
-
-      await Promise.all(
-        images.map((img) => {
-          if (img.complete) {
-            return Promise.resolve();
-          }
-
-          return new Promise<void>((resolve) => {
-            img.onload = () => resolve();
-            img.onerror = () => resolve();
-          });
-        }),
-      );
-
-      const options = {
-        pixelRatio: 2,
-        backgroundColor: "#F7F7F3",
-        cacheBust: true,
-        width: target.scrollWidth,
-        height: target.scrollHeight,
-        style: {
-          width: `${target.scrollWidth}px`,
-          maxWidth: "none",
-          height: "auto",
-          overflow: "visible",
-        },
-      };
-
       if (
         navigator.clipboard &&
         typeof ClipboardItem !== "undefined" &&
         window.isSecureContext
       ) {
+        // Clipboard write is started immediately during the button click.
         const imagePromise = toBlob(target, options).then((blob) => {
           if (!blob) {
-            throw new Error("Could not create poster image.");
+            throw new Error("Poster image could not be generated.");
           }
 
           return blob;
         });
 
-        const clipboardItem = new ClipboardItem({
-          "image/png": imagePromise,
-        });
+        const clipboardPromise = navigator.clipboard.write([
+          new ClipboardItem({
+            "image/png": imagePromise,
+          }),
+        ]);
 
-        await navigator.clipboard.write([clipboardItem]);
+        await clipboardPromise;
 
-        setMessage(
-          "Poster image copied! Paste it into WhatsApp.",
-        );
+        setMessage("Poster copied successfully! Now paste it into WhatsApp.");
       } else {
+        await document.fonts.ready;
+
         const blob = await toBlob(target, options);
 
         if (!blob) {
-          throw new Error("Could not create poster image.");
+          throw new Error("Poster image could not be generated.");
         }
 
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-
-        link.href = url;
-        link.download = `${title || "umrah-poster"}.png`;
-
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-
-        window.setTimeout(() => {
-          URL.revokeObjectURL(url);
-        }, 1000);
-
-        setMessage("Poster image downloaded.");
+        downloadImage(blob);
+        setMessage("Clipboard unavailable. Poster downloaded instead.");
       }
     } catch (error) {
       console.error("Poster copy error:", error);
 
-      setMessage(
-        "Copy failed. Please allow clipboard permission or use Download.",
-      );
+      // If clipboard fails, automatically download the poster.
+      try {
+        const blob = await toBlob(target, options);
+
+        if (!blob) {
+          throw new Error("Poster image could not be generated.");
+        }
+
+        downloadImage(blob);
+        setMessage("Copy unavailable. Poster downloaded successfully.");
+      } catch (downloadError) {
+        console.error("Poster download error:", downloadError);
+
+        setMessage(
+          "Image failed. Please check browser permissions and image loading.",
+        );
+      }
     } finally {
       setCopying(false);
     }
   }
+
 
   function exportSavedData() {
     const blob = new Blob(
