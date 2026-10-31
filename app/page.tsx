@@ -67,69 +67,69 @@ const themes: Record<
 > = {
   royal: {
     name: "Royal Blue",
-    description: "Blue & Gold",
-    primary: "#142f53",
-    secondary: "#285482",
-    accent: "#d6ad62",
-    light: "#f5f0e5",
-    text: "#17365d",
-    border: "#d6ad62",
-    headerOverlay: "rgba(20,47,83,0.28)",
+    description: "Royal Blue & Champagne Gold",
+    primary: "#102B4E",
+    secondary: "#245681",
+    accent: "#E6BD70",
+    light: "#F0F5FA",
+    text: "#183B60",
+    border: "#D4B16A",
+    headerOverlay: "rgba(16,43,78,0.32)",
   },
   emerald: {
     name: "Emerald",
-    description: "Green & Gold",
-    primary: "#064b3b",
-    secondary: "#14745a",
-    accent: "#d8b56b",
-    light: "#edf6f0",
-    text: "#064b3b",
-    border: "#c9a65c",
-    headerOverlay: "rgba(6,75,59,0.30)",
+    description: "Emerald Green & Gold",
+    primary: "#064638",
+    secondary: "#11745B",
+    accent: "#E2C078",
+    light: "#EDF7F1",
+    text: "#07543F",
+    border: "#B9D9C7",
+    headerOverlay: "rgba(6,70,56,0.32)",
   },
   black: {
     name: "Black Gold",
-    description: "Black & Gold",
+    description: "Luxury Black & Gold",
     primary: "#171717",
-    secondary: "#393126",
-    accent: "#d8b15e",
-    light: "#f5f0e5",
-    text: "#211c14",
-    border: "#c49a45",
-    headerOverlay: "rgba(0,0,0,0.42)",
+    secondary: "#403525",
+    accent: "#E5BD68",
+    light: "#F6F2E9",
+    text: "#302719",
+    border: "#C6A15C",
+    headerOverlay: "rgba(0,0,0,0.45)",
   },
   cream: {
     name: "Cream",
-    description: "Cream & Brown",
-    primary: "#65452d",
-    secondary: "#96704d",
-    accent: "#b58a4d",
-    light: "#faf3e7",
-    text: "#503923",
-    border: "#c5a36b",
-    headerOverlay: "rgba(72,48,28,0.28)",
+    description: "Warm Cream & Brown",
+    primary: "#62432B",
+    secondary: "#96704A",
+    accent: "#CDA568",
+    light: "#FBF4E8",
+    text: "#563B27",
+    border: "#D7BD91",
+    headerOverlay: "rgba(72,48,28,0.30)",
   },
   navy: {
     name: "Navy Silver",
-    description: "Navy & Silver",
-    primary: "#172b45",
-    secondary: "#405873",
-    accent: "#c4d0dc",
-    light: "#eef2f6",
-    text: "#172b45",
-    border: "#aab8c7",
-    headerOverlay: "rgba(23,43,69,0.34)",
+    description: "Navy & Platinum Silver",
+    primary: "#172A43",
+    secondary: "#425D78",
+    accent: "#D4DFE9",
+    light: "#EFF3F7",
+    text: "#203B58",
+    border: "#B8C6D5",
+    headerOverlay: "rgba(23,42,67,0.38)",
   },
   maroon: {
     name: "Maroon",
-    description: "Maroon & Gold",
-    primary: "#641d32",
-    secondary: "#913b4d",
-    accent: "#d6b16c",
-    light: "#fbf0ef",
-    text: "#641d32",
-    border: "#c69b58",
-    headerOverlay: "rgba(100,29,50,0.34)",
+    description: "Royal Maroon & Gold",
+    primary: "#641D36",
+    secondary: "#913D55",
+    accent: "#E1BD78",
+    light: "#FBF0F2",
+    text: "#70253D",
+    border: "#D2A9AE",
+    headerOverlay: "rgba(100,29,54,0.36)",
   },
 };
 
@@ -468,111 +468,108 @@ export default function Home() {
     setActivePoster(null);
   }
 
-  
+  /* NEW POSTER - LOAD LATEST SAVED DETAILS */
 
+  function newPoster() {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      const saved: SavedPoster[] = stored ? JSON.parse(stored) : [];
 
-function newPoster() {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    const saved: SavedPoster[] = stored ? JSON.parse(stored) : [];
+      const latestPoster = [...saved].sort(
+        (a, b) =>
+          new Date(b.createdAt || 0).getTime() -
+          new Date(a.createdAt || 0).getTime()
+      )[0];
 
-    const latestPoster = [...saved].sort(
-      (a, b) =>
-        new Date(b.createdAt || 0).getTime() -
-        new Date(a.createdAt || 0).getTime()
-    )[0];
+      if (latestPoster) {
+        setTitle(latestPoster.title || "UMRAH PACKAGE");
 
-    if (latestPoster) {
-      setTitle(latestPoster.title || "UMRAH PACKAGE");
+        setFlight({
+          ...blankFlight,
+          ...(latestPoster.flight || {}),
+        });
 
-      setFlight({
-        ...blankFlight,
-        ...(latestPoster.flight || {}),
-      });
+        setPackages(
+          latestPoster.packages?.length
+            ? latestPoster.packages.map((item, index) => ({
+                ...item,
+                id: `${Date.now()}-${index}`,
+              }))
+            : [blankPackage(String(Date.now()), 1)]
+        );
 
-      setPackages(
-        latestPoster.packages?.length
-          ? latestPoster.packages.map((item, index) => ({
-              ...item,
-              id: `${Date.now()}-${index}`,
-            }))
-          : [blankPackage(String(Date.now()), 1)]
-      );
+        setTheme(
+          themes[latestPoster.theme] ? latestPoster.theme : "royal"
+        );
 
-      setTheme(
-        themes[latestPoster.theme] ? latestPoster.theme : "royal"
-      );
+        setServices(
+          latestPoster.services ||
+            "Visa • Return Ticket • Accommodation • Transport • 21 Days"
+        );
 
-      setServices(
-        latestPoster.services ||
+        setSavedPosters(saved);
+      } else {
+        setTitle("UMRAH PACKAGE");
+        setFlight({ ...blankFlight });
+        setPackages([blankPackage(String(Date.now()), 1)]);
+        setTheme("royal");
+        setServices(
           "Visa • Return Ticket • Accommodation • Transport • 21 Days"
+        );
+      }
+
+      setEditingId(null);
+      setActivePoster(null);
+
+      setMessage(
+        latestPoster
+          ? "Latest saved poster ki details load ho gayi hain. Changes karke naya poster save karein."
+          : "Naya poster ready hai."
       );
 
-      setSavedPosters(saved);
-    } else {
-      setTitle("UMRAH PACKAGE");
-      setFlight({ ...blankFlight });
-      setPackages([blankPackage(String(Date.now()), 1)]);
-      setTheme("royal");
-      setServices(
-        "Visa • Return Ticket • Accommodation • Transport • 21 Days"
-      );
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (error) {
+      console.error(error);
+      setMessage("Saved poster load nahi ho saka.");
     }
-
-    // Important: new poster must have a NEW ID
-    setEditingId(null);
-    setActivePoster(null);
-
-    setMessage(
-      latestPoster
-        ? "Latest saved poster ki tamam details load ho gayi hain. Ab changes karke naya poster save karein."
-        : "Naya poster ready hai."
-    );
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  } catch (error) {
-    console.error(error);
-    setMessage("Saved poster load nahi ho saka.");
   }
-}
 
+  /* SAVE POSTER */
 
-  
+  function savePoster() {
+    const poster: SavedPoster = {
+      id: editingId || String(Date.now()),
+      title: title.trim() || "UMRAH PACKAGE",
+      theme,
+      flight: { ...flight },
+      packages: packages.map((item) => ({ ...item })),
+      services,
+      createdAt: new Date().toISOString(),
+    };
 
-function savePoster() {
-  const poster: SavedPoster = {
-    id: editingId || String(Date.now()),
-    title: title.trim() || "UMRAH PACKAGE",
-    theme,
-    flight: { ...flight },
-    packages: packages.map((item) => ({ ...item })),
-    services,
-    createdAt: new Date().toISOString(),
-  };
+    const updatedPosters = editingId
+      ? savedPosters.some((item) => item.id === editingId)
+        ? savedPosters.map((item) =>
+            item.id === editingId ? poster : item
+          )
+        : [poster, ...savedPosters]
+      : [poster, ...savedPosters];
 
-  const updatedPosters = editingId
-    ? savedPosters.some((item) => item.id === editingId)
-      ? savedPosters.map((item) =>
-          item.id === editingId ? poster : item
-        )
-      : [poster, ...savedPosters]
-    : [poster, ...savedPosters];
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(updatedPosters)
+      );
 
-  try {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(updatedPosters)
-    );
-
-    setSavedPosters(updatedPosters);
-    setActivePoster(poster);
-    setEditingId(poster.id);
-    setMessage("Poster successfully save ho gaya.");
-  } catch (error) {
-    console.error(error);
-    setMessage("Poster save nahi ho saka. Browser storage check karein.");
+      setSavedPosters(updatedPosters);
+      setActivePoster(poster);
+      setEditingId(poster.id);
+      setMessage("Poster successfully save ho gaya.");
+    } catch (error) {
+      console.error(error);
+      setMessage("Poster save nahi ho saka. Browser storage check karein.");
+    }
   }
-}
 
   function editPoster(poster: SavedPoster) {
     setTitle(poster.title);
@@ -613,6 +610,8 @@ function savePoster() {
 
     setMessage("Poster delete ho gaya.");
   }
+
+  /* COPY POSTER IMAGE */
 
   async function copyPosterImage() {
     const target = posterRef.current;
@@ -689,20 +688,22 @@ function savePoster() {
   }
 
   const shownPoster: SavedPoster = activePoster || {
-  id: "preview",
-  title,
-  theme,
-  flight,
-  packages,
-  services,
-  createdAt: "",
-};
+    id: "preview",
+    title,
+    theme,
+    flight,
+    packages,
+    services,
+    createdAt: "",
+  };
 
   const posterTheme = themes[shownPoster.theme || "royal"];
 
-  const routeText = `${shownPoster.flight.origin || "MULTAN"} - ${
-    shownPoster.flight.destination || "JEDDAH"
-  } - ${shownPoster.flight.origin || "MULTAN"}`;
+  const routeText = `${
+    shownPoster.flight.origin || "MULTAN"
+  } - ${shownPoster.flight.destination || "JEDDAH"} - ${
+    shownPoster.flight.origin || "MULTAN"
+  }`;
 
   return (
     <main className="min-h-screen bg-[#f1f3f6] text-slate-900">
@@ -1001,10 +1002,10 @@ function savePoster() {
                   />
                 </div>
 
-                {/* MAKKAH */}
+                {/* MAKKAH HOTEL FORM */}
 
-                <div className="rounded-xl border border-amber-200 bg-[#fffaf0] p-4">
-                  <h3 className="mb-3 font-black text-[#704b22]">
+                <div className="rounded-xl border border-emerald-200 bg-[#f0f8f2] p-4">
+                  <h3 className="mb-3 font-black text-[#07543F]">
                     🕋 Makkah Hotel
                   </h3>
 
@@ -1036,10 +1037,10 @@ function savePoster() {
                   </div>
                 </div>
 
-                {/* MADINAH */}
+                {/* MADINAH HOTEL FORM */}
 
-                <div className="rounded-xl border border-emerald-200 bg-[#f1faf5] p-4">
-                  <h3 className="mb-3 font-black text-[#176348]">
+                <div className="rounded-xl border border-blue-200 bg-[#f0f5fc] p-4">
+                  <h3 className="mb-3 font-black text-[#17477D]">
                     ☪ Madinah Hotel
                   </h3>
 
@@ -1071,10 +1072,10 @@ function savePoster() {
                   </div>
                 </div>
 
-                {/* RATES */}
+                {/* RATES FORM */}
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <h3 className="mb-3 font-black text-[#17365d]">
+                <div className="rounded-xl border border-amber-200 bg-[#fffcf3] p-4">
+                  <h3 className="mb-3 font-black text-[#72501E]">
                     Package Rates (PKR)
                   </h3>
 
@@ -1431,9 +1432,12 @@ function savePoster() {
                   </div>
                 </div>
 
-                {/* HOTEL AND RATES - SINGLE HEADING TABLE */}
+                {/* HOTEL AND RATES TABLE */}
 
-                <div className="mt-4 overflow-hidden rounded-xl border" style={{ borderColor: posterTheme.border }}>
+                <div
+                  className="mt-4 overflow-hidden rounded-xl border"
+                  style={{ borderColor: posterTheme.border }}
+                >
                   <table>
                     <colgroup>
                       <col style={{ width: "23%" }} />
@@ -1443,8 +1447,6 @@ function savePoster() {
                       <col style={{ width: "13.5%" }} />
                       <col style={{ width: "13.5%" }} />
                     </colgroup>
-
-                    {/* HEADINGS ONLY ONCE */}
 
                     <thead>
                       <tr
@@ -1491,12 +1493,10 @@ function savePoster() {
                       </tr>
                     </thead>
 
-                    {/* ALL PACKAGES NUMBER-WISE */}
-
                     <tbody>
                       {shownPoster.packages.map((pkg, index) => (
                         <>
-                          {/* PACKAGE NUMBER STRIP */}
+                          {/* PACKAGE HEADING */}
 
                           <tr key={`${pkg.id}-heading`}>
                             <td
@@ -1525,30 +1525,35 @@ function savePoster() {
                             </td>
                           </tr>
 
-                          {/* PACKAGE HOTEL AND RATE DATA */}
+                          {/* HOTEL AND RATE DATA */}
 
                           <tr
                             key={`${pkg.id}-data`}
                             className="bg-white"
                           >
-                            <td className="border-t border-slate-200 px-1.5 py-3 align-top sm:px-2">
+                            {/* MAKKAH HOTEL */}
+
+                            <td
+                              className="border-t border-slate-200 px-2 py-3 align-top"
+                              style={{ background: "#F0F8F2" }}
+                            >
                               <p
-                                className="break-words text-[9px] font-black leading-snug sm:text-xs"
-                                style={{ color: posterTheme.text }}
+                                className="break-words text-[11px] font-black leading-snug sm:text-sm"
+                                style={{ color: "#07543F" }}
                               >
                                 {pkg.makkahHotel || "Hotel not added"}
                               </p>
 
-                              <p className="mt-1 text-[8px] font-semibold text-slate-600 sm:text-[10px]">
+                              <p className="mt-1 text-[9px] font-bold text-slate-600 sm:text-[11px]">
                                 {pkg.makkahCategory}
                               </p>
 
                               {pkg.makkahDistance && (
                                 <span
-                                  className="mt-1 inline-block rounded px-1 py-0.5 text-[7px] font-bold sm:text-[9px]"
+                                  className="mt-1 inline-block rounded-md px-1.5 py-1 text-[8px] font-black sm:text-[10px]"
                                   style={{
-                                    background: posterTheme.light,
-                                    color: posterTheme.text,
+                                    background: "#D8EDE0",
+                                    color: "#07543F",
                                   }}
                                 >
                                   {pkg.makkahDistance}
@@ -1556,24 +1561,29 @@ function savePoster() {
                               )}
                             </td>
 
-                            <td className="border-t border-slate-200 px-1.5 py-3 align-top sm:px-2">
+                            {/* MADINAH HOTEL */}
+
+                            <td
+                              className="border-t border-slate-200 px-2 py-3 align-top"
+                              style={{ background: "#F0F5FC" }}
+                            >
                               <p
-                                className="break-words text-[9px] font-black leading-snug sm:text-xs"
-                                style={{ color: posterTheme.text }}
+                                className="break-words text-[11px] font-black leading-snug sm:text-sm"
+                                style={{ color: "#17477D" }}
                               >
                                 {pkg.madinahHotel || "Hotel not added"}
                               </p>
 
-                              <p className="mt-1 text-[8px] font-semibold text-slate-600 sm:text-[10px]">
+                              <p className="mt-1 text-[9px] font-bold text-slate-600 sm:text-[11px]">
                                 {pkg.madinahCategory}
                               </p>
 
                               {pkg.madinahDistance && (
                                 <span
-                                  className="mt-1 inline-block rounded px-1 py-0.5 text-[7px] font-bold sm:text-[9px]"
+                                  className="mt-1 inline-block rounded-md px-1.5 py-1 text-[8px] font-black sm:text-[10px]"
                                   style={{
-                                    background: posterTheme.light,
-                                    color: posterTheme.text,
+                                    background: "#DCE9F8",
+                                    color: "#17477D",
                                   }}
                                 >
                                   {pkg.madinahDistance}
@@ -1581,32 +1591,60 @@ function savePoster() {
                               )}
                             </td>
 
-                            <td
-                              className="border-t border-slate-200 px-1 py-3 text-center align-middle text-[8px] font-black sm:text-[10px]"
-                              style={{ color: posterTheme.text }}
-                            >
-                              {pkg.sharing ? money(pkg.sharing) : "—"}
-                            </td>
+                            {/* SHARING RATE */}
 
                             <td
-                              className="border-t border-slate-200 px-1 py-3 text-center align-middle text-[8px] font-black sm:text-[10px]"
-                              style={{ color: posterTheme.text }}
+                              className="border-t border-slate-200 px-1 py-3 text-center align-middle"
+                              style={{
+                                background: "#FFFCF3",
+                                color: "#72501E",
+                              }}
                             >
-                              {pkg.quad ? money(pkg.quad) : "—"}
+                              <span className="break-words text-[9px] font-black sm:text-xs">
+                                {pkg.sharing ? money(pkg.sharing) : "—"}
+                              </span>
                             </td>
 
-                            <td
-                              className="border-t border-slate-200 px-1 py-3 text-center align-middle text-[8px] font-black sm:text-[10px]"
-                              style={{ color: posterTheme.text }}
-                            >
-                              {pkg.triple ? money(pkg.triple) : "—"}
-                            </td>
+                            {/* QUAD RATE */}
 
                             <td
-                              className="border-t border-slate-200 px-1 py-3 text-center align-middle text-[8px] font-black sm:text-[10px]"
-                              style={{ color: posterTheme.text }}
+                              className="border-t border-slate-200 px-1 py-3 text-center align-middle"
+                              style={{
+                                background: "#FFFCF3",
+                                color: "#72501E",
+                              }}
                             >
-                              {pkg.double ? money(pkg.double) : "—"}
+                              <span className="break-words text-[9px] font-black sm:text-xs">
+                                {pkg.quad ? money(pkg.quad) : "—"}
+                              </span>
+                            </td>
+
+                            {/* TRIPLE RATE */}
+
+                            <td
+                              className="border-t border-slate-200 px-1 py-3 text-center align-middle"
+                              style={{
+                                background: "#FFFCF3",
+                                color: "#72501E",
+                              }}
+                            >
+                              <span className="break-words text-[9px] font-black sm:text-xs">
+                                {pkg.triple ? money(pkg.triple) : "—"}
+                              </span>
+                            </td>
+
+                            {/* DOUBLE RATE */}
+
+                            <td
+                              className="border-t border-slate-200 px-1 py-3 text-center align-middle"
+                              style={{
+                                background: "#FFFCF3",
+                                color: "#72501E",
+                              }}
+                            >
+                              <span className="break-words text-[9px] font-black sm:text-xs">
+                                {pkg.double ? money(pkg.double) : "—"}
+                              </span>
                             </td>
                           </tr>
                         </>
@@ -1615,7 +1653,7 @@ function savePoster() {
                   </table>
                 </div>
 
-                {/* FOOTER */}
+                {/* POSTER FOOTER */}
 
                 <div
                   className="mt-4 rounded-xl border px-3 py-3"
@@ -1669,9 +1707,10 @@ function savePoster() {
             clear karne se pehle Download Backup use karein.
           </p>
         </section>
-            </div>
+      </div>
 
       {/* WEBSITE FOOTER */}
+
       <footer className="border-t-4 border-[#d6ad62] bg-gradient-to-r from-[#101f35] via-[#17395e] to-[#244c75] px-4 py-7 text-center text-white shadow-inner">
         <p className="text-sm font-black tracking-widest text-[#e3bd72]">
           HARAM JUNOON TRAVELS & TOURS
