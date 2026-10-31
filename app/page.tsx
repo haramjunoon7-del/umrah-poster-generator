@@ -270,8 +270,11 @@ function money(value: string | number) {
 
 function dateText(value: string) {
   if (!value) return "Date not added";
+
   const date = new Date(`${value}T00:00:00`);
+
   if (Number.isNaN(date.getTime())) return value;
+
   return date.toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "short",
@@ -281,14 +284,17 @@ function dateText(value: string) {
 
 function timeText(value: string) {
   if (!value) return "Time not added";
+
   const [hours, minutes] = value.split(":");
   const hour = Number(hours);
+
   if (!Number.isFinite(hour)) return value;
+
   const suffix = hour >= 12 ? "PM" : "AM";
   const displayHour = hour % 12 || 12;
+
   return `${displayHour}:${minutes || "00"} ${suffix}`;
 }
-
 function Field({
   label,
   value,
@@ -387,28 +393,37 @@ function AirlineLogo({ airline }: { airline: string }) {
 
 export default function Home() {
   const [flight, setFlight] = useState<FlightData>(blankFlight);
+
   const [packages, setPackages] = useState<PackageData[]>([
     blankPackage("package-1", 1),
   ]);
+
   const [title, setTitle] = useState("UMRAH PACKAGE");
   const [theme, setTheme] = useState<PosterTheme>("royal");
+
   const [services, setServices] = useState(
     "Visa • Return Ticket • Accommodation • Transport • 21 Days",
   );
+
   const [savedPosters, setSavedPosters] = useState<SavedPoster[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [activePoster, setActivePoster] = useState<SavedPoster | null>(null);
   const [message, setMessage] = useState("");
   const [copying, setCopying] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+
   const posterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
+
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) setSavedPosters(parsed);
+
+        if (Array.isArray(parsed)) {
+          setSavedPosters(parsed);
+        }
       }
     } catch (error) {
       console.error("Saved poster loading error:", error);
@@ -419,11 +434,16 @@ export default function Home() {
 
   useEffect(() => {
     if (!hydrated) return;
+
     localStorage.setItem(STORAGE_KEY, JSON.stringify(savedPosters));
   }, [savedPosters, hydrated]);
 
   function updateFlight(key: keyof FlightData, value: string) {
-    setFlight((current) => ({ ...current, [key]: value }));
+    setFlight((current) => ({
+      ...current,
+      [key]: value,
+    }));
+
     setActivePoster(null);
   }
 
@@ -437,6 +457,7 @@ export default function Home() {
         pkg.id === id ? { ...pkg, [key]: value } : pkg,
       ),
     );
+
     setActivePoster(null);
   }
 
@@ -448,6 +469,7 @@ export default function Home() {
         current.length + 1,
       ),
     ]);
+
     setActivePoster(null);
   }
 
@@ -456,7 +478,11 @@ export default function Home() {
       setMessage("At least one package is required.");
       return;
     }
-    setPackages((current) => current.filter((pkg) => pkg.id !== id));
+
+    setPackages((current) =>
+      current.filter((pkg) => pkg.id !== id),
+    );
+
     setActivePoster(null);
   }
 
@@ -467,18 +493,24 @@ export default function Home() {
       setTitle(latest.title);
       setTheme(latest.theme);
       setFlight({ ...latest.flight });
+
       setPackages(
         latest.packages.map((pkg, index) => ({
           ...pkg,
           id: `package-${Date.now()}-${index}`,
         })),
       );
+
       setServices(latest.services);
     } else {
       setTitle("UMRAH PACKAGE");
       setTheme("royal");
       setFlight({ ...blankFlight });
-      setPackages([blankPackage(`package-${Date.now()}`, 1)]);
+
+      setPackages([
+        blankPackage(`package-${Date.now()}`, 1),
+      ]);
+
       setServices(
         "Visa • Return Ticket • Accommodation • Transport • 21 Days",
       );
@@ -516,13 +548,17 @@ export default function Home() {
           item.id === editingId ? poster : item,
         );
       }
+
       return [poster, ...current];
     });
 
     setEditingId(poster.id);
     setActivePoster(poster);
+
     setMessage(
-      editingId ? "Poster updated successfully." : "Poster saved successfully.",
+      editingId
+        ? "Poster updated successfully."
+        : "Poster saved successfully.",
     );
   }
 
@@ -530,29 +566,37 @@ export default function Home() {
     setTitle(poster.title);
     setTheme(poster.theme);
     setFlight({ ...poster.flight });
+
     setPackages(
       poster.packages.map((pkg, index) => ({
         ...pkg,
         id: `package-${Date.now()}-${index}`,
       })),
     );
+
     setServices(poster.services);
     setEditingId(poster.id);
     setActivePoster(poster);
     setMessage("Poster loaded for editing.");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }
 
   function showPoster(poster: SavedPoster) {
     setTitle(poster.title);
     setTheme(poster.theme);
     setFlight({ ...poster.flight });
+
     setPackages(
       poster.packages.map((pkg, index) => ({
         ...pkg,
         id: `package-${Date.now()}-${index}`,
       })),
     );
+
     setServices(poster.services);
     setEditingId(poster.id);
     setActivePoster(poster);
@@ -560,11 +604,17 @@ export default function Home() {
   }
 
   function deletePoster(id: string) {
-    if (!window.confirm("Are you sure you want to delete this poster?")) {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this poster?",
+      )
+    ) {
       return;
     }
 
-    setSavedPosters((current) => current.filter((poster) => poster.id !== id));
+    setSavedPosters((current) =>
+      current.filter((poster) => poster.id !== id),
+    );
 
     if (editingId === id) {
       setEditingId(null);
@@ -576,6 +626,7 @@ export default function Home() {
 
   async function copyPosterImage() {
     const target = posterRef.current;
+
     if (!target) {
       setMessage("Poster preview is not ready.");
       return;
@@ -599,7 +650,9 @@ export default function Home() {
         },
       });
 
-      if (!blob) throw new Error("Could not create poster image.");
+      if (!blob) {
+        throw new Error("Could not create poster image.");
+      }
 
       if (
         navigator.clipboard &&
@@ -607,20 +660,29 @@ export default function Home() {
         window.isSecureContext
       ) {
         await navigator.clipboard.write([
-          new ClipboardItem({ "image/png": blob }),
+          new ClipboardItem({
+            "image/png": blob,
+          }),
         ]);
-        setMessage("Poster image copied. Paste it in WhatsApp.");
+
+        setMessage(
+          "Poster image copied. Paste it in WhatsApp.",
+        );
       } else {
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
+
         link.href = url;
         link.download = `${title || "umrah-poster"}.png`;
         link.click();
+
         URL.revokeObjectURL(url);
+
         setMessage("Poster image downloaded.");
       }
     } catch (error) {
       console.error("Poster copy error:", error);
+
       setMessage(
         "Image copy failed. Please use localhost or HTTPS and try again.",
       );
@@ -630,14 +692,20 @@ export default function Home() {
   }
 
   function exportSavedData() {
-    const blob = new Blob([JSON.stringify(savedPosters, null, 2)], {
-      type: "application/json",
-    });
+    const blob = new Blob(
+      [JSON.stringify(savedPosters, null, 2)],
+      {
+        type: "application/json",
+      },
+    );
+
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
+
     link.href = url;
     link.download = "haram-junoon-posters-backup.json";
     link.click();
+
     URL.revokeObjectURL(url);
   }
 
@@ -660,10 +728,13 @@ export default function Home() {
         createdAt: new Date().toISOString(),
       };
 
-  const posterTheme = themes[shownPoster.theme] || themes.royal;
-  const routeText = `${flight.origin || "Origin"} → ${flight.destination || "Destination"}`;
+  const posterTheme =
+    themes[shownPoster.theme] || themes.royal;
 
-  return (
+  const routeText = `${flight.origin || "Origin"} → ${
+    flight.destination || "Destination"
+  }`;
+    return (
     <main className="min-h-screen bg-[#F4F5F7] text-slate-800">
       <header className="border-b border-[#D8C18F] bg-[#171A16] px-4 py-5 text-white shadow-lg sm:px-8">
         <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-4">
@@ -678,6 +749,7 @@ export default function Home() {
               Create, save and manage professional Umrah package posters
             </p>
           </div>
+
           <div className="flex flex-wrap gap-2">
             <button
               onClick={newPoster}
@@ -685,6 +757,7 @@ export default function Home() {
             >
               + New Poster
             </button>
+
             <button
               onClick={exportSavedData}
               className="rounded-xl bg-[#C79A4C] px-4 py-2.5 text-sm font-black text-[#20170B] transition hover:bg-[#E0B967]"
@@ -697,11 +770,13 @@ export default function Home() {
 
       <div className="mx-auto grid max-w-[1500px] grid-cols-1 gap-6 p-4 lg:grid-cols-[440px_minmax(0,1fr)] lg:p-6">
         <section className="space-y-5">
+          {/* POSTER DETAILS */}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-black text-slate-800">
                 Poster Details
               </h2>
+
               {editingId && (
                 <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">
                   Editing saved poster
@@ -724,6 +799,7 @@ export default function Home() {
                 <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600">
                   Poster Theme
                 </span>
+
                 <select
                   value={theme}
                   onChange={(event) => {
@@ -768,6 +844,7 @@ export default function Home() {
                       className="mb-1 block h-5 rounded-md"
                       style={{ background: themes[key].gradient }}
                     />
+
                     <span className="text-[10px] font-bold text-slate-700">
                       {themes[key].name}
                     </span>
@@ -777,11 +854,13 @@ export default function Home() {
             </div>
           </div>
 
+          {/* FLIGHT DETAILS */}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-black text-slate-800">
                 Flight Details
               </h2>
+
               <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
                 Shared flight
               </span>
@@ -802,48 +881,56 @@ export default function Home() {
                   "SalamAir",
                 ]}
               />
+
               <Field
                 label="Flight Number"
                 value={flight.flightNumber}
                 onChange={(value) => updateFlight("flightNumber", value)}
                 placeholder="PA-123"
               />
+
               <Field
                 label="Origin"
                 value={flight.origin}
                 onChange={(value) => updateFlight("origin", value)}
                 placeholder="Multan"
               />
+
               <Field
                 label="Destination"
                 value={flight.destination}
                 onChange={(value) => updateFlight("destination", value)}
                 placeholder="Jeddah"
               />
+
               <Field
                 label="Departure Date"
                 type="date"
                 value={flight.departureDate}
                 onChange={(value) => updateFlight("departureDate", value)}
               />
+
               <Field
                 label="Departure Time"
                 type="time"
                 value={flight.departureTime}
                 onChange={(value) => updateFlight("departureTime", value)}
               />
+
               <Field
                 label="Return Date"
                 type="date"
                 value={flight.returnDate}
                 onChange={(value) => updateFlight("returnDate", value)}
               />
+
               <Field
                 label="Return Flight"
                 value={flight.returnFlight}
                 onChange={(value) => updateFlight("returnFlight", value)}
                 placeholder="Return flight number"
               />
+
               <Field
                 label="Return Time"
                 type="time"
@@ -853,16 +940,19 @@ export default function Home() {
             </div>
           </div>
 
+          {/* PACKAGE FORM */}
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="text-lg font-black text-slate-800">
                   Package Details
                 </h2>
+
                 <p className="text-xs text-slate-500">
                   Add multiple hotel and rate options
                 </p>
               </div>
+
               <button
                 onClick={addPackage}
                 className="rounded-xl bg-gradient-to-r from-[#9A6B2C] to-[#D4AD63] px-4 py-2.5 text-sm font-black text-white shadow-md transition hover:brightness-105"
@@ -880,6 +970,7 @@ export default function Home() {
                   <h3 className="font-black text-[#8A642E]">
                     Package {index + 1}
                   </h3>
+
                   <button
                     onClick={() => removePackage(pkg.id)}
                     className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50"
@@ -897,6 +988,7 @@ export default function Home() {
                     }
                     placeholder="Package No. 1"
                   />
+
                   <Field
                     label="Total Nights"
                     value={pkg.nights}
@@ -911,6 +1003,7 @@ export default function Home() {
 
                 <div className="mb-3 flex items-center gap-2">
                   <span className="text-lg">🕋</span>
+
                   <h4 className="font-black text-[#8A4B12]">
                     Makkah Hotel
                   </h4>
@@ -925,6 +1018,7 @@ export default function Home() {
                     }
                     placeholder="Makkah hotel name"
                   />
+
                   <SelectField
                     label="Hotel Category"
                     value={pkg.makkahCategory}
@@ -938,6 +1032,7 @@ export default function Home() {
                       "5 Star",
                     ]}
                   />
+
                   <Field
                     label="Distance from Haram"
                     value={pkg.makkahDistance}
@@ -952,6 +1047,7 @@ export default function Home() {
 
                 <div className="mb-3 flex items-center gap-2">
                   <span className="text-lg">🕌</span>
+
                   <h4 className="font-black text-[#08734D]">
                     Madinah Hotel
                   </h4>
@@ -966,6 +1062,7 @@ export default function Home() {
                     }
                     placeholder="Madinah hotel name"
                   />
+
                   <SelectField
                     label="Hotel Category"
                     value={pkg.madinahCategory}
@@ -979,6 +1076,7 @@ export default function Home() {
                       "5 Star",
                     ]}
                   />
+
                   <Field
                     label="Distance from Masjid Nabawi"
                     value={pkg.madinahDistance}
@@ -1004,6 +1102,7 @@ export default function Home() {
                     }
                     placeholder="226299"
                   />
+
                   <Field
                     label="Quad"
                     value={pkg.quad}
@@ -1012,6 +1111,7 @@ export default function Home() {
                     }
                     placeholder="230899"
                   />
+
                   <Field
                     label="Triple"
                     value={pkg.triple}
@@ -1020,6 +1120,7 @@ export default function Home() {
                     }
                     placeholder="238399"
                   />
+
                   <Field
                     label="Double"
                     value={pkg.double}
@@ -1033,6 +1134,7 @@ export default function Home() {
             ))}
           </div>
 
+          {/* SAVE AND COPY BUTTONS */}
           <div className="sticky bottom-3 z-20 rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-xl backdrop-blur">
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -1041,6 +1143,7 @@ export default function Home() {
               >
                 {editingId ? "Update Poster" : "Save Poster"}
               </button>
+
               <button
                 onClick={copyPosterImage}
                 disabled={copying}
@@ -1049,6 +1152,7 @@ export default function Home() {
                 {copying ? "Preparing Image..." : "Copy Poster Image"}
               </button>
             </div>
+
             {message && (
               <p className="mt-2 text-center text-xs font-semibold text-slate-600">
                 {message}
@@ -1056,16 +1160,19 @@ export default function Home() {
             )}
           </div>
 
+          {/* SAVED POSTERS */}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <div>
                 <h2 className="text-lg font-black text-slate-800">
                   Saved Posters
                 </h2>
+
                 <p className="text-xs text-slate-500">
                   {savedPosters.length} saved poster(s)
                 </p>
               </div>
+
               <button
                 onClick={exportSavedData}
                 className="text-xs font-bold text-[#936A2E] underline"
@@ -1090,17 +1197,20 @@ export default function Home() {
                         <p className="font-black text-slate-800">
                           {poster.title}
                         </p>
+
                         <p className="text-xs text-slate-500">
                           {poster.packages.length} package(s) •{" "}
-                          {new Date(poster.createdAt).toLocaleDateString(
-                            "en-GB",
-                          )}
+                          {new Date(
+                            poster.createdAt,
+                          ).toLocaleDateString("en-GB")}
                         </p>
                       </div>
+
                       <span className="rounded-full bg-[#F8F0E1] px-2.5 py-1 text-[10px] font-bold text-[#87612B]">
                         {themes[poster.theme]?.name || "Royal Blue"}
                       </span>
                     </div>
+
                     <div className="mt-3 flex flex-wrap gap-2">
                       <button
                         onClick={() => showPoster(poster)}
@@ -1108,12 +1218,14 @@ export default function Home() {
                       >
                         Preview
                       </button>
+
                       <button
                         onClick={() => editPoster(poster)}
                         className="rounded-lg border border-[#D8BD8A] px-3 py-1.5 text-xs font-bold text-[#805B25] hover:bg-[#FBF5E9]"
                       >
                         Edit
                       </button>
+
                       <button
                         onClick={() => deletePoster(poster.id)}
                         className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50"
@@ -1128,16 +1240,19 @@ export default function Home() {
           </div>
         </section>
 
+        {/* LIVE POSTER PREVIEW */}
         <section className="min-w-0">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <div>
               <h2 className="text-xl font-black text-slate-800">
                 Live Poster Preview
               </h2>
+
               <p className="text-xs text-slate-500">
                 This is the image that will be copied or downloaded
               </p>
             </div>
+
             <button
               onClick={copyPosterImage}
               disabled={copying}
@@ -1157,6 +1272,7 @@ export default function Home() {
                 fontFamily: "Arial, Helvetica, sans-serif",
               }}
             >
+              {/* POSTER HEADER */}
               <div
                 className="relative overflow-hidden px-8 py-8 text-center text-white"
                 style={{
@@ -1174,19 +1290,24 @@ export default function Home() {
                       event.currentTarget.style.display = "none";
                     }}
                   />
+
                   <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#E8C981]">
                     HARAM JUNOON TRAVELS & TOURS
                   </p>
+
                   <h1 className="mt-2 text-4xl font-black uppercase tracking-wide text-white">
                     {shownPoster.title || "UMRAH PACKAGE"}
                   </h1>
+
                   <div
                     className="mx-auto mt-3 h-1 w-24 rounded-full"
                     style={{ background: posterTheme.accent }}
                   />
+
                   <p className="mt-3 text-sm font-semibold tracking-wide text-white/90">
                     YOUR JOURNEY, OUR CARE
                   </p>
+
                   <p className="mt-3 text-xs font-semibold text-white/85">
                     {shownPoster.services}
                   </p>
@@ -1194,6 +1315,7 @@ export default function Home() {
               </div>
 
               <div className="px-5 py-5">
+                {/* FLIGHT DETAILS */}
                 <div
                   className="mb-4 rounded-xl p-4"
                   style={{
@@ -1208,6 +1330,7 @@ export default function Home() {
                     >
                       Flight Details
                     </h2>
+
                     <span className="text-[10px] font-bold text-slate-500">
                       SHARED FLIGHT
                     </span>
@@ -1216,10 +1339,12 @@ export default function Home() {
                   <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
                     <div className="flex items-center gap-3">
                       <AirlineLogo airline={flight.airline} />
+
                       <div>
                         <p className="text-sm font-black text-slate-800">
                           {flight.airline || "Airline"}
                         </p>
+
                         <p className="text-xs font-semibold text-slate-500">
                           {flight.flightNumber || "Flight number"}
                         </p>
@@ -1230,6 +1355,7 @@ export default function Home() {
                       <p className="text-base font-black text-slate-800">
                         {routeText}
                       </p>
+
                       <p className="mt-1 text-[10px] font-semibold text-slate-500">
                         OUTBOUND JOURNEY
                       </p>
@@ -1239,6 +1365,7 @@ export default function Home() {
                       <p className="text-xs font-bold text-slate-700">
                         {dateText(flight.departureDate)}
                       </p>
+
                       <p className="text-xs font-semibold text-slate-500">
                         {timeText(flight.departureTime)}
                       </p>
@@ -1254,15 +1381,18 @@ export default function Home() {
                           <p className="text-[10px] font-black uppercase tracking-wider text-slate-500">
                             Return Journey
                           </p>
+
                           <p className="text-sm font-black text-slate-800">
                             {flight.destination || "Destination"} →{" "}
                             {flight.origin || "Origin"}
                           </p>
                         </div>
+
                         <div className="text-right">
                           <p className="text-xs font-bold text-slate-700">
                             {flight.returnFlight || "Return flight"}
                           </p>
+
                           <p className="text-xs font-semibold text-slate-500">
                             {dateText(flight.returnDate)} •{" "}
                             {timeText(flight.returnTime)}
@@ -1273,6 +1403,7 @@ export default function Home() {
                   )}
                 </div>
 
+                {/* AVAILABLE PACKAGES */}
                 <div className="mb-3 flex items-center justify-between">
                   <h2
                     className="text-base font-black uppercase tracking-wider"
@@ -1280,6 +1411,7 @@ export default function Home() {
                   >
                     Available Umrah Packages
                   </h2>
+
                   <span
                     className="rounded-full px-3 py-1 text-[10px] font-black"
                     style={{
@@ -1291,19 +1423,21 @@ export default function Home() {
                   </span>
                 </div>
 
-                {/* HOTEL AND RATES TABLE - REFERENCE IMAGE LAYOUT */}
+                {/* HOTEL AND RATES TABLE */}
                 <div
                   className="overflow-hidden rounded-lg"
                   style={{
                     border: "1px solid #E8D8B7",
                     background: "#FFFFFF",
+                    fontFamily: "Arial, Helvetica, sans-serif",
                   }}
                 >
+                  {/* TABLE HEADER */}
                   <div
-                    className="grid grid-cols-[14%_25%_25%_9%_9%_9%_9%] items-center gap-0 border-b px-2 py-3"
+                    className="grid grid-cols-[14%_25%_25%_9%_9%_9%_9%] items-center gap-0 px-2 py-2.5"
                     style={{
-                      background: "#F7F3E9",
-                      borderColor: "#E8D8B7",
+                      background: "#F1EBDD",
+                      borderBottom: "1px solid #E8D8B7",
                     }}
                   >
                     {[
@@ -1317,88 +1451,108 @@ export default function Home() {
                     ].map((heading) => (
                       <div
                         key={heading}
-                        className="px-1 text-center text-[10px] font-black text-[#173E30] sm:text-[11px]"
+                        className="px-1 text-center text-[10px] font-bold text-[#173E30]"
                       >
                         {heading}
                       </div>
                     ))}
                   </div>
 
+                  {/* HOTEL AND RATE ROWS */}
                   {packages.map((pkg, index) => (
                     <div key={pkg.id}>
                       <div
-                        className="grid grid-cols-[14%_25%_25%_9%_9%_9%_9%] items-center gap-0 px-2 py-3"
+                        className="grid grid-cols-[14%_25%_25%_9%_9%_9%_9%] items-center gap-0 px-2 py-2.5"
                         style={{
                           background: "#FFFFFF",
                           borderBottom: "1px dashed #E8D8B7",
                         }}
                       >
-                        <div className="px-1">
-                          <p className="break-words text-[10px] font-black text-[#174B38] sm:text-[11px]">
+                        {/* PACKAGE */}
+                        <div className="min-w-0 px-1">
+                          <p className="break-words text-[10px] font-bold leading-tight text-[#174B38]">
                             {pkg.name || `UP-${110175 + index}`}
                           </p>
-                          <p className="mt-1 text-[9px] font-medium text-slate-500">
+
+                          <p className="mt-1 text-[9px] font-medium leading-tight text-[#777777]">
                             🕋 Makkah: {pkg.nights || "—"} Nights
                           </p>
-                          <p className="text-[9px] font-medium text-slate-500">
+
+                          <p className="text-[9px] font-medium leading-tight text-[#777777]">
                             🕌 Madinah: {pkg.nights || "—"} Nights
                           </p>
-                          <p className="text-[9px] font-black text-[#C79A4C]">
+
+                          <p className="text-[9px] font-bold leading-tight text-[#C79A4C]">
                             Total: {pkg.nights || "—"} Nights
                           </p>
                         </div>
 
-                        <div className="flex min-w-0 items-start gap-2 px-1">
-                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[#E8D8B7] bg-[#FBF8F0] text-sm shadow-sm">
+                        {/* MAKKAH HOTEL */}
+                        <div className="flex min-w-0 items-start gap-1.5 px-1">
+                          <div
+                            className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[12px]"
+                            style={{
+                              border: "1px solid #E8D8B7",
+                              background: "#FBF8F0",
+                            }}
+                          >
                             🕋
                           </div>
+
                           <div className="min-w-0">
-                            <p
-                              className="break-words text-[10px] font-semibold leading-snug sm:text-[11px]"
-                              style={{ color: "#174B38" }}
-                            >
+                            <p className="break-words text-[10px] font-bold leading-snug text-[#174B38]">
                               {(pkg.makkahHotel || "HOTEL NOT ADDED").toUpperCase()}
                             </p>
-                            <p className="mt-1 break-words text-[9px] font-medium leading-snug text-slate-500">
+
+                            <p className="mt-1 break-words text-[9px] font-normal leading-snug text-[#777777]">
                               {pkg.makkahDistance
-                                ? `${pkg.makkahDistance} FROM HARAM`
-                                : pkg.makkahCategory || "Makkah Hotel"}
-                            </p>
-                            <p className="mt-1 text-[8px] font-semibold text-slate-400">
-                              {pkg.makkahCategory}
+                                ? `${pkg.makkahDistance} ${
+                                    pkg.makkahDistance.toLowerCase().includes("meter")
+                                      ? ""
+                                      : "METER "
+                                  }FROM HARAM`
+                                : ""}
                             </p>
                           </div>
                         </div>
 
-                        <div className="flex min-w-0 items-start gap-2 px-1">
-                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[#E8D8B7] bg-[#FBF8F0] text-sm shadow-sm">
+                        {/* MADINAH HOTEL */}
+                        <div className="flex min-w-0 items-start gap-1.5 px-1">
+                          <div
+                            className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[12px]"
+                            style={{
+                              border: "1px solid #E8D8B7",
+                              background: "#FBF8F0",
+                            }}
+                          >
                             🕌
                           </div>
+
                           <div className="min-w-0">
-                            <p
-                              className="break-words text-[10px] font-semibold leading-snug sm:text-[11px]"
-                              style={{ color: "#174B38" }}
-                            >
+                            <p className="break-words text-[10px] font-bold leading-snug text-[#174B38]">
                               {(pkg.madinahHotel || "HOTEL NOT ADDED").toUpperCase()}
                             </p>
-                            <p className="mt-1 break-words text-[9px] font-medium leading-snug text-slate-500">
+
+                            <p className="mt-1 break-words text-[9px] font-normal leading-snug text-[#777777]">
                               {pkg.madinahDistance
-                                ? `${pkg.madinahDistance} FROM MASJID NABAWI`
-                                : pkg.madinahCategory || "Madinah Hotel"}
-                            </p>
-                            <p className="mt-1 text-[8px] font-semibold text-slate-400">
-                              {pkg.madinahCategory}
+                                ? `${pkg.madinahDistance} ${
+                                    pkg.madinahDistance.toLowerCase().includes("meter")
+                                      ? ""
+                                      : "METER "
+                                  }FROM MASJID NABAWI`
+                                : ""}
                             </p>
                           </div>
                         </div>
 
+                        {/* RATES */}
                         {[pkg.sharing, pkg.quad, pkg.triple, pkg.double].map(
                           (rate, rateIndex) => (
                             <div
                               key={`${pkg.id}-rate-${rateIndex}`}
-                              className="px-0.5 text-center"
+                              className="min-w-0 px-0.5 text-center"
                             >
-                              <span className="break-words text-[10px] font-bold leading-tight tabular-nums text-[#174B38] sm:text-[11px]">
+                              <span className="break-words text-[10px] font-black leading-tight tabular-nums text-[#174B38]">
                                 {rate ? money(rate) : "—"}
                               </span>
                             </div>
@@ -1409,6 +1563,7 @@ export default function Home() {
                   ))}
                 </div>
 
+                {/* CONTACT FOOTER */}
                 <div
                   className="mt-5 rounded-xl px-4 py-3 text-center"
                   style={{
@@ -1419,15 +1574,20 @@ export default function Home() {
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/80">
                     Contact Us For Booking & Details
                   </p>
+
                   <p className="mt-1 text-lg font-black tracking-wide">
                     03137183111 • 03216837494 • 03128992016
                   </p>
+
                   <p className="mt-1 text-xs font-semibold text-white/85">
                     haramjunoontravels@gmail.com
                   </p>
                 </div>
 
-                <div className="mt-4 border-t pt-3 text-center" style={{ borderColor: posterTheme.border }}>
+                <div
+                  className="mt-4 border-t pt-3 text-center"
+                  style={{ borderColor: posterTheme.border }}
+                >
                   <p className="text-[9px] font-semibold tracking-wide text-slate-500">
                     SYSTEM DESIGNED & DEVELOPED BY AMEER HAMZA
                   </p>
