@@ -1685,7 +1685,7 @@ export default function Home() {
                                 color: "#68440E",
                               }}
                             >
-                              <span className="break-words text-[15px] font-black leading-tight tabular-nums sm:text-sm">
+                              <span className="break-words text-[10px] font-black leading-tight tabular-nums sm:text-sm">
                                 {pkg.sharing ? money(pkg.sharing) : "—"}
                               </span>
                             </td>
