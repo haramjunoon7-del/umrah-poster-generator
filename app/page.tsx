@@ -5,11 +5,13 @@ import { useEffect, useRef, useState } from "react";
 import { toBlob } from "html-to-image";
 
 type PosterTheme =
-  | "royal" | "emerald" | "black" | "cream" | "navy" | "maroon"
-  | "ocean" | "purple" | "sunset" | "teal" | "rose" | "desert";
+  | "royal" | "emerald" | "black" | "cream"
+  | "navy" | "maroon" | "ocean" | "purple"
+  | "sunset" | "teal" | "rose" | "desert";
 
 type FlightData = {
   airline: string;
+  returnAirline: string;
   flightNumber: string;
   origin: string;
   destination: string;
@@ -39,7 +41,6 @@ type PackageData = {
 type SavedPoster = {
   id: string;
   title: string;
-  packageCode: string;
   theme: PosterTheme;
   flight: FlightData;
   packages: PackageData[];
@@ -210,12 +211,35 @@ const themes: Record<PosterTheme, ThemeDetails> = {
 };
 
 const themeOptions: PosterTheme[] = [
-  "royal", "emerald", "black", "cream", "navy", "maroon",
-  "ocean", "purple", "sunset", "teal", "rose", "desert",
+  "royal", "emerald", "black", "cream",
+  "navy", "maroon", "ocean", "purple",
+  "sunset", "teal", "rose", "desert",
 ];
+
+const airlineOptions = [
+  "Airblue",
+  "PIA",
+  "Fly Jinnah",
+  "AirSial",
+  "Riyadh Air",
+  "Saudia",
+  "SalamAir",
+];
+
+// Local airline logos: images must be inside public/airlines/
+const airlineLogos: Record<string, string> = {
+  PIA: "/airlines/pia.png",
+  Airblue: "/airlines/airblue.png",
+  AirSial: "/airlines/airsial.png",
+  "Fly Jinnah": "/airlines/fly-jinnah.png",
+  "Riyadh Air": "/airlines/riyadh-air.png",
+  Saudia: "/airlines/saudia.png",
+  SalamAir: "/airlines/salam-air.png",
+};
 
 const blankFlight: FlightData = {
   airline: "Airblue",
+  returnAirline: "Airblue",
   flightNumber: "",
   origin: "Multan",
   destination: "Jeddah",
@@ -252,6 +276,7 @@ function money(value: string | number) {
 
 function dateText(value: string) {
   if (!value) return "Date not added";
+
   const date = new Date(`${value}T00:00:00`);
   if (Number.isNaN(date.getTime())) return value;
 
@@ -264,12 +289,15 @@ function dateText(value: string) {
 
 function timeText(value: string) {
   if (!value) return "Time not added";
+
   const [hours, minutes] = value.split(":");
   const hour = Number(hours);
   if (!Number.isFinite(hour)) return value;
 
   const suffix = hour >= 12 ? "PM" : "AM";
-  return `${hour % 12 || 12}:${minutes || "00"} ${suffix}`;
+  const displayHour = hour % 12 || 12;
+
+  return `${displayHour}:${minutes || "00"} ${suffix}`;
 }
 
 function Field({
@@ -323,52 +351,115 @@ function SelectField({
         className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#C79A4C] focus:ring-2 focus:ring-[#C79A4C]/15"
       >
         {options.map((option) => (
-          <option key={option} value={option}>{option}</option>
+          <option key={option} value={option}>
+            {option}
+          </option>
         ))}
       </select>
     </label>
   );
 }
 
-// Ye paths tumhare manually uploaded public/airlines logos ke hain.
-const airlineLogos: Record<string, string> = {
-  PIA: "/airlines/pia.png",
-  Airblue: "/airlines/airblue.png",
-  AirSial: "/airlines/airsial.png",
-  "Fly Jinnah": "/airlines/fly-jinnah.png",
-  Saudia: "/airlines/saudia.png",
-  SalamAir: "/airlines/salam-air.png",
-  "Riyadh Air": "/airlines/riyadh-air.png",
-};
-
 function AirlineLogo({ airline }: { airline: string }) {
+  const [failed, setFailed] = useState(false);
   const logo = airlineLogos[airline];
-  if (!logo) return null;
+
+  if (!logo || failed) {
+    return (
+      <div className="flex h-14 w-20 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white px-1 text-center text-xs font-black text-slate-700">
+        {airline || "AIRLINE"}
+      </div>
+    );
+  }
 
   return (
     <img
       src={logo}
-      alt={`${airline} Logo`}
+      alt={`${airline} logo`}
       crossOrigin="anonymous"
       className="h-14 w-20 shrink-0 object-contain"
+      onError={() => setFailed(true)}
     />
+  );
+}
+
+// Same itinerary layout for outbound and return
+function FlightItineraryRow({
+  label,
+  airline,
+  flightNumber,
+  origin,
+  destination,
+  date,
+  time,
+  accent,
+}: {
+  label: string;
+  airline: string;
+  flightNumber: string;
+  origin: string;
+  destination: string;
+  date: string;
+  time: string;
+  accent: string;
+}) {
+  return (
+    <div className="grid grid-cols-[1fr_1.15fr_100px] items-center gap-3">
+      {/* LEFT: FLIGHT NUMBER + DATE/TIME */}
+      <div className="min-w-0">
+        <p className="text-[9px] font-black uppercase tracking-wider text-slate-500">
+          {label}
+        </p>
+        <p className="mt-1 break-words text-sm font-black text-slate-800">
+          {flightNumber || "Flight number"}
+        </p>
+        <p className="mt-1 text-[10px] font-semibold text-slate-500">
+          {dateText(date)}
+        </p>
+        <p className="text-[10px] font-semibold text-slate-500">
+          {timeText(time)}
+        </p>
+      </div>
+
+      {/* MIDDLE: SECTOR */}
+      <div className="min-w-0 text-center">
+        <p className="break-words text-base font-black text-slate-800">
+          {origin || "Origin"} → {destination || "Destination"}
+        </p>
+        <div
+          className="mx-auto mt-2 h-0.5 w-16 rounded-full"
+          style={{ background: accent }}
+        />
+        <p className="mt-1 text-[9px] font-bold uppercase tracking-wider text-slate-500">
+          Sector
+        </p>
+      </div>
+
+      {/* RIGHT: SELECTED AIRLINE LOGO */}
+      <div className="flex min-w-0 flex-col items-end justify-center">
+        <AirlineLogo airline={airline} />
+        <p className="mt-1 max-w-full text-right text-[9px] font-bold text-slate-500">
+          {airline}
+        </p>
+      </div>
+    </div>
   );
 }
 
 export default function Home() {
   const [flight, setFlight] = useState<FlightData>(blankFlight);
+
   const [packages, setPackages] = useState<PackageData[]>([
     blankPackage("package-1", 1),
   ]);
+
   const [title, setTitle] = useState("UMRAH PACKAGE");
-
-  // NEW: Package Code state
-  const [packageCode, setPackageCode] = useState("");
-
   const [theme, setTheme] = useState<PosterTheme>("royal");
+
   const [services, setServices] = useState(
     "Visa • Return Ticket • Accommodation • Transport • 21 Days",
   );
+
   const [savedPosters, setSavedPosters] = useState<SavedPoster[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [activePoster, setActivePoster] = useState<SavedPoster | null>(null);
@@ -381,9 +472,26 @@ export default function Home() {
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
+
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) setSavedPosters(parsed);
+
+        if (Array.isArray(parsed)) {
+          // Compatibility with previously saved posters
+          const compatible = parsed.map((poster: SavedPoster) => ({
+            ...poster,
+            flight: {
+              ...blankFlight,
+              ...poster.flight,
+              returnAirline:
+                poster.flight?.returnAirline ||
+                poster.flight?.airline ||
+                "Airblue",
+            },
+          }));
+
+          setSavedPosters(compatible);
+        }
       }
     } catch (error) {
       console.error("Saved poster loading error:", error);
@@ -394,6 +502,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!hydrated) return;
+
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(savedPosters));
     } catch (error) {
@@ -403,13 +512,22 @@ export default function Home() {
   }, [savedPosters, hydrated]);
 
   function updateFlight(key: keyof FlightData, value: string) {
-    setFlight((current) => ({ ...current, [key]: value }));
+    setFlight((current) => ({
+      ...current,
+      [key]: value,
+    }));
     setActivePoster(null);
   }
 
-  function updatePackage(id: string, key: keyof PackageData, value: string) {
+  function updatePackage(
+    id: string,
+    key: keyof PackageData,
+    value: string,
+  ) {
     setPackages((current) =>
-      current.map((pkg) => pkg.id === id ? { ...pkg, [key]: value } : pkg),
+      current.map((pkg) =>
+        pkg.id === id ? { ...pkg, [key]: value } : pkg,
+      ),
     );
     setActivePoster(null);
   }
@@ -417,7 +535,10 @@ export default function Home() {
   function addPackage() {
     setPackages((current) => [
       ...current,
-      blankPackage(`package-${Date.now()}-${current.length}`, current.length + 1),
+      blankPackage(
+        `package-${Date.now()}-${current.length}`,
+        current.length + 1,
+      ),
     ]);
     setActivePoster(null);
   }
@@ -427,6 +548,7 @@ export default function Home() {
       setMessage("At least one package is required.");
       return;
     }
+
     setPackages((current) => current.filter((pkg) => pkg.id !== id));
     setActivePoster(null);
   }
@@ -436,21 +558,25 @@ export default function Home() {
 
     if (latest) {
       setTitle(latest.title);
-      setPackageCode(latest.packageCode || "");
       setTheme(latest.theme);
-      setFlight({ ...latest.flight });
-      setPackages(latest.packages.map((pkg, index) => ({
-        ...pkg,
-        id: `package-${Date.now()}-${index}`,
-      })));
+      setFlight({ ...blankFlight, ...latest.flight });
+
+      setPackages(
+        latest.packages.map((pkg, index) => ({
+          ...pkg,
+          id: `package-${Date.now()}-${index}`,
+        })),
+      );
+
       setServices(latest.services);
     } else {
       setTitle("UMRAH PACKAGE");
-      setPackageCode("");
       setTheme("royal");
       setFlight({ ...blankFlight });
       setPackages([blankPackage(`package-${Date.now()}`, 1)]);
-      setServices("Visa • Return Ticket • Accommodation • Transport • 21 Days");
+      setServices(
+        "Visa • Return Ticket • Accommodation • Transport • 21 Days",
+      );
     }
 
     setEditingId(null);
@@ -463,7 +589,8 @@ export default function Home() {
       setMessage("Please enter poster title.");
       return;
     }
-    if (!packages.length) {
+
+    if (packages.length === 0) {
       setMessage("Please add at least one package.");
       return;
     }
@@ -471,7 +598,6 @@ export default function Home() {
     const poster: SavedPoster = {
       id: editingId || `poster-${Date.now()}`,
       title: title.trim(),
-      packageCode: packageCode.trim(),
       theme,
       flight: { ...flight },
       packages: packages.map((pkg) => ({ ...pkg })),
@@ -479,55 +605,83 @@ export default function Home() {
       createdAt: new Date().toISOString(),
     };
 
-    setSavedPosters((current) =>
+    setSavedPosters((current) => {
+      if (editingId) {
+        return current.map((item) =>
+          item.id === editingId ? poster : item,
+        );
+      }
+      return [poster, ...current];
+    });
+
+    setEditingId(poster.id);
+    setActivePoster(poster);
+
+    setMessage(
       editingId
-        ? current.map((item) => item.id === editingId ? poster : item)
-        : [poster, ...current],
+        ? "Poster updated successfully."
+        : "Poster saved successfully.",
     );
-
-    setEditingId(poster.id);
-    setActivePoster(poster);
-    setMessage(editingId ? "Poster updated successfully." : "Poster saved successfully.");
-  }
-
-  function loadPoster(poster: SavedPoster) {
-    setTitle(poster.title);
-    setPackageCode(poster.packageCode || "");
-    setTheme(poster.theme);
-    setFlight({ ...poster.flight });
-    setPackages(poster.packages.map((pkg, index) => ({
-      ...pkg,
-      id: `package-${Date.now()}-${index}`,
-    })));
-    setServices(poster.services);
-    setEditingId(poster.id);
-    setActivePoster(poster);
   }
 
   function editPoster(poster: SavedPoster) {
-    loadPoster(poster);
+    setTitle(poster.title);
+    setTheme(poster.theme);
+    setFlight({ ...blankFlight, ...poster.flight });
+
+    setPackages(
+      poster.packages.map((pkg, index) => ({
+        ...pkg,
+        id: `package-${Date.now()}-${index}`,
+      })),
+    );
+
+    setServices(poster.services);
+    setEditingId(poster.id);
+    setActivePoster(poster);
     setMessage("Poster loaded for editing.");
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function showPoster(poster: SavedPoster) {
-    loadPoster(poster);
+    setTitle(poster.title);
+    setTheme(poster.theme);
+    setFlight({ ...blankFlight, ...poster.flight });
+
+    setPackages(
+      poster.packages.map((pkg, index) => ({
+        ...pkg,
+        id: `package-${Date.now()}-${index}`,
+      })),
+    );
+
+    setServices(poster.services);
+    setEditingId(poster.id);
+    setActivePoster(poster);
     setMessage("Saved poster preview loaded.");
   }
 
   function deletePoster(id: string) {
-    if (!window.confirm("Are you sure you want to delete this poster?")) return;
+    if (!window.confirm("Are you sure you want to delete this poster?")) {
+      return;
+    }
 
-    setSavedPosters((current) => current.filter((poster) => poster.id !== id));
+    setSavedPosters((current) =>
+      current.filter((poster) => poster.id !== id),
+    );
+
     if (editingId === id) {
       setEditingId(null);
       setActivePoster(null);
     }
+
     setMessage("Poster deleted.");
   }
 
   async function copyPosterImage() {
     const target = posterRef.current;
+
     if (!target) {
       setMessage("Poster preview is not ready.");
       return;
@@ -553,11 +707,14 @@ export default function Home() {
     function downloadImage(blob: Blob) {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
+
       link.href = url;
       link.download = `${title || "umrah-poster"}.png`;
+
       document.body.appendChild(link);
       link.click();
       link.remove();
+
       window.setTimeout(() => URL.revokeObjectURL(url), 3000);
     }
 
@@ -570,7 +727,9 @@ export default function Home() {
         window.isSecureContext
       ) {
         const imagePromise = toBlob(target, options).then((blob) => {
-          if (!blob) throw new Error("Poster image could not be generated.");
+          if (!blob) {
+            throw new Error("Poster image could not be generated.");
+          }
           return blob;
         });
 
@@ -581,20 +740,31 @@ export default function Home() {
         setMessage("Poster copied successfully! Now paste it into WhatsApp.");
       } else {
         const blob = await toBlob(target, options);
-        if (!blob) throw new Error("Poster image could not be generated.");
+
+        if (!blob) {
+          throw new Error("Poster image could not be generated.");
+        }
+
         downloadImage(blob);
         setMessage("Clipboard unavailable. Poster downloaded instead.");
       }
     } catch (error) {
       console.error("Poster copy error:", error);
+
       try {
         const blob = await toBlob(target, options);
-        if (!blob) throw new Error("Poster image could not be generated.");
+
+        if (!blob) {
+          throw new Error("Poster image could not be generated.");
+        }
+
         downloadImage(blob);
         setMessage("Copy unavailable. Poster downloaded successfully.");
       } catch (downloadError) {
         console.error("Poster download error:", downloadError);
-        setMessage("Image failed. Please check browser permissions and image loading.");
+        setMessage(
+          "Image failed. Please check browser permissions and image loading.",
+        );
       }
     } finally {
       setCopying(false);
@@ -605,13 +775,17 @@ export default function Home() {
     const blob = new Blob([JSON.stringify(savedPosters, null, 2)], {
       type: "application/json",
     });
+
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
+
     link.href = url;
     link.download = "haram-junoon-posters-backup.json";
+
     document.body.appendChild(link);
     link.click();
     link.remove();
+
     URL.revokeObjectURL(url);
   }
 
@@ -619,7 +793,6 @@ export default function Home() {
     ? {
         ...activePoster,
         title,
-        packageCode,
         theme,
         flight,
         packages,
@@ -628,7 +801,6 @@ export default function Home() {
     : {
         id: "preview",
         title,
-        packageCode,
         theme,
         flight,
         packages,
@@ -637,7 +809,12 @@ export default function Home() {
       };
 
   const posterTheme = themes[shownPoster.theme] || themes.royal;
-  const routeText = `${flight.origin || "Origin"} → ${flight.destination || "Destination"}`;
+
+  const outboundSectorOrigin = flight.origin || "Origin";
+  const outboundSectorDestination = flight.destination || "Destination";
+
+  const returnSectorOrigin = flight.destination || "Destination";
+  const returnSectorDestination = flight.origin || "Origin";
 
   return (
     <main className="min-h-screen bg-[#F4F5F7] text-slate-800">
@@ -654,11 +831,18 @@ export default function Home() {
               Create, save and manage professional Umrah package posters
             </p>
           </div>
+
           <div className="flex flex-wrap gap-2">
-            <button onClick={newPoster} className="rounded-xl border border-white/20 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-white/10">
+            <button
+              onClick={newPoster}
+              className="rounded-xl border border-white/20 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-white/10"
+            >
               + New Poster
             </button>
-            <button onClick={exportSavedData} className="rounded-xl bg-[#C79A4C] px-4 py-2.5 text-sm font-black text-[#20170B] transition hover:bg-[#E0B967]">
+            <button
+              onClick={exportSavedData}
+              className="rounded-xl bg-[#C79A4C] px-4 py-2.5 text-sm font-black text-[#20170B] transition hover:bg-[#E0B967]"
+            >
               Export Backup
             </button>
           </div>
@@ -670,7 +854,10 @@ export default function Home() {
           {/* POSTER DETAILS */}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-black text-slate-800">Poster Details</h2>
+              <h2 className="text-lg font-black text-slate-800">
+                Poster Details
+              </h2>
+
               {editingId && (
                 <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">
                   Editing saved poster
@@ -688,21 +875,6 @@ export default function Home() {
                 }}
                 placeholder="Enter poster title"
               />
-
-              {/* NEW PACKAGE CODE FIELD */}
-              <Field
-                label="Package Code"
-                value={packageCode}
-                onChange={(value) => {
-                  setPackageCode(value);
-                  setActivePoster(null);
-                }}
-                placeholder="Example: HJ-UMR-2027-001"
-              />
-
-              <p className="-mt-2 text-[11px] text-slate-500">
-                Ye code poster ke header mein title ke neeche show hoga.
-              </p>
 
               <label className="block">
                 <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600">
@@ -748,38 +920,106 @@ export default function Home() {
                         : "border-slate-200 hover:border-[#C79A4C]"
                     }`}
                   >
-                    <span className="mb-1 block h-5 rounded-md" style={{ background: themes[key].gradient }} />
-                    <span className="text-[10px] font-bold text-slate-700">{themes[key].name}</span>
+                    <span
+                      className="mb-1 block h-5 rounded-md"
+                      style={{ background: themes[key].gradient }}
+                    />
+                    <span className="text-[10px] font-bold text-slate-700">
+                      {themes[key].name}
+                    </span>
                   </button>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* FLIGHT DETAILS */}
+          {/* FLIGHT DETAILS FORM */}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-black text-slate-800">Flight Details</h2>
+              <h2 className="text-lg font-black text-slate-800">
+                Flight Details
+              </h2>
               <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
                 Shared flight
               </span>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <SelectField
-                label="Airline"
-                value={flight.airline}
-                onChange={(value) => updateFlight("airline", value)}
-                options={["Airblue", "PIA", "Fly Jinnah", "AirSial", "Riyadh Air", "Saudia", "SalamAir"]}
-              />
-              <Field label="Flight Number" value={flight.flightNumber} onChange={(value) => updateFlight("flightNumber", value)} placeholder="PA-123" />
-              <Field label="Origin" value={flight.origin} onChange={(value) => updateFlight("origin", value)} placeholder="Multan" />
-              <Field label="Destination" value={flight.destination} onChange={(value) => updateFlight("destination", value)} placeholder="Jeddah" />
-              <Field label="Departure Date" type="date" value={flight.departureDate} onChange={(value) => updateFlight("departureDate", value)} />
-              <Field label="Departure Time" type="time" value={flight.departureTime} onChange={(value) => updateFlight("departureTime", value)} />
-              <Field label="Return Date" type="date" value={flight.returnDate} onChange={(value) => updateFlight("returnDate", value)} />
-              <Field label="Return Flight Number" value={flight.returnFlight} onChange={(value) => updateFlight("returnFlight", value)} placeholder="Return flight number" />
-              <Field label="Return Time" type="time" value={flight.returnTime} onChange={(value) => updateFlight("returnTime", value)} />
+            <div className="space-y-4">
+              <div className="rounded-xl border border-slate-200 p-3">
+                <h3 className="mb-3 text-sm font-black text-slate-800">
+                  Outbound Flight
+                </h3>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <SelectField
+                    label="Outbound Airline"
+                    value={flight.airline}
+                    onChange={(value) => updateFlight("airline", value)}
+                    options={airlineOptions}
+                  />
+                  <Field
+                    label="Flight Number"
+                    value={flight.flightNumber}
+                    onChange={(value) => updateFlight("flightNumber", value)}
+                    placeholder="PA-123"
+                  />
+                  <Field
+                    label="Origin"
+                    value={flight.origin}
+                    onChange={(value) => updateFlight("origin", value)}
+                    placeholder="Multan"
+                  />
+                  <Field
+                    label="Destination"
+                    value={flight.destination}
+                    onChange={(value) => updateFlight("destination", value)}
+                    placeholder="Jeddah"
+                  />
+                  <Field
+                    label="Departure Date"
+                    type="date"
+                    value={flight.departureDate}
+                    onChange={(value) => updateFlight("departureDate", value)}
+                  />
+                  <Field
+                    label="Departure Time"
+                    type="time"
+                    value={flight.departureTime}
+                    onChange={(value) => updateFlight("departureTime", value)}
+                  />
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-slate-200 p-3">
+                <h3 className="mb-3 text-sm font-black text-slate-800">
+                  Return Journey
+                </h3>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <SelectField
+                    label="Return Airline"
+                    value={flight.returnAirline || flight.airline}
+                    onChange={(value) => updateFlight("returnAirline", value)}
+                    options={airlineOptions}
+                  />
+                  <Field
+                    label="Return Flight Number"
+                    value={flight.returnFlight}
+                    onChange={(value) => updateFlight("returnFlight", value)}
+                    placeholder="PA-124"
+                  />
+                  <Field
+                    label="Return Date"
+                    type="date"
+                    value={flight.returnDate}
+                    onChange={(value) => updateFlight("returnDate", value)}
+                  />
+                  <Field
+                    label="Return Time"
+                    type="time"
+                    value={flight.returnTime}
+                    onChange={(value) => updateFlight("returnTime", value)}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -787,26 +1027,51 @@ export default function Home() {
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-lg font-black text-slate-800">Package Details</h2>
-                <p className="text-xs text-slate-500">Add multiple hotel and rate options</p>
+                <h2 className="text-lg font-black text-slate-800">
+                  Package Details
+                </h2>
+                <p className="text-xs text-slate-500">
+                  Add multiple hotel and rate options
+                </p>
               </div>
-              <button onClick={addPackage} className="rounded-xl bg-gradient-to-r from-[#9A6B2C] to-[#D4AD63] px-4 py-2.5 text-sm font-black text-white shadow-md transition hover:brightness-105">
+              <button
+                onClick={addPackage}
+                className="rounded-xl bg-gradient-to-r from-[#9A6B2C] to-[#D4AD63] px-4 py-2.5 text-sm font-black text-white shadow-md transition hover:brightness-105"
+              >
                 + Add New Package
               </button>
             </div>
 
             {packages.map((pkg, index) => (
-              <div key={pkg.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div
+                key={pkg.id}
+                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+              >
                 <div className="mb-4 flex items-center justify-between">
-                  <h3 className="font-black text-[#8A642E]">Package {index + 1}</h3>
-                  <button onClick={() => removePackage(pkg.id)} className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50">
+                  <h3 className="font-black text-[#8A642E]">
+                    Package {index + 1}
+                  </h3>
+                  <button
+                    onClick={() => removePackage(pkg.id)}
+                    className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50"
+                  >
                     Remove
                   </button>
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <Field label="Package Name / Code" value={pkg.name} onChange={(value) => updatePackage(pkg.id, "name", value)} placeholder="Package No. 1" />
-                  <Field label="Total Nights" value={pkg.nights} onChange={(value) => updatePackage(pkg.id, "nights", value)} placeholder="21" />
+                  <Field
+                    label="Package Name / Code"
+                    value={pkg.name}
+                    onChange={(value) => updatePackage(pkg.id, "name", value)}
+                    placeholder="Package No. 1"
+                  />
+                  <Field
+                    label="Total Nights"
+                    value={pkg.nights}
+                    onChange={(value) => updatePackage(pkg.id, "nights", value)}
+                    placeholder="21"
+                  />
                 </div>
 
                 <div className="my-5 border-t border-dashed border-slate-200" />
@@ -817,9 +1082,24 @@ export default function Home() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <Field label="Hotel Name" value={pkg.makkahHotel} onChange={(value) => updatePackage(pkg.id, "makkahHotel", value)} placeholder="Makkah hotel name" />
-                  <SelectField label="Hotel Category" value={pkg.makkahCategory} onChange={(value) => updatePackage(pkg.id, "makkahCategory", value)} options={["Economy", "3 Star", "4 Star", "5 Star"]} />
-                  <Field label="Distance from Haram" value={pkg.makkahDistance} onChange={(value) => updatePackage(pkg.id, "makkahDistance", value)} placeholder="500 Meter" />
+                  <Field
+                    label="Hotel Name"
+                    value={pkg.makkahHotel}
+                    onChange={(value) => updatePackage(pkg.id, "makkahHotel", value)}
+                    placeholder="Makkah hotel name"
+                  />
+                  <SelectField
+                    label="Hotel Category"
+                    value={pkg.makkahCategory}
+                    onChange={(value) => updatePackage(pkg.id, "makkahCategory", value)}
+                    options={["Economy", "3 Star", "4 Star", "5 Star"]}
+                  />
+                  <Field
+                    label="Distance from Haram"
+                    value={pkg.makkahDistance}
+                    onChange={(value) => updatePackage(pkg.id, "makkahDistance", value)}
+                    placeholder="500 Meter"
+                  />
                 </div>
 
                 <div className="my-5 border-t border-dashed border-slate-200" />
@@ -830,19 +1110,57 @@ export default function Home() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <Field label="Hotel Name" value={pkg.madinahHotel} onChange={(value) => updatePackage(pkg.id, "madinahHotel", value)} placeholder="Madinah hotel name" />
-                  <SelectField label="Hotel Category" value={pkg.madinahCategory} onChange={(value) => updatePackage(pkg.id, "madinahCategory", value)} options={["Economy", "3 Star", "4 Star", "5 Star"]} />
-                  <Field label="Distance from Masjid Nabawi" value={pkg.madinahDistance} onChange={(value) => updatePackage(pkg.id, "madinahDistance", value)} placeholder="800 Meter" />
+                  <Field
+                    label="Hotel Name"
+                    value={pkg.madinahHotel}
+                    onChange={(value) => updatePackage(pkg.id, "madinahHotel", value)}
+                    placeholder="Madinah hotel name"
+                  />
+                  <SelectField
+                    label="Hotel Category"
+                    value={pkg.madinahCategory}
+                    onChange={(value) => updatePackage(pkg.id, "madinahCategory", value)}
+                    options={["Economy", "3 Star", "4 Star", "5 Star"]}
+                  />
+                  <Field
+                    label="Distance from Masjid Nabawi"
+                    value={pkg.madinahDistance}
+                    onChange={(value) => updatePackage(pkg.id, "madinahDistance", value)}
+                    placeholder="800 Meter"
+                  />
                 </div>
 
                 <div className="my-5 border-t border-dashed border-slate-200" />
 
-                <h4 className="mb-3 font-black text-slate-800">Package Rates (PKR)</h4>
+                <h4 className="mb-3 font-black text-slate-800">
+                  Package Rates (PKR)
+                </h4>
+
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  <Field label="Sharing" value={pkg.sharing} onChange={(value) => updatePackage(pkg.id, "sharing", value)} placeholder="226299" />
-                  <Field label="Quad" value={pkg.quad} onChange={(value) => updatePackage(pkg.id, "quad", value)} placeholder="230899" />
-                  <Field label="Triple" value={pkg.triple} onChange={(value) => updatePackage(pkg.id, "triple", value)} placeholder="238399" />
-                  <Field label="Double" value={pkg.double} onChange={(value) => updatePackage(pkg.id, "double", value)} placeholder="253499" />
+                  <Field
+                    label="Sharing"
+                    value={pkg.sharing}
+                    onChange={(value) => updatePackage(pkg.id, "sharing", value)}
+                    placeholder="226299"
+                  />
+                  <Field
+                    label="Quad"
+                    value={pkg.quad}
+                    onChange={(value) => updatePackage(pkg.id, "quad", value)}
+                    placeholder="230899"
+                  />
+                  <Field
+                    label="Triple"
+                    value={pkg.triple}
+                    onChange={(value) => updatePackage(pkg.id, "triple", value)}
+                    placeholder="238399"
+                  />
+                  <Field
+                    label="Double"
+                    value={pkg.double}
+                    onChange={(value) => updatePackage(pkg.id, "double", value)}
+                    placeholder="253499"
+                  />
                 </div>
               </div>
             ))}
@@ -851,24 +1169,45 @@ export default function Home() {
           {/* SAVE AND COPY BUTTONS */}
           <div className="sticky bottom-3 z-20 rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-xl backdrop-blur">
             <div className="grid grid-cols-2 gap-2">
-              <button onClick={savePoster} className="rounded-xl bg-[#173E30] px-4 py-3 text-sm font-black text-white transition hover:bg-[#20543F]">
+              <button
+                onClick={savePoster}
+                className="rounded-xl bg-[#173E30] px-4 py-3 text-sm font-black text-white transition hover:bg-[#20543F]"
+              >
                 {editingId ? "Update Poster" : "Save Poster"}
               </button>
-              <button onClick={copyPosterImage} disabled={copying} className="rounded-xl bg-gradient-to-r from-[#A87935] to-[#D5B16B] px-4 py-3 text-sm font-black text-white transition hover:brightness-105 disabled:opacity-60">
+              <button
+                onClick={copyPosterImage}
+                disabled={copying}
+                className="rounded-xl bg-gradient-to-r from-[#A87935] to-[#D5B16B] px-4 py-3 text-sm font-black text-white transition hover:brightness-105 disabled:opacity-60"
+              >
                 {copying ? "Preparing Image..." : "Copy Poster Image"}
               </button>
             </div>
-            {message && <p className="mt-2 text-center text-xs font-semibold text-slate-600">{message}</p>}
+
+            {message && (
+              <p className="mt-2 text-center text-xs font-semibold text-slate-600">
+                {message}
+              </p>
+            )}
           </div>
 
           {/* SAVED POSTERS */}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <div>
-                <h2 className="text-lg font-black text-slate-800">Saved Posters</h2>
-                <p className="text-xs text-slate-500">{savedPosters.length} saved poster(s)</p>
+                <h2 className="text-lg font-black text-slate-800">
+                  Saved Posters
+                </h2>
+                <p className="text-xs text-slate-500">
+                  {savedPosters.length} saved poster(s)
+                </p>
               </div>
-              <button onClick={exportSavedData} className="text-xs font-bold text-[#936A2E] underline">Download Backup</button>
+              <button
+                onClick={exportSavedData}
+                className="text-xs font-bold text-[#936A2E] underline"
+              >
+                Download Backup
+              </button>
             </div>
 
             {!savedPosters.length ? (
@@ -878,24 +1217,46 @@ export default function Home() {
             ) : (
               <div className="space-y-3">
                 {savedPosters.map((poster) => (
-                  <div key={poster.id} className="rounded-xl border border-slate-200 p-3">
+                  <div
+                    key={poster.id}
+                    className="rounded-xl border border-slate-200 p-3"
+                  >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div>
-                        <p className="font-black text-slate-800">{poster.title}</p>
+                        <p className="font-black text-slate-800">
+                          {poster.title}
+                        </p>
                         <p className="text-xs text-slate-500">
-                          {poster.packageCode ? `Code: ${poster.packageCode} • ` : ""}
                           {poster.packages.length} package(s) •{" "}
-                          {poster.createdAt ? new Date(poster.createdAt).toLocaleDateString("en-GB") : "Date unavailable"}
+                          {poster.createdAt
+                            ? new Date(poster.createdAt).toLocaleDateString("en-GB")
+                            : "Date unavailable"}
                         </p>
                       </div>
                       <span className="rounded-full bg-[#F8F0E1] px-2.5 py-1 text-[10px] font-bold text-[#87612B]">
                         {themes[poster.theme]?.name || "Royal Blue"}
                       </span>
                     </div>
+
                     <div className="mt-3 flex flex-wrap gap-2">
-                      <button onClick={() => showPoster(poster)} className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50">Preview</button>
-                      <button onClick={() => editPoster(poster)} className="rounded-lg border border-[#D8BD8A] px-3 py-1.5 text-xs font-bold text-[#805B25] hover:bg-[#FBF5E9]">Edit</button>
-                      <button onClick={() => deletePoster(poster.id)} className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50">Delete</button>
+                      <button
+                        onClick={() => showPoster(poster)}
+                        className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50"
+                      >
+                        Preview
+                      </button>
+                      <button
+                        onClick={() => editPoster(poster)}
+                        className="rounded-lg border border-[#D8BD8A] px-3 py-1.5 text-xs font-bold text-[#805B25] hover:bg-[#FBF5E9]"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deletePoster(poster.id)}
+                        className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50"
+                      >
+                        Delete
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -908,10 +1269,18 @@ export default function Home() {
         <section className="min-w-0">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h2 className="text-xl font-black text-slate-800">Live Poster Preview</h2>
-              <p className="text-xs text-slate-500">This is the image that will be copied or downloaded</p>
+              <h2 className="text-xl font-black text-slate-800">
+                Live Poster Preview
+              </h2>
+              <p className="text-xs text-slate-500">
+                This is the image that will be copied or downloaded
+              </p>
             </div>
-            <button onClick={copyPosterImage} disabled={copying} className="rounded-xl bg-[#173E30] px-4 py-2.5 text-sm font-black text-white shadow transition hover:bg-[#20543F] disabled:opacity-60">
+            <button
+              onClick={copyPosterImage}
+              disabled={copying}
+              className="rounded-xl bg-[#173E30] px-4 py-2.5 text-sm font-black text-white shadow transition hover:bg-[#20543F] disabled:opacity-60"
+            >
               {copying ? "Preparing..." : "Copy Image"}
             </button>
           </div>
@@ -941,107 +1310,127 @@ export default function Home() {
                     alt="Haram Junoon Travels & Tours"
                     crossOrigin="anonymous"
                     className="mx-auto mb-3 h-16 w-16 rounded-full border-2 border-[#D9B66F] bg-white object-contain p-1"
-                    onError={(event) => { event.currentTarget.style.display = "none"; }}
+                    onError={(event) => {
+                      event.currentTarget.style.display = "none";
+                    }}
                   />
-
                   <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#E8C981]">
                     HARAM JUNOON TRAVELS & TOURS
                   </p>
-
                   <h1 className="mt-2 text-4xl font-black uppercase tracking-wide text-white">
                     {shownPoster.title || "UMRAH PACKAGE"}
                   </h1>
-
-                  {/* NEW PACKAGE CODE IN POSTER HEADER */}
-                  {shownPoster.packageCode?.trim() && (
-                    <div className="mx-auto mt-3 inline-flex items-center gap-2 rounded-full border border-[#E8C981]/80 bg-black/30 px-5 py-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#E8C981]">
-                        PACKAGE CODE
-                      </span>
-                      <span className="text-sm font-black tracking-widest text-white">
-                        {shownPoster.packageCode}
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="mx-auto mt-3 h-1 w-24 rounded-full" style={{ background: posterTheme.accent }} />
-                  <p className="mt-3 text-sm font-semibold tracking-wide text-white/90">YOUR JOURNEY, OUR CARE</p>
-                  <p className="mt-3 text-xs font-semibold text-white/85">{shownPoster.services}</p>
+                  <div
+                    className="mx-auto mt-3 h-1 w-24 rounded-full"
+                    style={{ background: posterTheme.accent }}
+                  />
+                  <p className="mt-3 text-sm font-semibold tracking-wide text-white/90">
+                    YOUR JOURNEY, OUR CARE
+                  </p>
+                  <p className="mt-3 text-xs font-semibold text-white/85">
+                    {shownPoster.services}
+                  </p>
                 </div>
               </div>
 
               <div className="px-5 py-5">
                 {/* FLIGHT DETAILS */}
-                <div className="mb-4 rounded-xl p-4" style={{ background: "#FFFFFF", border: `1px solid ${posterTheme.border}` }}>
+                <div
+                  className="mb-4 rounded-xl p-4"
+                  style={{
+                    background: "#FFFFFF",
+                    border: `1px solid ${posterTheme.border}`,
+                  }}
+                >
                   <div className="mb-3 flex items-center justify-between">
-                    <h2 className="text-sm font-black uppercase tracking-wider" style={{ color: posterTheme.primary }}>
+                    <h2
+                      className="text-sm font-black uppercase tracking-wider"
+                      style={{ color: posterTheme.primary }}
+                    >
                       Flight Details
                     </h2>
-                    <span className="text-[10px] font-bold text-slate-500">SHARED FLIGHT</span>
+                    <span className="text-[10px] font-bold text-slate-500">
+                      SHARED FLIGHT
+                    </span>
                   </div>
 
-                  {/* OUTBOUND */}
-                  <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
-                    <div className="flex items-center gap-3">
-                      <AirlineLogo airline={flight.airline} />
-                      <div>
-                        <p className="text-sm font-black text-slate-800">{flight.airline || "Airline"}</p>
-                        <p className="text-xs font-semibold text-slate-500">{flight.flightNumber || "Flight number"}</p>
-                      </div>
-                    </div>
+                  {/* OUTBOUND: NUMBER LEFT, SECTOR MIDDLE, LOGO RIGHT */}
+                  <FlightItineraryRow
+                    label="Outbound Journey"
+                    airline={flight.airline}
+                    flightNumber={flight.flightNumber}
+                    origin={outboundSectorOrigin}
+                    destination={outboundSectorDestination}
+                    date={flight.departureDate}
+                    time={flight.departureTime}
+                    accent={posterTheme.accent}
+                  />
 
-                    <div className="text-center">
-                      <p className="text-base font-black text-slate-800">{routeText}</p>
-                      <p className="mt-1 text-[10px] font-semibold text-slate-500">OUTBOUND JOURNEY</p>
-                    </div>
+                  {/* RETURN: SAME LAYOUT */}
+                  <div className="my-3 border-t border-dashed border-slate-200" />
 
-                    <div className="text-right">
-                      <p className="text-xs font-bold text-slate-700">{dateText(flight.departureDate)}</p>
-                      <p className="text-xs font-semibold text-slate-500">{timeText(flight.departureTime)}</p>
-                    </div>
-                  </div>
-
-                  {/* RETURN JOURNEY - SAME LAYOUT AS OUTBOUND */}
-                  <div className="mt-3 border-t border-dashed border-slate-200 pt-3">
-                    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
-                      <div className="flex items-center gap-3">
-                        <AirlineLogo airline={flight.airline} />
-                        <div>
-                          <p className="text-sm font-black text-slate-800">{flight.airline || "Airline"}</p>
-                          <p className="text-xs font-semibold text-slate-500">{flight.returnFlight || "Return flight number"}</p>
-                        </div>
-                      </div>
-
-                      <div className="text-center">
-                        <p className="text-base font-black text-slate-800">
-                          {flight.destination || "Destination"} → {flight.origin || "Origin"}
-                        </p>
-                        <p className="mt-1 text-[10px] font-semibold text-slate-500">RETURN JOURNEY</p>
-                      </div>
-
-                      <div className="text-right">
-                        <p className="text-xs font-bold text-slate-700">{dateText(flight.returnDate)}</p>
-                        <p className="text-xs font-semibold text-slate-500">{timeText(flight.returnTime)}</p>
-                      </div>
-                    </div>
-                  </div>
+                  <FlightItineraryRow
+                    label="Return Journey"
+                    airline={flight.returnAirline || flight.airline}
+                    flightNumber={flight.returnFlight}
+                    origin={returnSectorOrigin}
+                    destination={returnSectorDestination}
+                    date={flight.returnDate}
+                    time={flight.returnTime}
+                    accent={posterTheme.accent}
+                  />
                 </div>
 
                 {/* AVAILABLE PACKAGES */}
                 <div className="mb-3 flex items-center justify-between">
-                  <h2 className="text-base font-black uppercase tracking-wider" style={{ color: posterTheme.primary }}>
+                  <h2
+                    className="text-base font-black uppercase tracking-wider"
+                    style={{ color: posterTheme.primary }}
+                  >
                     Available Umrah Packages
                   </h2>
-                  <span className="rounded-full px-3 py-1 text-[10px] font-black" style={{ color: posterTheme.primary, background: `${posterTheme.accent}35` }}>
+                  <span
+                    className="rounded-full px-3 py-1 text-[10px] font-black"
+                    style={{
+                      color: posterTheme.primary,
+                      background: `${posterTheme.accent}35`,
+                    }}
+                  >
                     {packages.length} PACKAGES
                   </span>
                 </div>
 
                 {/* HOTEL AND RATES TABLE */}
-                <div className="overflow-hidden rounded-lg" style={{ border: "1px solid #E8D8B7", background: "#FFFFFF", fontFamily: "Arial, Helvetica, sans-serif" }}>
-                  <div className="grid grid-cols-[14%_25%_25%_9%_9%_9%_9%] items-center gap-0 px-2 py-2.5" style={{ background: "#F1EBDD", borderBottom: "1px solid #E8D8B7" }}>
-                    {["Package", "Makkah Hotel", "Madinah Hotel", "Sharing", "Quad", "Triple", "Double"].map((heading) => (
-                      <div key={heading} className="px-1 text-center text-[10px] font-bold text-[#173E30]">{heading}</div>
+                <div
+                  className="overflow-hidden rounded-lg"
+                  style={{
+                    border: "1px solid #E8D8B7",
+                    background: "#FFFFFF",
+                    fontFamily: "Arial, Helvetica, sans-serif",
+                  }}
+                >
+                  <div
+                    className="grid grid-cols-[14%_25%_25%_9%_9%_9%_9%] items-center gap-0 px-2 py-2.5"
+                    style={{
+                      background: "#F1EBDD",
+                      borderBottom: "1px solid #E8D8B7",
+                    }}
+                  >
+                    {[
+                      "Package",
+                      "Makkah Hotel",
+                      "Madinah Hotel",
+                      "Sharing",
+                      "Quad",
+                      "Triple",
+                      "Double",
+                    ].map((heading) => (
+                      <div
+                        key={heading}
+                        className="px-1 text-center text-[10px] font-bold text-[#173E30]"
+                      >
+                        {heading}
+                      </div>
                     ))}
                   </div>
 
@@ -1049,7 +1438,10 @@ export default function Home() {
                     <div
                       key={pkg.id}
                       className="grid grid-cols-[14%_25%_25%_9%_9%_9%_9%] items-center gap-0 px-2 py-2.5"
-                      style={{ background: "#FFFFFF", borderBottom: "1px dashed #E8D8B7" }}
+                      style={{
+                        background: "#FFFFFF",
+                        borderBottom: "1px dashed #E8D8B7",
+                      }}
                     >
                       <div className="min-w-0 px-1">
                         <p className="break-words text-[10px] font-bold leading-tight text-[#174B38]">
@@ -1061,44 +1453,96 @@ export default function Home() {
                       </div>
 
                       <div className="flex min-w-0 items-start gap-1.5 px-1">
-                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-[#E8D8B7] bg-[#FBF8F0] text-[12px]">🕋</div>
+                        <div
+                          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[12px]"
+                          style={{
+                            border: "1px solid #E8D8B7",
+                            background: "#FBF8F0",
+                          }}
+                        >
+                          🕋
+                        </div>
                         <div className="min-w-0">
-                          <p className="break-words text-[10px] font-bold leading-snug text-[#174B38]">{(pkg.makkahHotel || "HOTEL NOT ADDED").toUpperCase()}</p>
+                          <p className="break-words text-[10px] font-bold leading-snug text-[#174B38]">
+                            {(pkg.makkahHotel || "HOTEL NOT ADDED").toUpperCase()}
+                          </p>
                           <p className="mt-1 break-words text-[9px] font-normal leading-snug text-[#777777]">
-                            {pkg.makkahDistance ? `${pkg.makkahDistance} ${pkg.makkahDistance.toLowerCase().includes("meter") ? "" : "METER "}FROM HARAM` : ""}
+                            {pkg.makkahDistance
+                              ? `${pkg.makkahDistance} ${
+                                  pkg.makkahDistance.toLowerCase().includes("meter")
+                                    ? ""
+                                    : "METER "
+                                }FROM HARAM`
+                              : ""}
                           </p>
                         </div>
                       </div>
 
                       <div className="flex min-w-0 items-start gap-1.5 px-1">
-                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-[#E8D8B7] bg-[#FBF8F0] text-[12px]">🕌</div>
+                        <div
+                          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[12px]"
+                          style={{
+                            border: "1px solid #E8D8B7",
+                            background: "#FBF8F0",
+                          }}
+                        >
+                          🕌
+                        </div>
                         <div className="min-w-0">
-                          <p className="break-words text-[10px] font-bold leading-snug text-[#174B38]">{(pkg.madinahHotel || "HOTEL NOT ADDED").toUpperCase()}</p>
+                          <p className="break-words text-[10px] font-bold leading-snug text-[#174B38]">
+                            {(pkg.madinahHotel || "HOTEL NOT ADDED").toUpperCase()}
+                          </p>
                           <p className="mt-1 break-words text-[9px] font-normal leading-snug text-[#777777]">
-                            {pkg.madinahDistance ? `${pkg.madinahDistance} ${pkg.madinahDistance.toLowerCase().includes("meter") ? "" : "METER "}FROM MASJID NABAWI` : ""}
+                            {pkg.madinahDistance
+                              ? `${pkg.madinahDistance} ${
+                                  pkg.madinahDistance.toLowerCase().includes("meter")
+                                    ? ""
+                                    : "METER "
+                                }FROM MASJID NABAWI`
+                              : ""}
                           </p>
                         </div>
                       </div>
 
-                      {[pkg.sharing, pkg.quad, pkg.triple, pkg.double].map((rate, rateIndex) => (
-                        <div key={`${pkg.id}-rate-${rateIndex}`} className="min-w-0 px-0.5 text-center">
-                          <span className="break-words text-[10px] font-black leading-tight tabular-nums text-[#174B38]">
-                            {rate ? money(rate) : "—"}
-                          </span>
-                        </div>
-                      ))}
+                      {[pkg.sharing, pkg.quad, pkg.triple, pkg.double].map(
+                        (rate, rateIndex) => (
+                          <div
+                            key={`${pkg.id}-rate-${rateIndex}`}
+                            className="min-w-0 px-0.5 text-center"
+                          >
+                            <span className="break-words text-[10px] font-black leading-tight tabular-nums text-[#174B38]">
+                              {rate ? money(rate) : "—"}
+                            </span>
+                          </div>
+                        ),
+                      )}
                     </div>
                   ))}
                 </div>
 
                 {/* CONTACT FOOTER */}
-                <div className="mt-5 rounded-xl px-4 py-3 text-center" style={{ background: posterTheme.gradient, color: "#FFFFFF" }}>
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/80">Contact Us For Booking & Details</p>
-                  <p className="mt-1 text-lg font-black tracking-wide">03137183111 • 03216837494 • 03128992016</p>
-                  <p className="mt-1 text-xs font-semibold text-white/85">haramjunoontravels@gmail.com</p>
+                <div
+                  className="mt-5 rounded-xl px-4 py-3 text-center"
+                  style={{
+                    background: posterTheme.gradient,
+                    color: "#FFFFFF",
+                  }}
+                >
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/80">
+                    Contact Us For Booking & Details
+                  </p>
+                  <p className="mt-1 text-lg font-black tracking-wide">
+                    03137183111 • 03216837494 • 03128992016
+                  </p>
+                  <p className="mt-1 text-xs font-semibold text-white/85">
+                    haramjunoontravels@gmail.com
+                  </p>
                 </div>
 
-                <div className="mt-4 border-t pt-3 text-center" style={{ borderColor: posterTheme.border }}>
+                <div
+                  className="mt-4 border-t pt-3 text-center"
+                  style={{ borderColor: posterTheme.border }}
+                >
                   <p className="text-[9px] font-semibold tracking-wide text-slate-500">
                     SYSTEM DESIGNED & DEVELOPED BY AMEER HAMZA
                   </p>
