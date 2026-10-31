@@ -1,24 +1,17 @@
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 import { toBlob } from "html-to-image";
 
 type PosterTheme =
-  | "royal"
-  | "emerald"
-  | "black"
-  | "cream"
-  | "navy"
-  | "maroon"
-  | "ocean"
-  | "purple"
-  | "sunset"
-  | "teal"
-  | "rose"
-  | "desert";
+  | "royal" | "emerald" | "black" | "cream"
+  | "navy" | "maroon" | "ocean" | "purple"
+  | "sunset" | "teal" | "rose" | "desert";
 
 type FlightData = {
   airline: string;
+  returnAirline: string;
   flightNumber: string;
   origin: string;
   destination: string;
@@ -218,22 +211,35 @@ const themes: Record<PosterTheme, ThemeDetails> = {
 };
 
 const themeOptions: PosterTheme[] = [
-  "royal",
-  "emerald",
-  "black",
-  "cream",
-  "navy",
-  "maroon",
-  "ocean",
-  "purple",
-  "sunset",
-  "teal",
-  "rose",
-  "desert",
+  "royal", "emerald", "black", "cream",
+  "navy", "maroon", "ocean", "purple",
+  "sunset", "teal", "rose", "desert",
 ];
+
+const airlineOptions = [
+  "Airblue",
+  "PIA",
+  "Fly Jinnah",
+  "AirSial",
+  "Riyadh Air",
+  "Saudia",
+  "SalamAir",
+];
+
+// Local airline logos: images must be inside public/airlines/
+const airlineLogos: Record<string, string> = {
+  PIA: "/airlines/pia.png",
+  Airblue: "/airlines/airblue.png",
+  AirSial: "/airlines/airsial.png",
+  "Fly Jinnah": "/airlines/fly-jinnah.png",
+  "Riyadh Air": "/airlines/riyadh-air.png",
+  Saudia: "/airlines/saudia.png",
+  SalamAir: "/airlines/salam-air.png",
+};
 
 const blankFlight: FlightData = {
   airline: "Airblue",
+  returnAirline: "Airblue",
   flightNumber: "",
   origin: "Multan",
   destination: "Jeddah",
@@ -264,9 +270,7 @@ function blankPackage(id: string, number: number): PackageData {
 
 function money(value: string | number) {
   const number = Number(String(value).replace(/,/g, ""));
-
   if (!Number.isFinite(number)) return String(value);
-
   return `PKR ${number.toLocaleString("en-PK")}`;
 }
 
@@ -274,7 +278,6 @@ function dateText(value: string) {
   if (!value) return "Date not added";
 
   const date = new Date(`${value}T00:00:00`);
-
   if (Number.isNaN(date.getTime())) return value;
 
   return date.toLocaleDateString("en-GB", {
@@ -289,7 +292,6 @@ function timeText(value: string) {
 
   const [hours, minutes] = value.split(":");
   const hour = Number(hours);
-
   if (!Number.isFinite(hour)) return value;
 
   const suffix = hour >= 12 ? "PM" : "AM";
@@ -316,7 +318,6 @@ function Field({
       <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600">
         {label}
       </span>
-
       <input
         type={type}
         value={value}
@@ -344,7 +345,6 @@ function SelectField({
       <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600">
         {label}
       </span>
-
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
@@ -360,27 +360,89 @@ function SelectField({
   );
 }
 
-const airlineLogos: Record<string, string> = {
-  PIA: "/airlines/pia.png",
-  Airblue: "/airlines/airblue.png",
-  AirSial: "/airlines/airsial.png",
-  "Fly Jinnah": "/airlines/fly-jinnah.png",
-  Saudia: "/airlines/saudia.png",
-  SalamAir: "/airlines/salam-air.png",
-  "Riyadh Air": "/airlines/riyadh-air.png",
-};
-
 function AirlineLogo({ airline }: { airline: string }) {
+  const [failed, setFailed] = useState(false);
   const logo = airlineLogos[airline];
 
-  if (!logo) return null;
+  if (!logo || failed) {
+    return (
+      <div className="flex h-14 w-20 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white px-1 text-center text-xs font-black text-slate-700">
+        {airline || "AIRLINE"}
+      </div>
+    );
+  }
 
   return (
     <img
       src={logo}
-      alt={`${airline} Logo`}
+      alt={`${airline} logo`}
+      crossOrigin="anonymous"
       className="h-14 w-20 shrink-0 object-contain"
+      onError={() => setFailed(true)}
     />
+  );
+}
+
+// Same itinerary layout for outbound and return
+function FlightItineraryRow({
+  label,
+  airline,
+  flightNumber,
+  origin,
+  destination,
+  date,
+  time,
+  accent,
+}: {
+  label: string;
+  airline: string;
+  flightNumber: string;
+  origin: string;
+  destination: string;
+  date: string;
+  time: string;
+  accent: string;
+}) {
+  return (
+    <div className="grid grid-cols-[1fr_1.15fr_100px] items-center gap-3">
+      {/* LEFT: FLIGHT NUMBER + DATE/TIME */}
+      <div className="min-w-0">
+        <p className="text-[9px] font-black uppercase tracking-wider text-slate-500">
+          {label}
+        </p>
+        <p className="mt-1 break-words text-sm font-black text-slate-800">
+          {flightNumber || "Flight number"}
+        </p>
+        <p className="mt-1 text-[10px] font-semibold text-slate-500">
+          {dateText(date)}
+        </p>
+        <p className="text-[10px] font-semibold text-slate-500">
+          {timeText(time)}
+        </p>
+      </div>
+
+      {/* MIDDLE: SECTOR */}
+      <div className="min-w-0 text-center">
+        <p className="break-words text-base font-black text-slate-800">
+          {origin || "Origin"} → {destination || "Destination"}
+        </p>
+        <div
+          className="mx-auto mt-2 h-0.5 w-16 rounded-full"
+          style={{ background: accent }}
+        />
+        <p className="mt-1 text-[9px] font-bold uppercase tracking-wider text-slate-500">
+          Sector
+        </p>
+      </div>
+
+      {/* RIGHT: SELECTED AIRLINE LOGO */}
+      <div className="flex min-w-0 flex-col items-end justify-center">
+        <AirlineLogo airline={airline} />
+        <p className="mt-1 max-w-full text-right text-[9px] font-bold text-slate-500">
+          {airline}
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -415,7 +477,20 @@ export default function Home() {
         const parsed = JSON.parse(raw);
 
         if (Array.isArray(parsed)) {
-          setSavedPosters(parsed);
+          // Compatibility with previously saved posters
+          const compatible = parsed.map((poster: SavedPoster) => ({
+            ...poster,
+            flight: {
+              ...blankFlight,
+              ...poster.flight,
+              returnAirline:
+                poster.flight?.returnAirline ||
+                poster.flight?.airline ||
+                "Airblue",
+            },
+          }));
+
+          setSavedPosters(compatible);
         }
       }
     } catch (error) {
@@ -441,7 +516,6 @@ export default function Home() {
       ...current,
       [key]: value,
     }));
-
     setActivePoster(null);
   }
 
@@ -455,7 +529,6 @@ export default function Home() {
         pkg.id === id ? { ...pkg, [key]: value } : pkg,
       ),
     );
-
     setActivePoster(null);
   }
 
@@ -467,7 +540,6 @@ export default function Home() {
         current.length + 1,
       ),
     ]);
-
     setActivePoster(null);
   }
 
@@ -477,10 +549,7 @@ export default function Home() {
       return;
     }
 
-    setPackages((current) =>
-      current.filter((pkg) => pkg.id !== id),
-    );
-
+    setPackages((current) => current.filter((pkg) => pkg.id !== id));
     setActivePoster(null);
   }
 
@@ -490,7 +559,7 @@ export default function Home() {
     if (latest) {
       setTitle(latest.title);
       setTheme(latest.theme);
-      setFlight({ ...latest.flight });
+      setFlight({ ...blankFlight, ...latest.flight });
 
       setPackages(
         latest.packages.map((pkg, index) => ({
@@ -504,11 +573,7 @@ export default function Home() {
       setTitle("UMRAH PACKAGE");
       setTheme("royal");
       setFlight({ ...blankFlight });
-
-      setPackages([
-        blankPackage(`package-${Date.now()}`, 1),
-      ]);
-
+      setPackages([blankPackage(`package-${Date.now()}`, 1)]);
       setServices(
         "Visa • Return Ticket • Accommodation • Transport • 21 Days",
       );
@@ -546,7 +611,6 @@ export default function Home() {
           item.id === editingId ? poster : item,
         );
       }
-
       return [poster, ...current];
     });
 
@@ -563,7 +627,7 @@ export default function Home() {
   function editPoster(poster: SavedPoster) {
     setTitle(poster.title);
     setTheme(poster.theme);
-    setFlight({ ...poster.flight });
+    setFlight({ ...blankFlight, ...poster.flight });
 
     setPackages(
       poster.packages.map((pkg, index) => ({
@@ -577,16 +641,13 @@ export default function Home() {
     setActivePoster(poster);
     setMessage("Poster loaded for editing.");
 
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function showPoster(poster: SavedPoster) {
     setTitle(poster.title);
     setTheme(poster.theme);
-    setFlight({ ...poster.flight });
+    setFlight({ ...blankFlight, ...poster.flight });
 
     setPackages(
       poster.packages.map((pkg, index) => ({
@@ -602,11 +663,7 @@ export default function Home() {
   }
 
   function deletePoster(id: string) {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this poster?",
-      )
-    ) {
+    if (!window.confirm("Are you sure you want to delete this poster?")) {
       return;
     }
 
@@ -622,7 +679,6 @@ export default function Home() {
     setMessage("Poster deleted.");
   }
 
-  
   async function copyPosterImage() {
     const target = posterRef.current;
 
@@ -659,38 +715,30 @@ export default function Home() {
       link.click();
       link.remove();
 
-      window.setTimeout(() => {
-        URL.revokeObjectURL(url);
-      }, 3000);
+      window.setTimeout(() => URL.revokeObjectURL(url), 3000);
     }
 
     try {
+      await document.fonts.ready;
+
       if (
         navigator.clipboard &&
         typeof ClipboardItem !== "undefined" &&
         window.isSecureContext
       ) {
-        // Clipboard write is started immediately during the button click.
         const imagePromise = toBlob(target, options).then((blob) => {
           if (!blob) {
             throw new Error("Poster image could not be generated.");
           }
-
           return blob;
         });
 
-        const clipboardPromise = navigator.clipboard.write([
-          new ClipboardItem({
-            "image/png": imagePromise,
-          }),
+        await navigator.clipboard.write([
+          new ClipboardItem({ "image/png": imagePromise }),
         ]);
-
-        await clipboardPromise;
 
         setMessage("Poster copied successfully! Now paste it into WhatsApp.");
       } else {
-        await document.fonts.ready;
-
         const blob = await toBlob(target, options);
 
         if (!blob) {
@@ -703,7 +751,6 @@ export default function Home() {
     } catch (error) {
       console.error("Poster copy error:", error);
 
-      // If clipboard fails, automatically download the poster.
       try {
         const blob = await toBlob(target, options);
 
@@ -715,7 +762,6 @@ export default function Home() {
         setMessage("Copy unavailable. Poster downloaded successfully.");
       } catch (downloadError) {
         console.error("Poster download error:", downloadError);
-
         setMessage(
           "Image failed. Please check browser permissions and image loading.",
         );
@@ -725,14 +771,10 @@ export default function Home() {
     }
   }
 
-
   function exportSavedData() {
-    const blob = new Blob(
-      [JSON.stringify(savedPosters, null, 2)],
-      {
-        type: "application/json",
-      },
-    );
+    const blob = new Blob([JSON.stringify(savedPosters, null, 2)], {
+      type: "application/json",
+    });
 
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -766,12 +808,13 @@ export default function Home() {
         createdAt: "",
       };
 
-  const posterTheme =
-    themes[shownPoster.theme] || themes.royal;
+  const posterTheme = themes[shownPoster.theme] || themes.royal;
 
-  const routeText = `${flight.origin || "Origin"} → ${
-    flight.destination || "Destination"
-  }`;
+  const outboundSectorOrigin = flight.origin || "Origin";
+  const outboundSectorDestination = flight.destination || "Destination";
+
+  const returnSectorOrigin = flight.destination || "Destination";
+  const returnSectorDestination = flight.origin || "Origin";
 
   return (
     <main className="min-h-screen bg-[#F4F5F7] text-slate-800">
@@ -781,11 +824,9 @@ export default function Home() {
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#D9B66F]">
               Haram Junoon Travels & Tours
             </p>
-
             <h1 className="mt-1 text-2xl font-black tracking-wide sm:text-3xl">
               Umrah Poster Generator
             </h1>
-
             <p className="mt-1 text-xs text-white/60">
               Create, save and manage professional Umrah package posters
             </p>
@@ -798,7 +839,6 @@ export default function Home() {
             >
               + New Poster
             </button>
-
             <button
               onClick={exportSavedData}
               className="rounded-xl bg-[#C79A4C] px-4 py-2.5 text-sm font-black text-[#20170B] transition hover:bg-[#E0B967]"
@@ -840,7 +880,6 @@ export default function Home() {
                 <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600">
                   Poster Theme
                 </span>
-
                 <select
                   value={theme}
                   onChange={(event) => {
@@ -885,7 +924,6 @@ export default function Home() {
                       className="mb-1 block h-5 rounded-md"
                       style={{ background: themes[key].gradient }}
                     />
-
                     <span className="text-[10px] font-bold text-slate-700">
                       {themes[key].name}
                     </span>
@@ -895,89 +933,93 @@ export default function Home() {
             </div>
           </div>
 
-          {/* FLIGHT DETAILS */}
+          {/* FLIGHT DETAILS FORM */}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-black text-slate-800">
                 Flight Details
               </h2>
-
               <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
                 Shared flight
               </span>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <SelectField
-                label="Airline"
-                value={flight.airline}
-                onChange={(value) => updateFlight("airline", value)}
-                options={[
-                  "Airblue",
-                  "PIA",
-                  "Fly Jinnah",
-                  "AirSial",
-                  "Riyadh Air",
-                  "Saudia",
-                  "SalamAir",
-                ]}
-              />
+            <div className="space-y-4">
+              <div className="rounded-xl border border-slate-200 p-3">
+                <h3 className="mb-3 text-sm font-black text-slate-800">
+                  Outbound Flight
+                </h3>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <SelectField
+                    label="Outbound Airline"
+                    value={flight.airline}
+                    onChange={(value) => updateFlight("airline", value)}
+                    options={airlineOptions}
+                  />
+                  <Field
+                    label="Flight Number"
+                    value={flight.flightNumber}
+                    onChange={(value) => updateFlight("flightNumber", value)}
+                    placeholder="PA-123"
+                  />
+                  <Field
+                    label="Origin"
+                    value={flight.origin}
+                    onChange={(value) => updateFlight("origin", value)}
+                    placeholder="Multan"
+                  />
+                  <Field
+                    label="Destination"
+                    value={flight.destination}
+                    onChange={(value) => updateFlight("destination", value)}
+                    placeholder="Jeddah"
+                  />
+                  <Field
+                    label="Departure Date"
+                    type="date"
+                    value={flight.departureDate}
+                    onChange={(value) => updateFlight("departureDate", value)}
+                  />
+                  <Field
+                    label="Departure Time"
+                    type="time"
+                    value={flight.departureTime}
+                    onChange={(value) => updateFlight("departureTime", value)}
+                  />
+                </div>
+              </div>
 
-              <Field
-                label="Flight Number"
-                value={flight.flightNumber}
-                onChange={(value) => updateFlight("flightNumber", value)}
-                placeholder="PA-123"
-              />
-
-              <Field
-                label="Origin"
-                value={flight.origin}
-                onChange={(value) => updateFlight("origin", value)}
-                placeholder="Multan"
-              />
-
-              <Field
-                label="Destination"
-                value={flight.destination}
-                onChange={(value) => updateFlight("destination", value)}
-                placeholder="Jeddah"
-              />
-
-              <Field
-                label="Departure Date"
-                type="date"
-                value={flight.departureDate}
-                onChange={(value) => updateFlight("departureDate", value)}
-              />
-
-              <Field
-                label="Departure Time"
-                type="time"
-                value={flight.departureTime}
-                onChange={(value) => updateFlight("departureTime", value)}
-              />
-
-              <Field
-                label="Return Date"
-                type="date"
-                value={flight.returnDate}
-                onChange={(value) => updateFlight("returnDate", value)}
-              />
-
-              <Field
-                label="Return Flight Number"
-                value={flight.returnFlight}
-                onChange={(value) => updateFlight("returnFlight", value)}
-                placeholder="Return flight number"
-              />
-
-              <Field
-                label="Return Time"
-                type="time"
-                value={flight.returnTime}
-                onChange={(value) => updateFlight("returnTime", value)}
-              />
+              <div className="rounded-xl border border-slate-200 p-3">
+                <h3 className="mb-3 text-sm font-black text-slate-800">
+                  Return Journey
+                </h3>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <SelectField
+                    label="Return Airline"
+                    value={flight.returnAirline || flight.airline}
+                    onChange={(value) => updateFlight("returnAirline", value)}
+                    options={airlineOptions}
+                  />
+                  <Field
+                    label="Return Flight Number"
+                    value={flight.returnFlight}
+                    onChange={(value) => updateFlight("returnFlight", value)}
+                    placeholder="PA-124"
+                  />
+                  <Field
+                    label="Return Date"
+                    type="date"
+                    value={flight.returnDate}
+                    onChange={(value) => updateFlight("returnDate", value)}
+                  />
+                  <Field
+                    label="Return Time"
+                    type="time"
+                    value={flight.returnTime}
+                    onChange={(value) => updateFlight("returnTime", value)}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -988,12 +1030,10 @@ export default function Home() {
                 <h2 className="text-lg font-black text-slate-800">
                   Package Details
                 </h2>
-
                 <p className="text-xs text-slate-500">
                   Add multiple hotel and rate options
                 </p>
               </div>
-
               <button
                 onClick={addPackage}
                 className="rounded-xl bg-gradient-to-r from-[#9A6B2C] to-[#D4AD63] px-4 py-2.5 text-sm font-black text-white shadow-md transition hover:brightness-105"
@@ -1011,7 +1051,6 @@ export default function Home() {
                   <h3 className="font-black text-[#8A642E]">
                     Package {index + 1}
                   </h3>
-
                   <button
                     onClick={() => removePackage(pkg.id)}
                     className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50"
@@ -1024,18 +1063,13 @@ export default function Home() {
                   <Field
                     label="Package Name / Code"
                     value={pkg.name}
-                    onChange={(value) =>
-                      updatePackage(pkg.id, "name", value)
-                    }
+                    onChange={(value) => updatePackage(pkg.id, "name", value)}
                     placeholder="Package No. 1"
                   />
-
                   <Field
                     label="Total Nights"
                     value={pkg.nights}
-                    onChange={(value) =>
-                      updatePackage(pkg.id, "nights", value)
-                    }
+                    onChange={(value) => updatePackage(pkg.id, "nights", value)}
                     placeholder="21"
                   />
                 </div>
@@ -1044,42 +1078,26 @@ export default function Home() {
 
                 <div className="mb-3 flex items-center gap-2">
                   <span className="text-lg">🕋</span>
-
-                  <h4 className="font-black text-[#8A4B12]">
-                    Makkah Hotel
-                  </h4>
+                  <h4 className="font-black text-[#8A4B12]">Makkah Hotel</h4>
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <Field
                     label="Hotel Name"
                     value={pkg.makkahHotel}
-                    onChange={(value) =>
-                      updatePackage(pkg.id, "makkahHotel", value)
-                    }
+                    onChange={(value) => updatePackage(pkg.id, "makkahHotel", value)}
                     placeholder="Makkah hotel name"
                   />
-
                   <SelectField
                     label="Hotel Category"
                     value={pkg.makkahCategory}
-                    onChange={(value) =>
-                      updatePackage(pkg.id, "makkahCategory", value)
-                    }
-                    options={[
-                      "Economy",
-                      "3 Star",
-                      "4 Star",
-                      "5 Star",
-                    ]}
+                    onChange={(value) => updatePackage(pkg.id, "makkahCategory", value)}
+                    options={["Economy", "3 Star", "4 Star", "5 Star"]}
                   />
-
                   <Field
                     label="Distance from Haram"
                     value={pkg.makkahDistance}
-                    onChange={(value) =>
-                      updatePackage(pkg.id, "makkahDistance", value)
-                    }
+                    onChange={(value) => updatePackage(pkg.id, "makkahDistance", value)}
                     placeholder="500 Meter"
                   />
                 </div>
@@ -1088,42 +1106,26 @@ export default function Home() {
 
                 <div className="mb-3 flex items-center gap-2">
                   <span className="text-lg">🕌</span>
-
-                  <h4 className="font-black text-[#08734D]">
-                    Madinah Hotel
-                  </h4>
+                  <h4 className="font-black text-[#08734D]">Madinah Hotel</h4>
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <Field
                     label="Hotel Name"
                     value={pkg.madinahHotel}
-                    onChange={(value) =>
-                      updatePackage(pkg.id, "madinahHotel", value)
-                    }
+                    onChange={(value) => updatePackage(pkg.id, "madinahHotel", value)}
                     placeholder="Madinah hotel name"
                   />
-
                   <SelectField
                     label="Hotel Category"
                     value={pkg.madinahCategory}
-                    onChange={(value) =>
-                      updatePackage(pkg.id, "madinahCategory", value)
-                    }
-                    options={[
-                      "Economy",
-                      "3 Star",
-                      "4 Star",
-                      "5 Star",
-                    ]}
+                    onChange={(value) => updatePackage(pkg.id, "madinahCategory", value)}
+                    options={["Economy", "3 Star", "4 Star", "5 Star"]}
                   />
-
                   <Field
                     label="Distance from Masjid Nabawi"
                     value={pkg.madinahDistance}
-                    onChange={(value) =>
-                      updatePackage(pkg.id, "madinahDistance", value)
-                    }
+                    onChange={(value) => updatePackage(pkg.id, "madinahDistance", value)}
                     placeholder="800 Meter"
                   />
                 </div>
@@ -1138,36 +1140,25 @@ export default function Home() {
                   <Field
                     label="Sharing"
                     value={pkg.sharing}
-                    onChange={(value) =>
-                      updatePackage(pkg.id, "sharing", value)
-                    }
+                    onChange={(value) => updatePackage(pkg.id, "sharing", value)}
                     placeholder="226299"
                   />
-
                   <Field
                     label="Quad"
                     value={pkg.quad}
-                    onChange={(value) =>
-                      updatePackage(pkg.id, "quad", value)
-                    }
+                    onChange={(value) => updatePackage(pkg.id, "quad", value)}
                     placeholder="230899"
                   />
-
                   <Field
                     label="Triple"
                     value={pkg.triple}
-                    onChange={(value) =>
-                      updatePackage(pkg.id, "triple", value)
-                    }
+                    onChange={(value) => updatePackage(pkg.id, "triple", value)}
                     placeholder="238399"
                   />
-
                   <Field
                     label="Double"
                     value={pkg.double}
-                    onChange={(value) =>
-                      updatePackage(pkg.id, "double", value)
-                    }
+                    onChange={(value) => updatePackage(pkg.id, "double", value)}
                     placeholder="253499"
                   />
                 </div>
@@ -1184,7 +1175,6 @@ export default function Home() {
               >
                 {editingId ? "Update Poster" : "Save Poster"}
               </button>
-
               <button
                 onClick={copyPosterImage}
                 disabled={copying}
@@ -1208,12 +1198,10 @@ export default function Home() {
                 <h2 className="text-lg font-black text-slate-800">
                   Saved Posters
                 </h2>
-
                 <p className="text-xs text-slate-500">
                   {savedPosters.length} saved poster(s)
                 </p>
               </div>
-
               <button
                 onClick={exportSavedData}
                 className="text-xs font-bold text-[#936A2E] underline"
@@ -1238,17 +1226,13 @@ export default function Home() {
                         <p className="font-black text-slate-800">
                           {poster.title}
                         </p>
-
                         <p className="text-xs text-slate-500">
                           {poster.packages.length} package(s) •{" "}
                           {poster.createdAt
-                            ? new Date(
-                                poster.createdAt,
-                              ).toLocaleDateString("en-GB")
+                            ? new Date(poster.createdAt).toLocaleDateString("en-GB")
                             : "Date unavailable"}
                         </p>
                       </div>
-
                       <span className="rounded-full bg-[#F8F0E1] px-2.5 py-1 text-[10px] font-bold text-[#87612B]">
                         {themes[poster.theme]?.name || "Royal Blue"}
                       </span>
@@ -1261,14 +1245,12 @@ export default function Home() {
                       >
                         Preview
                       </button>
-
                       <button
                         onClick={() => editPoster(poster)}
                         className="rounded-lg border border-[#D8BD8A] px-3 py-1.5 text-xs font-bold text-[#805B25] hover:bg-[#FBF5E9]"
                       >
                         Edit
                       </button>
-
                       <button
                         onClick={() => deletePoster(poster.id)}
                         className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50"
@@ -1290,12 +1272,10 @@ export default function Home() {
               <h2 className="text-xl font-black text-slate-800">
                 Live Poster Preview
               </h2>
-
               <p className="text-xs text-slate-500">
                 This is the image that will be copied or downloaded
               </p>
             </div>
-
             <button
               onClick={copyPosterImage}
               disabled={copying}
@@ -1328,29 +1308,25 @@ export default function Home() {
                   <img
                     src="/haram-junoon-logo.png"
                     alt="Haram Junoon Travels & Tours"
+                    crossOrigin="anonymous"
                     className="mx-auto mb-3 h-16 w-16 rounded-full border-2 border-[#D9B66F] bg-white object-contain p-1"
                     onError={(event) => {
                       event.currentTarget.style.display = "none";
                     }}
                   />
-
                   <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#E8C981]">
                     HARAM JUNOON TRAVELS & TOURS
                   </p>
-
                   <h1 className="mt-2 text-4xl font-black uppercase tracking-wide text-white">
                     {shownPoster.title || "UMRAH PACKAGE"}
                   </h1>
-
                   <div
                     className="mx-auto mt-3 h-1 w-24 rounded-full"
                     style={{ background: posterTheme.accent }}
                   />
-
                   <p className="mt-3 text-sm font-semibold tracking-wide text-white/90">
                     YOUR JOURNEY, OUR CARE
                   </p>
-
                   <p className="mt-3 text-xs font-semibold text-white/85">
                     {shownPoster.services}
                   </p>
@@ -1373,74 +1349,36 @@ export default function Home() {
                     >
                       Flight Details
                     </h2>
-
                     <span className="text-[10px] font-bold text-slate-500">
                       SHARED FLIGHT
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
-                    <div className="flex items-center gap-3">
-                      <AirlineLogo airline={flight.airline} />
+                  {/* OUTBOUND: NUMBER LEFT, SECTOR MIDDLE, LOGO RIGHT */}
+                  <FlightItineraryRow
+                    label="Outbound Journey"
+                    airline={flight.airline}
+                    flightNumber={flight.flightNumber}
+                    origin={outboundSectorOrigin}
+                    destination={outboundSectorDestination}
+                    date={flight.departureDate}
+                    time={flight.departureTime}
+                    accent={posterTheme.accent}
+                  />
 
-                      <div>
-                        <p className="text-sm font-black text-slate-800">
-                          {flight.airline || "Airline"}
-                        </p>
+                  {/* RETURN: SAME LAYOUT */}
+                  <div className="my-3 border-t border-dashed border-slate-200" />
 
-                        <p className="text-xs font-semibold text-slate-500">
-                          {flight.flightNumber || "Flight number"}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="text-center">
-                      <p className="text-base font-black text-slate-800">
-                        {routeText}
-                      </p>
-
-                      <p className="mt-1 text-[10px] font-semibold text-slate-500">
-                        OUTBOUND JOURNEY
-                      </p>
-                    </div>
-
-                    <div className="text-right">
-                      <p className="text-xs font-bold text-slate-700">
-                        {dateText(flight.departureDate)}
-                      </p>
-
-                      <p className="text-xs font-semibold text-slate-500">
-                        {timeText(flight.departureTime)}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* RETURN JOURNEY - ALWAYS VISIBLE */}
-                  <div className="mt-3 border-t border-dashed border-slate-200 pt-3">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div>
-                        <p className="text-[10px] font-black uppercase tracking-wider text-slate-500">
-                          Return Journey
-                        </p>
-
-                        <p className="text-sm font-black text-slate-800">
-                          {flight.destination || "Destination"} →{" "}
-                          {flight.origin || "Origin"}
-                        </p>
-                      </div>
-
-                      <div className="text-right">
-                        <p className="text-xs font-bold text-slate-700">
-                          {flight.returnFlight || "Return flight number"}
-                        </p>
-
-                        <p className="text-xs font-semibold text-slate-500">
-                          {dateText(flight.returnDate)} •{" "}
-                          {timeText(flight.returnTime)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                  <FlightItineraryRow
+                    label="Return Journey"
+                    airline={flight.returnAirline || flight.airline}
+                    flightNumber={flight.returnFlight}
+                    origin={returnSectorOrigin}
+                    destination={returnSectorDestination}
+                    date={flight.returnDate}
+                    time={flight.returnTime}
+                    accent={posterTheme.accent}
+                  />
                 </div>
 
                 {/* AVAILABLE PACKAGES */}
@@ -1451,7 +1389,6 @@ export default function Home() {
                   >
                     Available Umrah Packages
                   </h2>
-
                   <span
                     className="rounded-full px-3 py-1 text-[10px] font-black"
                     style={{
@@ -1472,7 +1409,6 @@ export default function Home() {
                     fontFamily: "Arial, Helvetica, sans-serif",
                   }}
                 >
-                  {/* TABLE HEADER */}
                   <div
                     className="grid grid-cols-[14%_25%_25%_9%_9%_9%_9%] items-center gap-0 px-2 py-2.5"
                     style={{
@@ -1498,103 +1434,88 @@ export default function Home() {
                     ))}
                   </div>
 
-                  {/* HOTEL AND RATE ROWS */}
                   {packages.map((pkg, index) => (
-                    <div key={pkg.id}>
-                      <div
-                        className="grid grid-cols-[14%_25%_25%_9%_9%_9%_9%] items-center gap-0 px-2 py-2.5"
-                        style={{
-                          background: "#FFFFFF",
-                          borderBottom: "1px dashed #E8D8B7",
-                        }}
-                      >
-                        {/* PACKAGE */}
-                        <div className="min-w-0 px-1">
-                          <p className="break-words text-[10px] font-bold leading-tight text-[#174B38]">
-                            {pkg.name || `UP-${110175 + index}`}
-                          </p>
-
-                          <p className="mt-2 rounded-md bg-[#F2E7D0] px-2 py-1 text-[9px] font-black text-[#8B642D]">
-                            TOTAL: {pkg.nights || "—"} NIGHTS
-                          </p>
-                        </div>
-
-                        {/* MAKKAH HOTEL */}
-                        <div className="flex min-w-0 items-start gap-1.5 px-1">
-                          <div
-                            className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[12px]"
-                            style={{
-                              border: "1px solid #E8D8B7",
-                              background: "#FBF8F0",
-                            }}
-                          >
-                            🕋
-                          </div>
-
-                          <div className="min-w-0">
-                            <p className="break-words text-[10px] font-bold leading-snug text-[#174B38]">
-                              {(pkg.makkahHotel || "HOTEL NOT ADDED").toUpperCase()}
-                            </p>
-
-                            <p className="mt-1 break-words text-[9px] font-normal leading-snug text-[#777777]">
-                              {pkg.makkahDistance
-                                ? `${pkg.makkahDistance} ${
-                                    pkg.makkahDistance
-                                      .toLowerCase()
-                                      .includes("meter")
-                                      ? ""
-                                      : "METER "
-                                  }FROM HARAM`
-                                : ""}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* MADINAH HOTEL */}
-                        <div className="flex min-w-0 items-start gap-1.5 px-1">
-                          <div
-                            className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[12px]"
-                            style={{
-                              border: "1px solid #E8D8B7",
-                              background: "#FBF8F0",
-                            }}
-                          >
-                            🕌
-                          </div>
-
-                          <div className="min-w-0">
-                            <p className="break-words text-[10px] font-bold leading-snug text-[#174B38]">
-                              {(pkg.madinahHotel || "HOTEL NOT ADDED").toUpperCase()}
-                            </p>
-
-                            <p className="mt-1 break-words text-[9px] font-normal leading-snug text-[#777777]">
-                              {pkg.madinahDistance
-                                ? `${pkg.madinahDistance} ${
-                                    pkg.madinahDistance
-                                      .toLowerCase()
-                                      .includes("meter")
-                                      ? ""
-                                      : "METER "
-                                  }FROM MASJID NABAWI`
-                                : ""}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* RATES */}
-                        {[pkg.sharing, pkg.quad, pkg.triple, pkg.double].map(
-                          (rate, rateIndex) => (
-                            <div
-                              key={`${pkg.id}-rate-${rateIndex}`}
-                              className="min-w-0 px-0.5 text-center"
-                            >
-                              <span className="break-words text-[10px] font-black leading-tight tabular-nums text-[#174B38]">
-                                {rate ? money(rate) : "—"}
-                              </span>
-                            </div>
-                          ),
-                        )}
+                    <div
+                      key={pkg.id}
+                      className="grid grid-cols-[14%_25%_25%_9%_9%_9%_9%] items-center gap-0 px-2 py-2.5"
+                      style={{
+                        background: "#FFFFFF",
+                        borderBottom: "1px dashed #E8D8B7",
+                      }}
+                    >
+                      <div className="min-w-0 px-1">
+                        <p className="break-words text-[10px] font-bold leading-tight text-[#174B38]">
+                          {pkg.name || `UP-${110175 + index}`}
+                        </p>
+                        <p className="mt-2 rounded-md bg-[#F2E7D0] px-2 py-1 text-[9px] font-black text-[#8B642D]">
+                          TOTAL: {pkg.nights || "—"} NIGHTS
+                        </p>
                       </div>
+
+                      <div className="flex min-w-0 items-start gap-1.5 px-1">
+                        <div
+                          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[12px]"
+                          style={{
+                            border: "1px solid #E8D8B7",
+                            background: "#FBF8F0",
+                          }}
+                        >
+                          🕋
+                        </div>
+                        <div className="min-w-0">
+                          <p className="break-words text-[10px] font-bold leading-snug text-[#174B38]">
+                            {(pkg.makkahHotel || "HOTEL NOT ADDED").toUpperCase()}
+                          </p>
+                          <p className="mt-1 break-words text-[9px] font-normal leading-snug text-[#777777]">
+                            {pkg.makkahDistance
+                              ? `${pkg.makkahDistance} ${
+                                  pkg.makkahDistance.toLowerCase().includes("meter")
+                                    ? ""
+                                    : "METER "
+                                }FROM HARAM`
+                              : ""}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex min-w-0 items-start gap-1.5 px-1">
+                        <div
+                          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[12px]"
+                          style={{
+                            border: "1px solid #E8D8B7",
+                            background: "#FBF8F0",
+                          }}
+                        >
+                          🕌
+                        </div>
+                        <div className="min-w-0">
+                          <p className="break-words text-[10px] font-bold leading-snug text-[#174B38]">
+                            {(pkg.madinahHotel || "HOTEL NOT ADDED").toUpperCase()}
+                          </p>
+                          <p className="mt-1 break-words text-[9px] font-normal leading-snug text-[#777777]">
+                            {pkg.madinahDistance
+                              ? `${pkg.madinahDistance} ${
+                                  pkg.madinahDistance.toLowerCase().includes("meter")
+                                    ? ""
+                                    : "METER "
+                                }FROM MASJID NABAWI`
+                              : ""}
+                          </p>
+                        </div>
+                      </div>
+
+                      {[pkg.sharing, pkg.quad, pkg.triple, pkg.double].map(
+                        (rate, rateIndex) => (
+                          <div
+                            key={`${pkg.id}-rate-${rateIndex}`}
+                            className="min-w-0 px-0.5 text-center"
+                          >
+                            <span className="break-words text-[10px] font-black leading-tight tabular-nums text-[#174B38]">
+                              {rate ? money(rate) : "—"}
+                            </span>
+                          </div>
+                        ),
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1610,11 +1531,9 @@ export default function Home() {
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/80">
                     Contact Us For Booking & Details
                   </p>
-
                   <p className="mt-1 text-lg font-black tracking-wide">
                     03137183111 • 03216837494 • 03128992016
                   </p>
-
                   <p className="mt-1 text-xs font-semibold text-white/85">
                     haramjunoontravels@gmail.com
                   </p>
