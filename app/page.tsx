@@ -1623,7 +1623,7 @@ export default function Home() {
                               style={{ background: "#FFF8E8" }}
                             >
                               <p
-                                className="break-words text-[12px] font-black leading-snug sm:text-[15px]"
+                                className="break-words text-[10px] font-medium leading-snug sm:text-[12px] tracking-normal"
                                 style={{ color: "#8A4B12" }}
                               >
                                 {pkg.makkahHotel || "Hotel not added"}
@@ -1685,7 +1685,7 @@ export default function Home() {
                                 color: "#68440E",
                               }}
                             >
-                              <span className="break-words text-[10px] font-black leading-tight tabular-nums sm:text-sm">
+                              <span className="break-words text-[15px] font-black leading-tight tabular-nums sm:text-sm">
                                 {pkg.sharing ? money(pkg.sharing) : "—"}
                               </span>
                             </td>
