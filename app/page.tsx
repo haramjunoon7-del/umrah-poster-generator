@@ -1623,7 +1623,7 @@ export default function Home() {
                               style={{ background: "#FFF8E8" }}
                             >
                               <p
-                                className="break-words text-[13px] font-semibold leading-snug sm:text-[15px]"
+                                className="break-words text-[14px] font-semibold leading-snug sm:text-[15px]"
                                 style={{ color: "#ca9d48" }}
                               >
                                 {pkg.makkahHotel || "Hotel not added"}
@@ -1653,7 +1653,7 @@ export default function Home() {
                               style={{ background: "#F0F8F2" }}
                             >
                               <p
-                                className="break-words text-[13px] font-semibold leading-snug sm:text-[15px]"
+                                className="break-words text-[14px] font-semibold leading-snug sm:text-[15px]"
                                 style={{ color: "#08734D" }}
                               >
                                 {pkg.madinahHotel || "Hotel not added"}
