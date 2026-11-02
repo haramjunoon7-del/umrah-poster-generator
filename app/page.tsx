@@ -22,7 +22,7 @@ type FlightData = {
   returnTime: string;
 };
 
-type PosterDesign = "classic" | "schedule";
+type PosterDesign = "classic" | "schedule" | "offer";
 
 type FlightSchedule = {
   id: string;
@@ -498,7 +498,7 @@ export default function Home() {
           // Compatibility with previously saved posters
           const compatible: SavedPoster[] = parsed.map((poster: SavedPoster): SavedPoster => ({
             ...poster,
-            design: poster.design === "schedule" ? "schedule" : "classic",
+            design: poster.design === "offer" ? "offer" : poster.design === "schedule" ? "schedule" : "classic",
             schedules: Array.isArray(poster.schedules) && poster.schedules.length
               ? poster.schedules.map((item, index) => ({ ...blankSchedule(`legacy-${index}`), ...item }))
               : [blankSchedule("schedule-legacy")],
@@ -581,7 +581,7 @@ export default function Home() {
     if (latest) {
       setTitle(latest.title);
       setTheme(latest.theme);
-      setPosterDesign(latest.design === "schedule" ? "schedule" : "classic");
+      setPosterDesign(latest.design === "offer" ? "offer" : latest.design === "schedule" ? "schedule" : "classic");
       setSchedules((latest.schedules?.length ? latest.schedules : [blankSchedule(`schedule-${Date.now()}`)]).map((item, index) => ({ ...blankSchedule(`schedule-${Date.now()}-${index}`), ...item })));
       setFlight({ ...blankFlight, ...latest.flight });
 
@@ -655,7 +655,7 @@ export default function Home() {
   function editPoster(poster: SavedPoster) {
     setTitle(poster.title);
     setTheme(poster.theme);
-    setPosterDesign(poster.design === "schedule" ? "schedule" : "classic");
+    setPosterDesign(poster.design === "offer" ? "offer" : poster.design === "schedule" ? "schedule" : "classic");
     setSchedules((poster.schedules?.length ? poster.schedules : [blankSchedule(`schedule-${Date.now()}`)]).map((item, index) => ({ ...blankSchedule(`schedule-${Date.now()}-${index}`), ...item })));
     setFlight({ ...blankFlight, ...poster.flight });
 
@@ -677,7 +677,7 @@ export default function Home() {
   function showPoster(poster: SavedPoster) {
     setTitle(poster.title);
     setTheme(poster.theme);
-    setPosterDesign(poster.design === "schedule" ? "schedule" : "classic");
+    setPosterDesign(poster.design === "offer" ? "offer" : poster.design === "schedule" ? "schedule" : "classic");
     setSchedules((poster.schedules?.length ? poster.schedules : [blankSchedule(`schedule-${Date.now()}`)]).map((item, index) => ({ ...blankSchedule(`schedule-${Date.now()}-${index}`), ...item })));
     setFlight({ ...blankFlight, ...poster.flight });
 
@@ -889,7 +889,7 @@ export default function Home() {
       <div className="mx-auto max-w-[1500px] px-4 pt-5 lg:px-6">
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <p className="mb-3 text-xs font-black uppercase tracking-wider text-slate-500">Choose Poster Design</p>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <button type="button" onClick={() => { setPosterDesign("classic"); setActivePoster(null); }} className={`rounded-xl border-2 p-4 text-left transition ${posterDesign === "classic" ? "border-[#C79A4C] bg-[#FBF5E9]" : "border-slate-200 hover:border-slate-300"}`}>
               <span className="block text-sm font-black text-slate-800">Previous Poster Design</span>
               <span className="mt-1 block text-xs text-slate-500">Existing layout — unchanged</span>
@@ -897,6 +897,10 @@ export default function Home() {
             <button type="button" onClick={() => { setPosterDesign("schedule"); setActivePoster(null); }} className={`rounded-xl border-2 p-4 text-left transition ${posterDesign === "schedule" ? "border-blue-700 bg-blue-50" : "border-slate-200 hover:border-slate-300"}`}>
               <span className="block text-sm font-black text-slate-800">New Flight Schedule Design</span>
               <span className="mt-1 block text-xs text-slate-500">Multiple departure & return dates</span>
+            </button>
+            <button type="button" onClick={() => { setPosterDesign("offer"); setActivePoster(null); }} className={`rounded-xl border-2 p-4 text-left transition ${posterDesign === "offer" ? "border-amber-500 bg-amber-50" : "border-slate-200 hover:border-amber-300"}`}>
+              <span className="block text-sm font-black text-slate-800">🎉 Bumper Offer Design</span>
+              <span className="mt-1 block text-xs text-slate-500">Premium promotional look with gold offer highlights</span>
             </button>
           </div>
         </div>
@@ -1319,7 +1323,7 @@ export default function Home() {
                         </p>
                       </div>
                       <span className="rounded-full bg-[#F8F0E1] px-2.5 py-1 text-[10px] font-bold text-[#87612B]">
-                        {poster.design === "schedule" ? "Flight Schedule" : (themes[poster.theme]?.name || "Royal Blue")}
+                        {poster.design === "offer" ? "Bumper Offer" : poster.design === "schedule" ? "Flight Schedule" : (themes[poster.theme]?.name || "Royal Blue")}
                       </span>
                     </div>
 
@@ -1370,16 +1374,16 @@ export default function Home() {
             </button>
           </div>
 
-          {posterDesign === "classic" ? (
+          {posterDesign !== "schedule" ? (
             <>
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-lg sm:p-4">
             <div
               ref={posterRef}
-              className="mx-auto w-full min-w-[760px] overflow-hidden bg-[#F7F7F3]"
+              className={`mx-auto w-full min-w-[760px] overflow-hidden ${posterDesign === "offer" ? "bg-[#FFF9EA]" : "bg-[#F7F7F3]"}`}
               style={{
                 color: posterTheme.text,
-                border: `1px solid ${posterTheme.border}`,
-                boxShadow: `0 18px 42px ${posterTheme.primary}22`,
+                border: posterDesign === "offer" ? "3px solid #D5A63C" : `1px solid ${posterTheme.border}`,
+                boxShadow: posterDesign === "offer" ? "0 20px 48px rgba(120,35,25,.24)" : `0 18px 42px ${posterTheme.primary}22`,
                 fontFamily: "Arial, Helvetica, sans-serif",
               }}
             >
@@ -1387,16 +1391,23 @@ export default function Home() {
               <div
                 className="relative overflow-hidden px-8 py-8 text-center text-white"
                 style={{
-                  backgroundImage: `linear-gradient(125deg, ${posterTheme.primary}F2 0%, ${posterTheme.primary}C8 48%, ${posterTheme.secondary}D9 100%), url('https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?auto=format&fit=crop&w=1800&q=85')`,
+                  backgroundImage: posterDesign === "offer"
+                    ? "linear-gradient(125deg, rgba(8,55,39,.96) 0%, rgba(17,93,61,.88) 48%, rgba(126,31,25,.91) 100%), url('https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?auto=format&fit=crop&w=1800&q=85')"
+                    : `linear-gradient(125deg, ${posterTheme.primary}F2 0%, ${posterTheme.primary}C8 48%, ${posterTheme.secondary}D9 100%), url('https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?auto=format&fit=crop&w=1800&q=85')`,
                   backgroundPosition: "center",
                   backgroundSize: "cover",
-                  boxShadow: `inset 0 -8px 24px ${posterTheme.primary}55`,
+                  boxShadow: posterDesign === "offer" ? "inset 0 -10px 30px rgba(245,190,75,.35)" : `inset 0 -8px 24px ${posterTheme.primary}55`,
                 }}
               >
                 <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.16]" style={{ backgroundImage: "repeating-linear-gradient(45deg, transparent 0 18px, rgba(238,211,151,.55) 19px 20px, transparent 21px 39px), repeating-linear-gradient(-45deg, transparent 0 18px, rgba(238,211,151,.35) 19px 20px, transparent 21px 39px)", backgroundSize: "40px 40px" }} />
                 <div aria-hidden="true" className="pointer-events-none absolute -left-16 -top-20 h-56 w-56 rounded-full border border-white/20 shadow-[0_0_50px_rgba(255,255,255,0.12)]" />
                 <div aria-hidden="true" className="pointer-events-none absolute -right-16 -bottom-24 h-64 w-64 rounded-full border border-[#E6BD70]/35 shadow-[0_0_55px_rgba(230,189,112,0.18)]" />
                 <div className="relative z-10">
+                  {posterDesign === "offer" && (
+                    <div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full border-2 border-[#FFE6A1] bg-gradient-to-r from-[#8E211D] via-[#C23B24] to-[#8E211D] px-7 py-2.5 text-sm font-black uppercase tracking-[0.2em] text-[#FFF4CC] shadow-[0_7px_22px_rgba(0,0,0,.35)]">
+                      <span aria-hidden="true">✦</span> BUMPER OFFER <span aria-hidden="true">✦</span>
+                    </div>
+                  )}
                   <img
                     src="/haram-junoon-logo.png"
                     alt="Haram Junoon Travels & Tours"
@@ -1417,14 +1428,14 @@ export default function Home() {
                     style={{ background: posterTheme.accent }}
                   />
                   <p className="mt-3 text-sm font-semibold tracking-wide text-white/90">
-                    YOUR JOURNEY, OUR CARE
+                    {posterDesign === "offer" ? "SPECIAL UMRAH DEAL • BOOK YOUR JOURNEY TODAY" : "YOUR JOURNEY, OUR CARE"}
                   </p>
                   <p className="mt-3 text-xs font-semibold text-white/85">
                     {shownPoster.services}
                   </p>
                 </div>
               </div>
-              <div className="relative flex h-3 items-center justify-center" style={{ background: `linear-gradient(90deg, ${posterTheme.primary}, ${posterTheme.secondary}, ${posterTheme.primary})` }}>
+              <div className="relative flex h-3 items-center justify-center" style={{ background: posterDesign === "offer" ? "linear-gradient(90deg, #8E211D, #E5B94D, #0D593B, #E5B94D, #8E211D)" : `linear-gradient(90deg, ${posterTheme.primary}, ${posterTheme.secondary}, ${posterTheme.primary})` }}>
                 <span className="h-2 w-2 rotate-45 border border-[#F3D99D] bg-[#D6B56D] shadow-sm" />
                 <span className="absolute left-1/2 top-1/2 h-px w-24 -translate-x-1/2 -translate-y-1/2" style={{ background: `${posterTheme.accent}99` }} />
               </div>
@@ -1484,7 +1495,7 @@ export default function Home() {
                     className="text-base font-black uppercase tracking-wider"
                     style={{ color: posterTheme.primary }}
                   >
-                    Available Umrah Packages
+                    {posterDesign === "offer" ? "Bumper Offer Packages" : "Available Umrah Packages"}
                   </h2>
                   <span
                     className="rounded-full px-3 py-1 text-[10px] font-black"
@@ -1621,10 +1632,10 @@ export default function Home() {
                 <div
                   className="mt-5 rounded-xl px-4 py-3 text-center"
                   style={{
-                    background: `linear-gradient(115deg, ${posterTheme.primary} 0%, ${posterTheme.secondary} 58%, ${posterTheme.primary} 100%)`,
+                    background: posterDesign === "offer" ? "linear-gradient(115deg, #7F1D1D 0%, #0D593B 55%, #7F1D1D 100%)" : `linear-gradient(115deg, ${posterTheme.primary} 0%, ${posterTheme.secondary} 58%, ${posterTheme.primary} 100%)`,
                     color: "#FFFFFF",
-                    boxShadow: `0 8px 22px ${posterTheme.primary}30, inset 0 1px 0 ${posterTheme.accent}66`,
-                    border: `1px solid ${posterTheme.accent}88`,
+                    boxShadow: posterDesign === "offer" ? "0 10px 26px rgba(127,29,29,.28), inset 0 1px 0 rgba(255,225,155,.45)" : `0 8px 22px ${posterTheme.primary}30, inset 0 1px 0 ${posterTheme.accent}66`,
+                    border: posterDesign === "offer" ? "1px solid #E6BD70" : `1px solid ${posterTheme.accent}88`,
                   }}
                 >
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/80">
