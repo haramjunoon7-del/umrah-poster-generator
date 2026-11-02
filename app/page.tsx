@@ -22,6 +22,20 @@ type FlightData = {
   returnTime: string;
 };
 
+type PosterDesign = "classic" | "schedule";
+
+type FlightSchedule = {
+  id: string;
+  departureDate: string;
+  departureTime: string;
+  returnDate: string;
+  returnTime: string;
+};
+
+function blankSchedule(id: string): FlightSchedule {
+  return { id, departureDate: "", departureTime: "", returnDate: "", returnTime: "" };
+}
+
 type PackageData = {
   id: string;
   name: string;
@@ -42,6 +56,8 @@ type SavedPoster = {
   id: string;
   title: string;
   theme: PosterTheme;
+  design?: PosterDesign;
+  schedules?: FlightSchedule[];
   flight: FlightData;
   packages: PackageData[];
   services: string;
@@ -360,13 +376,13 @@ function SelectField({
   );
 }
 
-function AirlineLogo({ airline }: { airline: string }) {
+function AirlineLogo({ airline, compact = false }: { airline: string; compact?: boolean }) {
   const [failed, setFailed] = useState(false);
   const logo = airlineLogos[airline];
 
   if (!logo || failed) {
     return (
-      <div className="flex h-14 w-20 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white px-1 text-center text-xs font-black text-slate-700">
+      <div className={`flex shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white px-1 text-center font-black text-slate-700 ${compact ? "h-8 w-12 text-[8px]" : "h-14 w-20 text-xs"}`}>
         {airline || "AIRLINE"}
       </div>
     );
@@ -377,7 +393,7 @@ function AirlineLogo({ airline }: { airline: string }) {
       src={logo}
       alt={`${airline} logo`}
       crossOrigin="anonymous"
-      className="h-14 w-20 shrink-0 object-contain"
+      className={`shrink-0 rounded-lg border border-slate-200 bg-white p-1 object-contain shadow-sm ${compact ? "h-8 w-12" : "h-14 w-20"}`}
       onError={() => setFailed(true)}
     />
   );
@@ -454,7 +470,9 @@ export default function Home() {
   ]);
 
   const [title, setTitle] = useState("UMRAH PACKAGE");
-  const [theme, setTheme] = useState<PosterTheme>("royal");
+  const [theme, setTheme] = useState<PosterTheme>("emerald");
+  const [posterDesign, setPosterDesign] = useState<PosterDesign>("classic");
+  const [schedules, setSchedules] = useState<FlightSchedule[]>([blankSchedule("schedule-1")]);
 
   const [services, setServices] = useState(
     "Visa • Return Ticket • Accommodation • Transport • 21 Days",
@@ -478,8 +496,12 @@ export default function Home() {
 
         if (Array.isArray(parsed)) {
           // Compatibility with previously saved posters
-          const compatible = parsed.map((poster: SavedPoster) => ({
+          const compatible: SavedPoster[] = parsed.map((poster: SavedPoster): SavedPoster => ({
             ...poster,
+            design: poster.design === "schedule" ? "schedule" : "classic",
+            schedules: Array.isArray(poster.schedules) && poster.schedules.length
+              ? poster.schedules.map((item, index) => ({ ...blankSchedule(`legacy-${index}`), ...item }))
+              : [blankSchedule("schedule-legacy")],
             flight: {
               ...blankFlight,
               ...poster.flight,
@@ -559,6 +581,8 @@ export default function Home() {
     if (latest) {
       setTitle(latest.title);
       setTheme(latest.theme);
+      setPosterDesign(latest.design === "schedule" ? "schedule" : "classic");
+      setSchedules((latest.schedules?.length ? latest.schedules : [blankSchedule(`schedule-${Date.now()}`)]).map((item, index) => ({ ...blankSchedule(`schedule-${Date.now()}-${index}`), ...item })));
       setFlight({ ...blankFlight, ...latest.flight });
 
       setPackages(
@@ -571,7 +595,9 @@ export default function Home() {
       setServices(latest.services);
     } else {
       setTitle("UMRAH PACKAGE");
-      setTheme("royal");
+      setTheme("emerald");
+      setPosterDesign("classic");
+      setSchedules([blankSchedule(`schedule-${Date.now()}`)]);
       setFlight({ ...blankFlight });
       setPackages([blankPackage(`package-${Date.now()}`, 1)]);
       setServices(
@@ -599,6 +625,8 @@ export default function Home() {
       id: editingId || `poster-${Date.now()}`,
       title: title.trim(),
       theme,
+      design: posterDesign,
+      schedules: schedules.map((item) => ({ ...item })),
       flight: { ...flight },
       packages: packages.map((pkg) => ({ ...pkg })),
       services,
@@ -627,6 +655,8 @@ export default function Home() {
   function editPoster(poster: SavedPoster) {
     setTitle(poster.title);
     setTheme(poster.theme);
+    setPosterDesign(poster.design === "schedule" ? "schedule" : "classic");
+    setSchedules((poster.schedules?.length ? poster.schedules : [blankSchedule(`schedule-${Date.now()}`)]).map((item, index) => ({ ...blankSchedule(`schedule-${Date.now()}-${index}`), ...item })));
     setFlight({ ...blankFlight, ...poster.flight });
 
     setPackages(
@@ -647,6 +677,8 @@ export default function Home() {
   function showPoster(poster: SavedPoster) {
     setTitle(poster.title);
     setTheme(poster.theme);
+    setPosterDesign(poster.design === "schedule" ? "schedule" : "classic");
+    setSchedules((poster.schedules?.length ? poster.schedules : [blankSchedule(`schedule-${Date.now()}`)]).map((item, index) => ({ ...blankSchedule(`schedule-${Date.now()}-${index}`), ...item })));
     setFlight({ ...blankFlight, ...poster.flight });
 
     setPackages(
@@ -794,6 +826,8 @@ export default function Home() {
         ...activePoster,
         title,
         theme,
+        design: posterDesign,
+        schedules,
         flight,
         packages,
         services,
@@ -802,6 +836,8 @@ export default function Home() {
         id: "preview",
         title,
         theme,
+        design: posterDesign,
+        schedules,
         flight,
         packages,
         services,
@@ -817,9 +853,10 @@ export default function Home() {
   const returnSectorDestination = flight.origin || "Origin";
 
   return (
-    <main className="min-h-screen bg-[#F4F5F7] text-slate-800">
-      <header className="border-b border-[#D8C18F] bg-[#171A16] px-4 py-5 text-white shadow-lg sm:px-8">
-        <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-4">
+    <main className="min-h-screen bg-[#F4F5F7] text-slate-800" style={{ backgroundImage: "radial-gradient(circle at 8% 8%, rgba(214,181,109,0.10), transparent 26%), radial-gradient(circle at 92% 22%, rgba(6,78,59,0.07), transparent 28%), linear-gradient(135deg, #F7F8F6 0%, #F2F4F1 100%)" }}>
+      <header className="relative overflow-hidden border-b border-[#D8C18F] bg-[#123B2E] px-4 py-5 text-white shadow-xl sm:px-8" style={{ backgroundImage: "linear-gradient(115deg, #092D22 0%, #14543D 55%, #0B382B 100%)" }}>
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.12]" style={{ backgroundImage: "repeating-linear-gradient(45deg, transparent 0 20px, rgba(230,189,112,.55) 21px 22px, transparent 23px 42px), repeating-linear-gradient(-45deg, transparent 0 20px, rgba(230,189,112,.3) 21px 22px, transparent 23px 42px)", backgroundSize: "42px 42px" }} />
+        <div className="relative z-10 mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#D9B66F]">
               Haram Junoon Travels & Tours
@@ -848,6 +885,22 @@ export default function Home() {
           </div>
         </div>
       </header>
+
+      <div className="mx-auto max-w-[1500px] px-4 pt-5 lg:px-6">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <p className="mb-3 text-xs font-black uppercase tracking-wider text-slate-500">Choose Poster Design</p>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <button type="button" onClick={() => { setPosterDesign("classic"); setActivePoster(null); }} className={`rounded-xl border-2 p-4 text-left transition ${posterDesign === "classic" ? "border-[#C79A4C] bg-[#FBF5E9]" : "border-slate-200 hover:border-slate-300"}`}>
+              <span className="block text-sm font-black text-slate-800">Previous Poster Design</span>
+              <span className="mt-1 block text-xs text-slate-500">Existing layout — unchanged</span>
+            </button>
+            <button type="button" onClick={() => { setPosterDesign("schedule"); setActivePoster(null); }} className={`rounded-xl border-2 p-4 text-left transition ${posterDesign === "schedule" ? "border-blue-700 bg-blue-50" : "border-slate-200 hover:border-slate-300"}`}>
+              <span className="block text-sm font-black text-slate-800">New Flight Schedule Design</span>
+              <span className="mt-1 block text-xs text-slate-500">Multiple departure & return dates</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
       <div className="mx-auto grid max-w-[1500px] grid-cols-1 gap-6 p-4 lg:grid-cols-[440px_minmax(0,1fr)] lg:p-6">
         <section className="space-y-5">
@@ -1022,6 +1075,38 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          {posterDesign === "schedule" && (
+            <div className="rounded-2xl border border-blue-200 bg-white p-5 shadow-sm">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <h2 className="text-lg font-black text-slate-800">Multiple Flight Schedules</h2>
+                  <p className="text-xs text-slate-500">Har row mein departure aur return ki dates aur timings add karein.</p>
+                </div>
+                <button type="button" onClick={() => setSchedules((current) => [...current, blankSchedule(`schedule-${Date.now()}-${current.length}`)])} className="rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-black text-white hover:bg-blue-800">+ Add Schedule</button>
+              </div>
+              <div className="space-y-3">
+                {schedules.map((item, index) => (
+                  <div key={item.id} className="rounded-xl border border-slate-200 p-3">
+                    <div className="mb-3 flex items-center justify-between">
+                      <h3 className="text-sm font-black text-slate-800">Schedule {index + 1}</h3>
+                      <button type="button" disabled={schedules.length === 1} onClick={() => setSchedules((current) => current.filter((row) => row.id !== item.id))} className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-bold text-red-600 disabled:opacity-40">Remove</button>
+                    </div>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      <Field label="Departure Date" type="date" value={item.departureDate} onChange={(value) => setSchedules((current) => current.map((row) => row.id === item.id ? { ...row, departureDate: value } : row))} />
+                      <Field label="Departure Time" type="time" value={item.departureTime} onChange={(value) => setSchedules((current) => current.map((row) => row.id === item.id ? { ...row, departureTime: value } : row))} />
+                      <Field label="Return Date" type="date" value={item.returnDate} onChange={(value) => setSchedules((current) => current.map((row) => row.id === item.id ? { ...row, returnDate: value } : row))} />
+                      <Field label="Return Time" type="time" value={item.returnTime} onChange={(value) => setSchedules((current) => current.map((row) => row.id === item.id ? { ...row, returnTime: value } : row))} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Field label="Departure Flight Number" value={flight.flightNumber} onChange={(value) => updateFlight("flightNumber", value)} placeholder="PA 872" />
+                <Field label="Return Flight Number" value={flight.returnFlight} onChange={(value) => updateFlight("returnFlight", value)} placeholder="PA 873" />
+              </div>
+            </div>
+          )}
 
           {/* PACKAGE FORM */}
           <div className="space-y-4">
@@ -1234,7 +1319,7 @@ export default function Home() {
                         </p>
                       </div>
                       <span className="rounded-full bg-[#F8F0E1] px-2.5 py-1 text-[10px] font-bold text-[#87612B]">
-                        {themes[poster.theme]?.name || "Royal Blue"}
+                        {poster.design === "schedule" ? "Flight Schedule" : (themes[poster.theme]?.name || "Royal Blue")}
                       </span>
                     </div>
 
@@ -1285,6 +1370,8 @@ export default function Home() {
             </button>
           </div>
 
+          {posterDesign === "classic" ? (
+            <>
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-lg sm:p-4">
             <div
               ref={posterRef}
@@ -1292,6 +1379,7 @@ export default function Home() {
               style={{
                 color: posterTheme.text,
                 border: `1px solid ${posterTheme.border}`,
+                boxShadow: `0 18px 42px ${posterTheme.primary}22`,
                 fontFamily: "Arial, Helvetica, sans-serif",
               }}
             >
@@ -1299,11 +1387,15 @@ export default function Home() {
               <div
                 className="relative overflow-hidden px-8 py-8 text-center text-white"
                 style={{
-                  backgroundImage: `linear-gradient(${posterTheme.headerOverlay}, ${posterTheme.headerOverlay}), url('https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?auto=format&fit=crop&w=1800&q=85')`,
+                  backgroundImage: `linear-gradient(125deg, ${posterTheme.primary}F2 0%, ${posterTheme.primary}C8 48%, ${posterTheme.secondary}D9 100%), url('https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?auto=format&fit=crop&w=1800&q=85')`,
                   backgroundPosition: "center",
                   backgroundSize: "cover",
+                  boxShadow: `inset 0 -8px 24px ${posterTheme.primary}55`,
                 }}
               >
+                <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.16]" style={{ backgroundImage: "repeating-linear-gradient(45deg, transparent 0 18px, rgba(238,211,151,.55) 19px 20px, transparent 21px 39px), repeating-linear-gradient(-45deg, transparent 0 18px, rgba(238,211,151,.35) 19px 20px, transparent 21px 39px)", backgroundSize: "40px 40px" }} />
+                <div aria-hidden="true" className="pointer-events-none absolute -left-16 -top-20 h-56 w-56 rounded-full border border-white/20 shadow-[0_0_50px_rgba(255,255,255,0.12)]" />
+                <div aria-hidden="true" className="pointer-events-none absolute -right-16 -bottom-24 h-64 w-64 rounded-full border border-[#E6BD70]/35 shadow-[0_0_55px_rgba(230,189,112,0.18)]" />
                 <div className="relative z-10">
                   <img
                     src="/haram-junoon-logo.png"
@@ -1332,14 +1424,19 @@ export default function Home() {
                   </p>
                 </div>
               </div>
+              <div className="relative flex h-3 items-center justify-center" style={{ background: `linear-gradient(90deg, ${posterTheme.primary}, ${posterTheme.secondary}, ${posterTheme.primary})` }}>
+                <span className="h-2 w-2 rotate-45 border border-[#F3D99D] bg-[#D6B56D] shadow-sm" />
+                <span className="absolute left-1/2 top-1/2 h-px w-24 -translate-x-1/2 -translate-y-1/2" style={{ background: `${posterTheme.accent}99` }} />
+              </div>
 
-              <div className="px-5 py-5">
+              <div className="px-5 py-5" style={{ background: `linear-gradient(145deg, #FFFFFF 0%, ${posterTheme.light} 52%, #FFFFFF 100%)` }}>
                 {/* FLIGHT DETAILS */}
                 <div
-                  className="mb-4 rounded-xl p-4"
+                  className="relative mb-4 overflow-hidden rounded-xl p-4"
                   style={{
-                    background: "#FFFFFF",
+                    background: `linear-gradient(135deg, #FFFFFF 0%, ${posterTheme.light} 100%)`,
                     border: `1px solid ${posterTheme.border}`,
+                    boxShadow: `0 8px 22px ${posterTheme.primary}14, inset 0 1px 0 #FFFFFF`,
                   }}
                 >
                   <div className="mb-3 flex items-center justify-between">
@@ -1412,8 +1509,8 @@ export default function Home() {
                   <div
                     className="grid grid-cols-[14%_25%_25%_9%_9%_9%_9%] items-center gap-0 px-2 py-2.5"
                     style={{
-                      background: "#F1EBDD",
-                      borderBottom: "1px solid #E8D8B7",
+                      background: `linear-gradient(90deg, ${posterTheme.light}, ${posterTheme.accent}35, ${posterTheme.light})`,
+                      borderBottom: `1px solid ${posterTheme.border}`,
                     }}
                   >
                     {[
@@ -1439,8 +1536,8 @@ export default function Home() {
                       key={pkg.id}
                       className="grid grid-cols-[14%_25%_25%_9%_9%_9%_9%] items-center gap-0 px-2 py-2.5"
                       style={{
-                        background: "#FFFFFF",
-                        borderBottom: "1px dashed #E8D8B7",
+                        background: index % 2 === 0 ? "#FFFFFF" : posterTheme.light,
+                        borderBottom: `1px dashed ${posterTheme.border}`,
                       }}
                     >
                       <div className="min-w-0 px-1">
@@ -1524,8 +1621,10 @@ export default function Home() {
                 <div
                   className="mt-5 rounded-xl px-4 py-3 text-center"
                   style={{
-                    background: posterTheme.gradient,
+                    background: `linear-gradient(115deg, ${posterTheme.primary} 0%, ${posterTheme.secondary} 58%, ${posterTheme.primary} 100%)`,
                     color: "#FFFFFF",
+                    boxShadow: `0 8px 22px ${posterTheme.primary}30, inset 0 1px 0 ${posterTheme.accent}66`,
+                    border: `1px solid ${posterTheme.accent}88`,
                   }}
                 >
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/80">
@@ -1547,9 +1646,276 @@ export default function Home() {
                     SYSTEM DESIGNED & DEVELOPED BY AMEER HAMZA
                   </p>
                 </div>
+          </div>
+          </div>
+          </div>
+            </>
+          ) : (
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-lg sm:p-4">
+              <div ref={posterRef} className="mx-auto min-w-[760px] overflow-hidden" style={{ border: `1px solid ${posterTheme.border}`, boxShadow: `0 18px 42px ${posterTheme.primary}22` }}>
+                <div className="bg-white" style={{ color: posterTheme.text, fontFamily: "Arial, Helvetica, sans-serif" }}>
+                  <div
+                    className="relative isolate min-h-[245px] overflow-hidden px-4 pb-5 pt-4 text-center text-white sm:min-h-[265px] sm:px-7"
+                    style={{
+                      background: `linear-gradient(125deg, ${posterTheme.primary}F2 0%, ${posterTheme.primary}C8 42%, ${posterTheme.secondary}E0 72%, ${posterTheme.primary}E8 100%)`,
+                      boxShadow: `inset 0 -10px 28px ${posterTheme.primary}55`,
+                    }}
+                  >
+                    {/* MAKKAH + MADINAH PHOTOS BLENDED INTO HEADER BACKGROUND */}
+                    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 grid grid-cols-2">
+                      <div className="relative overflow-hidden">
+                        <img
+                          src="https://images.unsplash.com/photo-1565330770968-0240c0046ce3?auto=format&fit=crop&w=1200&q=90"
+                          alt=""
+                          crossOrigin="anonymous"
+                          loading="eager"
+                          className="h-full w-full object-cover"
+                          style={{ objectPosition: "center 48%" }}
+                        />
+                        <div className="absolute inset-0" style={{ background: `linear-gradient(90deg, ${posterTheme.primary}55, ${posterTheme.primary}C9 100%)` }} />
+                      </div>
+                      <div className="relative overflow-hidden">
+                        <img
+                          src="https://images.unsplash.com/photo-1573970647850-af23e4fa4628?auto=format&fit=crop&w=1200&q=90"
+                          alt=""
+                          crossOrigin="anonymous"
+                          loading="eager"
+                          className="h-full w-full object-cover"
+                          style={{ objectPosition: "center 48%" }}
+                        />
+                        <div className="absolute inset-0" style={{ background: `linear-gradient(270deg, ${posterTheme.secondary}55, ${posterTheme.primary}C9 100%)` }} />
+                      </div>
+                    </div>
+                    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 opacity-[0.22]" style={{ backgroundImage: "repeating-linear-gradient(45deg, transparent 0 17px, rgba(231,196,119,.5) 18px 19px, transparent 20px 36px), repeating-linear-gradient(-45deg, transparent 0 17px, rgba(231,196,119,.35) 18px 19px, transparent 20px 36px)", backgroundSize: "34px 34px" }} />
+                    <div aria-hidden="true" className="pointer-events-none absolute -left-20 -top-24 -z-10 h-64 w-64 rounded-full border border-[#E6BD70]/35 shadow-[0_0_55px_rgba(230,189,112,0.16)]" />
+                    <div aria-hidden="true" className="pointer-events-none absolute -right-20 -top-24 -z-10 h-64 w-64 rounded-full border border-white/20 shadow-[0_0_50px_rgba(255,255,255,0.12)]" />
+
+                    <div className="relative z-10 mx-auto max-w-[690px]">
+                      <div className="mb-2 flex items-center justify-center gap-3">
+                        <span className="h-px w-9" style={{ background: posterTheme.accent }} />
+                        <span className="rounded-full border px-3 py-1 text-[8px] font-black uppercase tracking-[0.28em] shadow" style={{ borderColor: `${posterTheme.accent}99`, color: posterTheme.accent, background: "rgba(0,0,0,.28)" }}>
+                          A Blessed Journey
+                        </span>
+                        <span className="h-px w-9" style={{ background: posterTheme.accent }} />
+                      </div>
+
+                      <img
+                        src="/haram-junoon-logo.png"
+                        alt="Haram Junoon Travels & Tours"
+                        crossOrigin="anonymous"
+                        className="mx-auto mb-1 h-10 w-10 rounded-full border-2 bg-white object-contain p-1 shadow-xl sm:h-11 sm:w-11"
+                        style={{ borderColor: posterTheme.accent }}
+                        onError={(event) => { event.currentTarget.style.display = "none"; }}
+                      />
+                      <p className="text-[9px] font-black uppercase tracking-[0.26em]" style={{ color: posterTheme.accent }}>
+                        HARAM JUNOON TRAVELS & TOURS
+                      </p>
+                      <h1 className="mt-1 text-2xl font-black uppercase tracking-wide text-white drop-shadow-lg sm:text-3xl">
+                        {shownPoster.title || "UMRAH PACKAGE"}
+                      </h1>
+                      <div className="mx-auto mt-2 h-1 w-16 rounded-full" style={{ background: posterTheme.accent }} />
+                      <p className="mt-2 text-[9px] font-bold uppercase tracking-[0.2em] text-white/90">
+                        YOUR JOURNEY, OUR CARE
+                      </p>
+                      <p className="mt-2 text-[10px] font-semibold text-white drop-shadow sm:text-xs">
+                        {shownPoster.services}
+                      </p>
+                      <div className="mt-3 flex items-center justify-center gap-3 text-[8px] font-black uppercase tracking-[0.18em] text-[#F4D99A] sm:text-[9px]">
+                        <span>✦ MAKKAH MUKARRAMAH</span>
+                        <span className="text-white/70">•</span>
+                        <span>MADINAH MUNAWWARAH ✦</span>
+                      </div>
+                    </div>
+
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-x-0 bottom-0 h-1"
+                      style={{
+                        background: `linear-gradient(90deg, transparent, ${posterTheme.accent}, transparent)`,
+                      }}
+                    />
+                  </div>
+                  <div className="relative h-3" style={{ background: `linear-gradient(90deg, ${posterTheme.primary}, ${posterTheme.secondary}, ${posterTheme.primary})` }}>
+                    <span className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 border border-[#F3D99D] bg-[#D6B56D] shadow-sm" />
+                  </div>
+                  <div className="p-5 sm:p-7" style={{ background: `linear-gradient(145deg, #FFFFFF 0%, ${posterTheme.light} 48%, #FFFFFF 100%)` }}>
+                    <div
+                      className="mb-3 overflow-hidden rounded-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
+                      style={{
+                        border: `1.5px solid ${posterTheme.accent}`,
+                        boxShadow: `0 9px 24px ${posterTheme.primary}22, inset 0 1px 0 #FFFFFF`,
+                        background: `linear-gradient(135deg, #FFFFFF 0%, ${posterTheme.light} 100%)`,
+                      }}
+                    >
+                      {/* COMPACT FLIGHT SCHEDULE HEADER */}
+                      <div
+                        className="relative flex items-center gap-2 px-3 py-2 text-white"
+                        style={{ background: posterTheme.gradient }}
+                      >
+                        <div
+                          className="flex h-8 w-8 items-center justify-center rounded-full text-lg shadow-md"
+                          style={{
+                            background: `${posterTheme.accent}30`,
+                            border: `1px solid ${posterTheme.accent}`,
+                          }}
+                        >
+                          ✈
+                        </div>
+
+                        <div>
+                          <h2 className="text-sm font-black uppercase tracking-wider">
+                            Flight Schedule
+                          </h2>
+                          <p className="text-[8px] font-semibold tracking-widest text-white/75">
+                            DEPARTURE & RETURN DETAILS
+                          </p>
+                        </div>
+
+                        <div
+                          className="ml-auto rounded-full px-2 py-1 text-[8px] font-black"
+                          style={{
+                            background: posterTheme.accent,
+                            color: posterTheme.primary,
+                          }}
+                        >
+                          FLIGHTS
+                        </div>
+                      </div>
+
+                      {/* OUTBOUND AND RETURN FLIGHT DETAILS */}
+                      <div
+                        className="grid grid-cols-2 text-center text-white"
+                        style={{ background: posterTheme.secondary }}
+                      >
+                        <div className="border-r border-white/20 px-2 py-2">
+                          <p className="text-[9px] font-black uppercase tracking-wide">
+                            Departure ({flight.origin || "Origin"} – {flight.destination || "Destination"})
+                          </p>
+                          <p className="mt-0.5 text-xs font-black">
+                            {flight.flightNumber || "Flight No."}
+                          </p>
+                          <div className="mt-1 flex items-center justify-center gap-1.5">
+                            <AirlineLogo airline={flight.airline} compact />
+                            <p className="text-[9px] font-semibold text-white/85">
+                              {flight.airline}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="px-2 py-2">
+                          <p className="text-[9px] font-black uppercase tracking-wide">
+                            Return ({flight.destination || "Destination"} – {flight.origin || "Origin"})
+                          </p>
+                          <p className="mt-0.5 text-xs font-black">
+                            {flight.returnFlight || "Flight No."}
+                          </p>
+                          <div className="mt-1 flex items-center justify-center gap-1.5">
+                            <AirlineLogo airline={flight.returnAirline || flight.airline} compact />
+                            <p className="text-[9px] font-semibold text-white/85">
+                              {flight.returnAirline || flight.airline}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* COMPACT SCHEDULE TABLE */}
+                      <div
+                        className="grid grid-cols-4 text-center"
+                        style={{ background: posterTheme.light }}
+                      >
+                        {[
+                          "Departure Date",
+                          "Departure Time",
+                          "Return Date",
+                          "Return Time",
+                        ].map((heading) => (
+                          <div
+                            key={heading}
+                            className="border-b border-r px-1 py-1.5 text-[8px] font-black uppercase sm:text-[9px]"
+                            style={{
+                              borderColor: posterTheme.border,
+                              color: posterTheme.primary,
+                              background: `${posterTheme.accent}20`,
+                            }}
+                          >
+                            {heading}
+                          </div>
+                        ))}
+
+                        {schedules.map((item, index) => (
+                          <div key={item.id} className="contents">
+                            <div
+                              className="border-r border-b px-1 py-2 text-[10px] font-black sm:text-xs"
+                              style={{
+                                borderColor: posterTheme.border,
+                                background: index % 2 ? "#FFFFFF" : posterTheme.light,
+                              }}
+                            >
+                              {item.departureDate ? dateText(item.departureDate) : "—"}
+                            </div>
+
+                            <div
+                              className="border-r border-b px-1 py-2 text-[10px] font-black sm:text-xs"
+                              style={{
+                                borderColor: posterTheme.border,
+                                background: index % 2 ? "#FFFFFF" : posterTheme.light,
+                              }}
+                            >
+                              {item.departureTime ? timeText(item.departureTime) : "—"}
+                            </div>
+
+                            <div
+                              className="border-r border-b px-1 py-2 text-[10px] font-black sm:text-xs"
+                              style={{
+                                borderColor: posterTheme.border,
+                                background: index % 2 ? "#FFFFFF" : posterTheme.light,
+                              }}
+                            >
+                              {item.returnDate ? dateText(item.returnDate) : "—"}
+                            </div>
+
+                            <div
+                              className="border-b px-1 py-2 text-[10px] font-black sm:text-xs"
+                              style={{
+                                borderColor: posterTheme.border,
+                                background: index % 2 ? "#FFFFFF" : posterTheme.light,
+                              }}
+                            >
+                              {item.returnTime ? timeText(item.returnTime) : "—"}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="mb-3 flex items-center justify-between">
+                      <h2 className="text-base font-black uppercase tracking-wider" style={{ color: posterTheme.primary }}>Available Umrah Packages</h2>
+                      <span className="rounded-full px-3 py-1 text-[10px] font-black" style={{ color: posterTheme.primary, background: `${posterTheme.accent}35` }}>{packages.length} PACKAGES</span>
+                    </div>
+                    <div className="overflow-hidden rounded-lg" style={{ border: `1px solid ${posterTheme.border}` }}>
+                      <div className="grid grid-cols-[14%_25%_25%_9%_9%_9%_9%] items-center px-2 py-2.5" style={{ background: posterTheme.light }}>
+                        {["Package", "Makkah Hotel", "Madinah Hotel", "Sharing", "Quad", "Triple", "Double"].map((heading) => <div key={heading} className="px-1 text-center text-[10px] font-bold" style={{ color: posterTheme.primary }}>{heading}</div>)}
+                      </div>
+                      {packages.map((pkg, index) => (
+                        <div key={pkg.id} className="grid grid-cols-[14%_25%_25%_9%_9%_9%_9%] items-center px-2 py-2.5" style={{ background: "#FFFFFF", borderTop: `1px dashed ${posterTheme.border}` }}>
+                          <div className="min-w-0 px-1"><p className="break-words text-[10px] font-bold leading-tight">{pkg.name || `UP-${110175 + index}`}</p><p className="mt-2 rounded-md px-1 py-1 text-[9px] font-black" style={{ background: posterTheme.light, color: posterTheme.primary }}>TOTAL: {pkg.nights || "—"} NIGHTS</p></div>
+                          <div className="min-w-0 px-1"><p className="break-words text-[10px] font-bold">{(pkg.makkahHotel || "HOTEL NOT ADDED").toUpperCase()}</p><p className="mt-1 text-[9px] text-slate-500">{pkg.makkahDistance} {pkg.makkahDistance ? "FROM HARAM" : ""}</p></div>
+                          <div className="min-w-0 px-1"><p className="break-words text-[10px] font-bold">{(pkg.madinahHotel || "HOTEL NOT ADDED").toUpperCase()}</p><p className="mt-1 text-[9px] text-slate-500">{pkg.madinahDistance} {pkg.madinahDistance ? "FROM MASJID NABAWI" : ""}</p></div>
+                          {[pkg.sharing, pkg.quad, pkg.triple, pkg.double].map((rate, rateIndex) => <div key={`${pkg.id}-new-rate-${rateIndex}`} className="min-w-0 px-0.5 text-center"><span className="break-words text-[10px] font-black leading-tight">{rate ? money(rate) : "—"}</span></div>)}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-5 rounded-xl border px-4 py-3 text-center text-white shadow-lg" style={{ background: `linear-gradient(115deg, ${posterTheme.primary} 0%, ${posterTheme.secondary} 58%, ${posterTheme.primary} 100%)`, borderColor: `${posterTheme.accent}88`, boxShadow: `0 9px 24px ${posterTheme.primary}30, inset 0 1px 0 ${posterTheme.accent}55` }}>
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/80">Contact Us For Booking & Details</p>
+                      <p className="mt-1 text-lg font-black tracking-wide">03137183111 • 03216837494 • 03128992016</p>
+                      <p className="mt-1 text-xs font-semibold text-white/85">haramjunoontravels@gmail.com</p>
+                    </div>
+                    <div className="mt-4 border-t pt-3 text-center" style={{ borderColor: posterTheme.border }}><p className="text-[9px] font-semibold tracking-wide text-slate-500">SYSTEM DESIGNED & DEVELOPED BY AMEER HAMZA</p></div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </section>
       </div>
     </main>
