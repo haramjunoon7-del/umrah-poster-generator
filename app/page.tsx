@@ -3,6 +3,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { toBlob } from "html-to-image";
+import { supabase } from "./lib/supabase";
 
 type PosterTheme =
   | "royal" | "emerald" | "black" | "cream"
@@ -20,9 +21,10 @@ type FlightData = {
   returnDate: string;
   returnFlight: string;
   returnTime: string;
+  seatsAvailable?: string;
 };
 
-type PosterDesign = "classic" | "schedule" | "offer";
+type PosterDesign = "classic" | "schedule" | "offer" | "airlineTable";
 
 type FlightSchedule = {
   id: string;
@@ -264,6 +266,7 @@ const blankFlight: FlightData = {
   returnDate: "",
   returnFlight: "",
   returnTime: "",
+  seatsAvailable: "",
 };
 
 function blankPackage(id: string, number: number): PackageData {
@@ -483,55 +486,205 @@ export default function Home() {
   const [activePoster, setActivePoster] = useState<SavedPoster | null>(null);
   const [message, setMessage] = useState("");
   const [copying, setCopying] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
+  const [authUser, setAuthUser] = useState<{ id: string; email?: string } | null>(null);
+  const [authReady, setAuthReady] = useState(false);
+  const [authPassword, setAuthPassword] = useState("");
+  const [authBusy, setAuthBusy] = useState(false);
+  const [authMessage, setAuthMessage] = useState("");
 
   const posterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+    let mounted = true;
 
-      if (raw) {
-        const parsed = JSON.parse(raw);
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+      const user = data.session?.user;
+      setAuthUser(user ? { id: user.id, email: user.email || undefined } : null);
+      setAuthReady(true);
+    });
 
-        if (Array.isArray(parsed)) {
-          // Compatibility with previously saved posters
-          const compatible: SavedPoster[] = parsed.map((poster: SavedPoster): SavedPoster => ({
-            ...poster,
-            design: poster.design === "offer" ? "offer" : poster.design === "schedule" ? "schedule" : "classic",
-            schedules: Array.isArray(poster.schedules) && poster.schedules.length
-              ? poster.schedules.map((item, index) => ({ ...blankSchedule(`legacy-${index}`), ...item }))
-              : [blankSchedule("schedule-legacy")],
-            flight: {
-              ...blankFlight,
-              ...poster.flight,
-              returnAirline:
-                poster.flight?.returnAirline ||
-                poster.flight?.airline ||
-                "Airblue",
-            },
-          }));
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      const user = session?.user;
+      setAuthUser(user ? { id: user.id, email: user.email || undefined } : null);
+      setAuthReady(true);
+    });
 
-          setSavedPosters(compatible);
-        }
-      }
-    } catch (error) {
-      console.error("Saved poster loading error:", error);
-    } finally {
-      setHydrated(true);
-    }
+    return () => {
+      mounted = false;
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
-    if (!hydrated) return;
+    if (!authReady) return;
+    if (!authUser) {
+      setMessage("Sign in to load your shared cloud posters.");
+      return;
+    }
+
+    let cancelled = false;
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    const normalizePosters = (items: SavedPoster[]): SavedPoster[] =>
+      items.map((poster: SavedPoster): SavedPoster => ({
+        ...poster,
+        design:
+          poster.design === "airlineTable"
+            ? "airlineTable"
+            : poster.design === "offer"
+              ? "offer"
+              : poster.design === "schedule"
+                ? "schedule"
+                : "classic",
+        schedules:
+          Array.isArray(poster.schedules) && poster.schedules.length
+            ? poster.schedules.map((item, index) => ({
+                ...blankSchedule(`legacy-${index}`),
+                ...item,
+              }))
+            : [blankSchedule("schedule-legacy")],
+        flight: {
+          ...blankFlight,
+          ...(poster.flight || {}),
+          returnAirline:
+            poster.flight?.returnAirline || poster.flight?.airline || "Airblue",
+        },
+        packages: Array.isArray(poster.packages) ? poster.packages : [],
+      }));
+
+    const loadCloudPosters = async () => {
+      const { data: sessionResult, error: sessionError } = await supabase.auth.getSession();
+
+      if (sessionError || !sessionResult.session) {
+        if (!cancelled) {
+          setMessage("Please sign in to sync posters across devices.");
+        }
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("umrah_poster_cloud")
+        .select("id, poster_data, created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Cloud poster loading error:", error);
+        if (!cancelled) {
+          setMessage("Cloud sync failed. Please create the Supabase table and check your connection.");
+        }
+        return;
+      }
+
+      const cloudPosters = normalizePosters(
+        (data || []).map((row: { poster_data: SavedPoster }) => row.poster_data),
+      );
+
+      if (cloudPosters.length === 0) {
+        let localPosters: SavedPoster[] = [];
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          const parsed = raw ? JSON.parse(raw) : [];
+          if (Array.isArray(parsed)) localPosters = normalizePosters(parsed);
+        } catch (storageError) {
+          console.error("Local poster migration error:", storageError);
+        }
+
+        if (localPosters.length > 0) {
+          const rows = localPosters.map((poster) => ({
+            id: poster.id,
+            poster_data: poster,
+            created_at: poster.createdAt || new Date().toISOString(),
+          }));
+          const { error: migrationError } = await supabase
+            .from("umrah_poster_cloud")
+            .upsert(rows, { onConflict: "id" });
+
+          if (migrationError) {
+            console.error("Poster migration error:", migrationError);
+            if (!cancelled) setMessage("Old posters loaded locally, but cloud migration failed.");
+          } else if (!cancelled) {
+            setSavedPosters(localPosters);
+            setMessage("Previous saved posters migrated to cloud successfully.");
+          }
+        } else if (!cancelled) {
+          setSavedPosters([]);
+        }
+      } else if (!cancelled) {
+        setSavedPosters(cloudPosters);
+      }
+
+
+      channel = supabase
+        .channel("umrah-poster-cloud-live-sync")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "umrah_poster_cloud" },
+          async () => {
+            const { data: refreshed, error: refreshError } = await supabase
+              .from("umrah_poster_cloud")
+              .select("id, poster_data, created_at")
+              .order("created_at", { ascending: false });
+
+            if (!refreshError && !cancelled && refreshed) {
+              setSavedPosters(
+                normalizePosters(
+                  refreshed.map((row: { poster_data: SavedPoster }) => row.poster_data),
+                ),
+              );
+            }
+          },
+        )
+        .subscribe();
+    };
+
+    void loadCloudPosters();
+
+    return () => {
+      cancelled = true;
+      if (channel) void supabase.removeChannel(channel);
+    };
+  }, [authReady, authUser?.id]);
+
+  async function handleAuth() {
+    const loginEmail = process.env.NEXT_PUBLIC_SUPABASE_LOGIN_EMAIL?.trim();
+
+    if (!loginEmail) {
+      setAuthMessage("Login setup missing. .env.local mein NEXT_PUBLIC_SUPABASE_LOGIN_EMAIL set karein.");
+      return;
+    }
+
+    if (!authPassword) {
+      setAuthMessage("Password enter karein.");
+      return;
+    }
+
+    setAuthBusy(true);
+    setAuthMessage("");
 
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(savedPosters));
+      const { error } = await supabase.auth.signInWithPassword({
+        email: loginEmail,
+        password: authPassword,
+      });
+      if (error) throw error;
+      setAuthPassword("");
     } catch (error) {
-      console.error("Saved poster storage error:", error);
-      setMessage("Could not save data in browser storage.");
+      setAuthMessage(error instanceof Error ? error.message : "Incorrect password. Dobara try karein.");
+    } finally {
+      setAuthBusy(false);
     }
-  }, [savedPosters, hydrated]);
+  }
+
+  async function handleSignOut() {
+    const { error } = await supabase.auth.signOut();
+    if (error) setMessage(error.message);
+    else {
+      setEditingId(null);
+      setActivePoster(null);
+      setMessage("Signed out.");
+    }
+  }
 
   function updateFlight(key: keyof FlightData, value: string) {
     setFlight((current) => ({
@@ -576,23 +729,45 @@ export default function Home() {
   }
 
   function newPoster() {
-    const latest = savedPosters[0];
+    const currentHasPackageData = packages.some((pkg) =>
+      Boolean(
+        pkg.makkahHotel || pkg.madinahHotel || pkg.makkahDistance ||
+        pkg.madinahDistance || pkg.sharing || pkg.quad || pkg.triple || pkg.double
+      ),
+    );
+    const currentHasFlightData = Boolean(
+      flight.flightNumber || flight.returnFlight || flight.departureDate ||
+      flight.returnDate || flight.departureTime || flight.returnTime
+    );
+    const source: SavedPoster | null =
+      (currentHasPackageData || currentHasFlightData) ? {
+        id: "current-copy",
+        title,
+        theme,
+        design: posterDesign,
+        schedules,
+        flight,
+        packages,
+        services,
+        createdAt: new Date().toISOString(),
+      } : (activePoster || (editingId ? savedPosters.find((item) => item.id === editingId) : null) || savedPosters[0] || null);
 
-    if (latest) {
-      setTitle(latest.title);
-      setTheme(latest.theme);
-      setPosterDesign(latest.design === "offer" ? "offer" : latest.design === "schedule" ? "schedule" : "classic");
-      setSchedules((latest.schedules?.length ? latest.schedules : [blankSchedule(`schedule-${Date.now()}`)]).map((item, index) => ({ ...blankSchedule(`schedule-${Date.now()}-${index}`), ...item })));
-      setFlight({ ...blankFlight, ...latest.flight });
-
+    if (source) {
+      setTitle(source.title);
+      setTheme(source.theme);
+      setPosterDesign(source.design === "airlineTable" ? "airlineTable" : source.design === "offer" ? "offer" : source.design === "schedule" ? "schedule" : "classic");
+      setSchedules(
+        (source.schedules?.length ? source.schedules : [blankSchedule(`schedule-${Date.now()}`)])
+          .map((item, index) => ({ ...blankSchedule(`schedule-${Date.now()}-${index}`), ...item })),
+      );
+      setFlight({ ...blankFlight, ...source.flight });
       setPackages(
-        latest.packages.map((pkg, index) => ({
+        source.packages.map((pkg, index) => ({
           ...pkg,
           id: `package-${Date.now()}-${index}`,
         })),
       );
-
-      setServices(latest.services);
+      setServices(source.services);
     } else {
       setTitle("UMRAH PACKAGE");
       setTheme("emerald");
@@ -600,17 +775,17 @@ export default function Home() {
       setSchedules([blankSchedule(`schedule-${Date.now()}`)]);
       setFlight({ ...blankFlight });
       setPackages([blankPackage(`package-${Date.now()}`, 1)]);
-      setServices(
-        "Visa • Return Ticket • Accommodation • Transport • 21 Days",
-      );
+      setServices("Visa • Return Ticket • Accommodation • Transport • 21 Days");
     }
 
     setEditingId(null);
     setActivePoster(null);
-    setMessage("New poster form is ready.");
+    setMessage(source
+      ? `New poster ready with all ${source.packages.length} previous package(s). Save it as a new poster.`
+      : "New poster form is ready.");
   }
 
-  function savePoster() {
+  async function savePoster() {
     if (!title.trim()) {
       setMessage("Please enter poster title.");
       return;
@@ -633,29 +808,43 @@ export default function Home() {
       createdAt: new Date().toISOString(),
     };
 
+    setMessage("Saving poster to cloud...");
+
+    const { data: sessionResult, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !sessionResult.session) {
+      setMessage("Please sign in first. Cloud saving requires an authenticated Supabase session.");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("umrah_poster_cloud")
+      .upsert(
+        { id: poster.id, poster_data: poster, created_at: poster.createdAt },
+        { onConflict: "id" },
+      );
+
+    if (error) {
+      console.error("Cloud poster save error:", error);
+      setMessage(`Cloud save failed: ${error.message}`);
+      return;
+    }
+
     setSavedPosters((current) => {
-      if (editingId) {
-        return current.map((item) =>
-          item.id === editingId ? poster : item,
-        );
-      }
-      return [poster, ...current];
+      const withoutCurrent = current.filter((item) => item.id !== poster.id);
+      return [poster, ...withoutCurrent];
     });
 
     setEditingId(poster.id);
     setActivePoster(poster);
-
-    setMessage(
-      editingId
-        ? "Poster updated successfully."
-        : "Poster saved successfully.",
-    );
+    setMessage(editingId
+      ? "Poster updated in cloud. It will appear on all devices."
+      : "Poster saved to cloud. It will appear on all devices.");
   }
 
   function editPoster(poster: SavedPoster) {
     setTitle(poster.title);
     setTheme(poster.theme);
-    setPosterDesign(poster.design === "offer" ? "offer" : poster.design === "schedule" ? "schedule" : "classic");
+    setPosterDesign(poster.design === "airlineTable" ? "airlineTable" : poster.design === "offer" ? "offer" : poster.design === "schedule" ? "schedule" : "classic");
     setSchedules((poster.schedules?.length ? poster.schedules : [blankSchedule(`schedule-${Date.now()}`)]).map((item, index) => ({ ...blankSchedule(`schedule-${Date.now()}-${index}`), ...item })));
     setFlight({ ...blankFlight, ...poster.flight });
 
@@ -677,7 +866,7 @@ export default function Home() {
   function showPoster(poster: SavedPoster) {
     setTitle(poster.title);
     setTheme(poster.theme);
-    setPosterDesign(poster.design === "offer" ? "offer" : poster.design === "schedule" ? "schedule" : "classic");
+    setPosterDesign(poster.design === "airlineTable" ? "airlineTable" : poster.design === "offer" ? "offer" : poster.design === "schedule" ? "schedule" : "classic");
     setSchedules((poster.schedules?.length ? poster.schedules : [blankSchedule(`schedule-${Date.now()}`)]).map((item, index) => ({ ...blankSchedule(`schedule-${Date.now()}-${index}`), ...item })));
     setFlight({ ...blankFlight, ...poster.flight });
 
@@ -694,21 +883,30 @@ export default function Home() {
     setMessage("Saved poster preview loaded.");
   }
 
-  function deletePoster(id: string) {
-    if (!window.confirm("Are you sure you want to delete this poster?")) {
+  async function deletePoster(id: string) {
+    if (!window.confirm("Are you sure you want to delete this poster from all devices?")) {
       return;
     }
 
-    setSavedPosters((current) =>
-      current.filter((poster) => poster.id !== id),
-    );
+    const { error } = await supabase
+      .from("umrah_poster_cloud")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("Cloud poster delete error:", error);
+      setMessage(`Could not delete from cloud: ${error.message}`);
+      return;
+    }
+
+    setSavedPosters((current) => current.filter((poster) => poster.id !== id));
 
     if (editingId === id) {
       setEditingId(null);
       setActivePoster(null);
     }
 
-    setMessage("Poster deleted.");
+    setMessage("Poster deleted from cloud and all devices.");
   }
 
   async function copyPosterImage() {
@@ -846,11 +1044,54 @@ export default function Home() {
 
   const posterTheme = themes[shownPoster.theme] || themes.royal;
 
+  const startingPrice = shownPoster.packages
+    .flatMap((pkg) => [pkg.sharing, pkg.quad, pkg.triple, pkg.double])
+    .map((rate) => {
+      const value = Number(String(rate || "").replace(/[^\\d.]/g, ""));
+      return Number.isFinite(value) && value > 0 ? value : null;
+    })
+    .filter((rate): rate is number => rate !== null)
+    .reduce<number | null>(
+      (lowest, rate) => lowest === null ? rate : Math.min(lowest, rate),
+      null,
+    );
+
   const outboundSectorOrigin = flight.origin || "Origin";
   const outboundSectorDestination = flight.destination || "Destination";
 
   const returnSectorOrigin = flight.destination || "Destination";
   const returnSectorDestination = flight.origin || "Origin";
+
+  if (!authReady || !authUser) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#F4F5F2] px-4 py-10">
+        <div className="w-full max-w-md rounded-3xl border border-[#D8C18F] bg-white p-7 shadow-2xl">
+          <div className="mb-6 text-center">
+            <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-[#123B2E] text-2xl text-[#E6BD70]">✦</div>
+            <p className="text-xs font-black uppercase tracking-[0.25em] text-[#A87935]">Haram Junoon Travels & Tours</p>
+            <h1 className="mt-2 text-2xl font-black text-slate-800">Umrah Poster Generator</h1>
+            <p className="mt-2 text-sm text-slate-500">Sign in to access shared posters on all your devices.</p>
+          </div>
+
+          {!authReady ? (
+            <p className="py-5 text-center text-sm font-semibold text-slate-500">Checking account...</p>
+          ) : (
+            <div className="space-y-4">
+              <label className="block">
+                <span className="mb-1.5 block text-xs font-bold uppercase text-slate-600">Access Password</span>
+                <input type="password" autoComplete="current-password" value={authPassword} onChange={(event) => setAuthPassword(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") void handleAuth(); }} className="w-full rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-[#C79A4C]" placeholder="Enter your password" />
+              </label>
+              <button onClick={() => void handleAuth()} disabled={authBusy || !authPassword} className="w-full rounded-xl bg-[#123B2E] px-4 py-3 font-black text-white hover:bg-[#1B5942] disabled:opacity-60">
+                {authBusy ? "Please wait..." : "Unlock Poster Generator"}
+              </button>
+              {authMessage && <p className="rounded-xl bg-amber-50 p-3 text-center text-xs font-semibold text-amber-800">{authMessage}</p>}
+              {message && <p className="text-center text-xs text-slate-500">{message}</p>}
+            </div>
+          )}
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-[#F4F5F7] text-slate-800" style={{ backgroundImage: "radial-gradient(circle at 8% 8%, rgba(214,181,109,0.10), transparent 26%), radial-gradient(circle at 92% 22%, rgba(6,78,59,0.07), transparent 28%), linear-gradient(135deg, #F7F8F6 0%, #F2F4F1 100%)" }}>
@@ -871,6 +1112,12 @@ export default function Home() {
 
           <div className="flex flex-wrap gap-2">
             <button
+              onClick={() => void handleSignOut()}
+              className="rounded-xl border border-white/20 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-white/10"
+            >
+              Sign Out
+            </button>
+            <button
               onClick={newPoster}
               className="rounded-xl border border-white/20 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-white/10"
             >
@@ -889,7 +1136,7 @@ export default function Home() {
       <div className="mx-auto max-w-[1500px] px-4 pt-5 lg:px-6">
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <p className="mb-3 text-xs font-black uppercase tracking-wider text-slate-500">Choose Poster Design</p>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <button type="button" onClick={() => { setPosterDesign("classic"); setActivePoster(null); }} className={`rounded-xl border-2 p-4 text-left transition ${posterDesign === "classic" ? "border-[#C79A4C] bg-[#FBF5E9]" : "border-slate-200 hover:border-slate-300"}`}>
               <span className="block text-sm font-black text-slate-800">Previous Poster Design</span>
               <span className="mt-1 block text-xs text-slate-500">Existing layout — unchanged</span>
@@ -901,6 +1148,10 @@ export default function Home() {
             <button type="button" onClick={() => { setPosterDesign("offer"); setActivePoster(null); }} className={`rounded-xl border-2 p-4 text-left transition ${posterDesign === "offer" ? "border-amber-500 bg-amber-50" : "border-slate-200 hover:border-amber-300"}`}>
               <span className="block text-sm font-black text-slate-800">🎉 Bumper Offer Design</span>
               <span className="mt-1 block text-xs text-slate-500">Premium promotional look with gold offer highlights</span>
+            </button>
+            <button type="button" onClick={() => { setPosterDesign("airlineTable"); setActivePoster(null); }} className={`rounded-xl border-2 p-4 text-left transition ${posterDesign === "airlineTable" ? "border-[#1976C2] bg-[#EAF4FC]" : "border-slate-200 hover:border-[#1976C2]"}`}>
+              <span className="block text-sm font-black text-slate-800">✈ Airline & Package Table</span>
+              <span className="mt-1 block text-xs text-slate-500">Reference image jaisa flight summary aur hotel-rate table</span>
             </button>
           </div>
         </div>
@@ -1074,6 +1325,13 @@ export default function Home() {
                     type="time"
                     value={flight.returnTime}
                     onChange={(value) => updateFlight("returnTime", value)}
+                  />
+                  <Field
+                    label="Available Seats"
+                    type="number"
+                    value={flight.seatsAvailable || ""}
+                    onChange={(value) => updateFlight("seatsAvailable", value)}
+                    placeholder="e.g. 10"
                   />
                 </div>
               </div>
@@ -1323,7 +1581,7 @@ export default function Home() {
                         </p>
                       </div>
                       <span className="rounded-full bg-[#F8F0E1] px-2.5 py-1 text-[10px] font-bold text-[#87612B]">
-                        {poster.design === "offer" ? "Bumper Offer" : poster.design === "schedule" ? "Flight Schedule" : (themes[poster.theme]?.name || "Royal Blue")}
+                        {poster.design === "airlineTable" ? "Airline & Package Table" : poster.design === "offer" ? "Bumper Offer" : poster.design === "schedule" ? "Flight Schedule" : (themes[poster.theme]?.name || "Royal Blue")}
                       </span>
                     </div>
 
@@ -1374,7 +1632,63 @@ export default function Home() {
             </button>
           </div>
 
-          {posterDesign !== "schedule" ? (
+          {posterDesign === "airlineTable" ? (
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-lg sm:p-4">
+              <div ref={posterRef} className="mx-auto min-w-[1180px] overflow-hidden rounded-xl border border-[#A9C4D9] bg-white font-sans text-[#23445F] shadow-sm" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
+                <div className="flex h-[54px] items-center justify-between gap-4 border-b border-[#D5E3EE] bg-[#F5FAFE] px-4">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <AirlineLogo airline={flight.airline} compact />
+                    <strong className="whitespace-nowrap text-[17px] font-black tracking-wide">{(flight.origin || "LAHORE").toUpperCase()} → {(flight.destination || "JEDDAH").toUpperCase()} → {(flight.origin || "LAHORE").toUpperCase()}</strong>
+                    <span className="whitespace-nowrap rounded-md border border-[#B8D7F1] bg-[#EAF4FC] px-3 py-2 text-[11px] font-bold uppercase text-[#2674B7]">▦ DEPARTURE&nbsp; {dateText(flight.departureDate).toUpperCase()}</span>
+                  </div>
+                  <span className="whitespace-nowrap rounded-md bg-[#1674BC] px-3 py-2 text-[11px] font-black text-white">♙ {flight.seatsAvailable ? `${flight.seatsAvailable} SEATS AVAILABLE` : "SEATS: CONTACT US"}</span>
+                </div>
+                <div className="grid grid-cols-[1fr_1fr_205px] border-b border-[#D8E5EF]">
+                  <div className="border-r border-[#D8E5EF] px-4 py-3">
+                    <div className="mb-2 flex items-center justify-between text-[11px] font-black tracking-wider text-[#3984BD]"><span>OUTBOUND</span><span>{flight.flightNumber || "FLIGHT NO."}</span></div>
+                    <div className="flex items-center justify-between gap-3">
+                      <div><p className="text-[16px] font-black">{(flight.origin || "ORIGIN").toUpperCase()}</p><p className="text-[11px] text-slate-500">{timeText(flight.departureTime)}</p><p className="mt-1 text-[11px] font-bold text-slate-500">{dateText(flight.departureDate).toUpperCase()}</p></div>
+                      <div className="flex min-w-0 flex-1 items-center gap-1 text-[#2479BC]"><span className="h-px flex-1 border-t border-dashed border-[#91B7D5]"/><span className="text-lg">✈</span><span className="h-px flex-1 border-t border-dashed border-[#91B7D5]"/></div>
+                      <div className="text-right"><p className="text-[16px] font-black">{(flight.destination || "DESTINATION").toUpperCase()}</p><p className="text-[11px] text-slate-500">{flight.airline || "AIRLINE"}</p></div>
+                    </div>
+                  </div>
+                  <div className="border-r border-[#D8E5EF] px-4 py-3">
+                    <div className="mb-2 flex items-center justify-between text-[11px] font-black tracking-wider text-[#3984BD]"><span>INBOUND</span><span>{flight.returnFlight || "FLIGHT NO."}</span></div>
+                    <div className="flex items-center justify-between gap-3">
+                      <div><p className="text-[16px] font-black">{(flight.destination || "DESTINATION").toUpperCase()}</p><p className="text-[11px] text-slate-500">{timeText(flight.returnTime)}</p><p className="mt-1 text-[11px] font-bold text-slate-500">{dateText(flight.returnDate).toUpperCase()}</p></div>
+                      <div className="flex min-w-0 flex-1 items-center gap-1 text-[#2479BC]"><span className="h-px flex-1 border-t border-dashed border-[#91B7D5]"/><span className="text-lg">✈</span><span className="h-px flex-1 border-t border-dashed border-[#91B7D5]"/></div>
+                      <div className="text-right"><p className="text-[16px] font-black">{(flight.origin || "ORIGIN").toUpperCase()}</p><p className="text-[11px] text-slate-500">{flight.returnAirline || flight.airline}</p></div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col justify-center bg-[#F8FBFE] px-4 py-3">
+                    <span className="text-[10px] font-bold tracking-wider text-slate-500">STARTING FROM</span>
+                    <strong className="mt-1 whitespace-nowrap text-[25px] font-black leading-none text-[#1674BC]">{startingPrice !== null ? money(startingPrice) : "CONTACT FOR PRICE"}</strong>
+                    <span className="mt-2 text-[10px] font-bold text-slate-500">PER PERSON · SHARING</span>
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-x-7 gap-y-2 border-b border-[#D8E5EF] px-4 py-3 text-[10px] font-semibold uppercase tracking-wide text-[#6B8296]">
+                  <span>PACKAGE DURATION&nbsp; <b className="text-[#315B7C]">{packages[0]?.nights || "—"} NIGHTS</b></span>
+                  <span>FLIGHT&nbsp; <b className="text-[#315B7C]">{flight.airline || "—"}</b></span>
+                  <span>SERVICES&nbsp; <b className="text-[#315B7C]">{services || "CONTACT FOR DETAILS"}</b></span>
+                </div>
+                <div className="flex items-center justify-between bg-[#F5F9FC] px-4 py-2.5">
+                  <div className="flex items-center gap-2"><h2 className="text-[15px] font-black uppercase tracking-wide text-[#294C68]">AVAILABLE PACKAGES</h2><span className="rounded bg-[#E2EEF7] px-2 py-0.5 text-[11px] font-black text-[#2876B2]">{packages.length}</span></div>
+                  <span className="text-[10px] font-black tracking-widest text-[#3984BD]">CHOOSE YOUR STAY</span>
+                </div>
+                <div className="grid grid-cols-[25%_25%_12.5%_12.5%_12.5%_12.5%] items-center border-b border-[#D8E5EF] bg-[#EAF2F8] px-3 py-2 text-[10px] font-black uppercase text-[#71889B]">
+                  {["MAKKAH HOTEL", "MADINAH HOTEL", "SHARING", "QUAD", "TRIPLE", "DOUBLE"].map((heading) => <div key={heading} className="px-2">{heading}</div>)}
+                </div>
+                {packages.map((pkg, index) => (
+                  <div key={pkg.id} className="grid min-h-[64px] grid-cols-[25%_25%_12.5%_12.5%_12.5%_12.5%] items-center border-b border-[#DCE7EF] bg-white px-3 py-2 last:border-b-0">
+                    <div className="min-w-0 px-2"><p className="break-words text-[11px] font-black leading-snug text-[#315B7C]">{(pkg.makkahHotel || `MAKKAH HOTEL ${index + 1}`).toUpperCase()}</p><p className="mt-1 text-[10px] font-medium text-slate-500">{pkg.makkahDistance ? `${pkg.makkahDistance} FROM HARAM` : `${pkg.nights || "—"} NIGHTS`}</p></div>
+                    <div className="min-w-0 px-2"><p className="break-words text-[11px] font-black leading-snug text-[#315B7C]">{(pkg.madinahHotel || `MADINAH HOTEL ${index + 1}`).toUpperCase()}</p><p className="mt-1 text-[10px] font-medium text-slate-500">{pkg.madinahDistance ? `${pkg.madinahDistance} FROM MASJID NABAWI` : `${pkg.nights || "—"} NIGHTS`}</p></div>
+                    {[pkg.sharing, pkg.quad, pkg.triple, pkg.double].map((rate, rateIndex) => <div key={`${pkg.id}-airline-rate-${rateIndex}`} className="border-l border-[#E7EEF4] px-1 text-center"><p className="text-[12px] font-black text-[#315B7C]">{rate ? money(rate).replace("PKR ", "") : "—"}</p><span className="mt-1 inline-block rounded bg-[#1674BC] px-2.5 py-1 text-[9px] font-black text-white">{rate ? "PER PERSON" : "ASK RATE"}</span></div>)}
+                  </div>
+                ))}
+                <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#D8E5EF] bg-[#F5F9FC] px-4 py-3"><span className="text-[10px] font-bold uppercase tracking-wider text-[#71889B]">HARAM JUNOON TRAVELS & TOURS · YOUR JOURNEY, OUR CARE</span><span className="text-[11px] font-black text-[#315B7C]">03137183111 · 03216837494 · 03128992016</span></div>
+              </div>
+            </div>
+          ) : posterDesign !== "schedule" ? (
             <>
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-lg sm:p-4">
             <div
@@ -1487,6 +1801,20 @@ export default function Home() {
                     time={flight.returnTime}
                     accent={posterTheme.accent}
                   />
+                  <div
+                    className="mt-3 flex items-center justify-between rounded-lg px-3 py-2"
+                    style={{
+                      background: `${posterTheme.accent}20`,
+                      border: `1px solid ${posterTheme.border}`,
+                    }}
+                  >
+                    <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: posterTheme.primary }}>
+                      Package Starting From
+                    </span>
+                    <span className="text-sm font-black tabular-nums" style={{ color: posterTheme.primary }}>
+                      {startingPrice !== null ? money(startingPrice) : "Contact For Price"}
+                    </span>
+                  </div>
                 </div>
 
                 {/* AVAILABLE PACKAGES */}
@@ -1896,6 +2224,20 @@ export default function Home() {
                             </div>
                           </div>
                         ))}
+                      </div>
+                      <div
+                        className="flex items-center justify-between border-t px-3 py-2"
+                        style={{
+                          borderColor: posterTheme.border,
+                          background: `${posterTheme.accent}20`,
+                        }}
+                      >
+                        <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: posterTheme.primary }}>
+                          Package Starting From
+                        </span>
+                        <span className="text-sm font-black tabular-nums" style={{ color: posterTheme.primary }}>
+                          {startingPrice !== null ? money(startingPrice) : "Contact For Price"}
+                        </span>
                       </div>
                     </div>
 
