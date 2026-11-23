@@ -242,17 +242,19 @@ const airlineOptions = [
   "Riyadh Air",
   "Saudia",
   "SalamAir",
+  "Flynas",
 ];
 
 // Local airline logos: images must be inside public/airlines/
 const airlineLogos: Record<string, string> = {
   PIA: "/airlines/pia.png",
   Airblue: "/airlines/airblue.png",
-  AirSial: "/airlines/airsial.png",
+  AirSial: "/airlines/air-sial.png",
   "Fly Jinnah": "/airlines/fly-jinnah.png",
   "Riyadh Air": "/airlines/riyadh-air.png",
   Saudia: "/airlines/saudia.png",
-  SalamAir: "/airlines/salam-air.png",
+  SalamAir: "/airlines/salamair.png",
+  Flynas: "/airlines/flynas.png",
 };
 
 const blankFlight: FlightData = {
