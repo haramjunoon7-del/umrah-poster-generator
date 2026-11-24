@@ -1694,104 +1694,120 @@ export default function Home() {
                   boxShadow: `0 18px 42px ${posterTheme.primary}24`,
                 }}
               >
-                {/* PREMIUM BRAND AND ROUTE HEADER */}
+                {/* REFERENCE-STYLE UMRAH PACKAGE POSTER */}
                 <div
-                  className="flex items-center justify-between gap-5 px-5 py-4"
+                  className="relative overflow-hidden bg-white"
                   style={{
-                    background: `linear-gradient(115deg, ${posterTheme.primary}, ${posterTheme.secondary})`,
-                    borderBottom: `4px solid ${posterTheme.accent}`,
+                    width: "1056px",
+                    minHeight: "1490px",
+                    fontFamily: "Arial, Helvetica, sans-serif",
+                    backgroundImage: "linear-gradient(125deg, #FFFFFF 0%, #F7F7F7 48%, #FFFFFF 100%)",
+                    color: "#111111",
                   }}
                 >
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div className="rounded-xl border border-white/30 bg-white p-1.5 shadow-md">
-                      <AirlineLogo airline={flight.airline} compact />
+                  {/* TOP BRAND STRIP */}
+                  <div className="relative grid grid-cols-[1fr_190px_1fr] items-center px-7 pt-5 pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="rounded-r-xl bg-[#E00000] px-5 py-3 text-white shadow-md">
+                        <p className="text-[38px] font-black leading-none">UMRAH</p>
+                        <p className="mt-1 text-[25px] font-bold italic leading-none">Packages</p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-white/75">HARAM JUNOON TRAVELS &amp; TOURS</p>
-                      <h2 className="mt-1 text-[19px] font-black tracking-wide text-white">{(flight.origin || "LAHORE").toUpperCase()} <span style={{ color: posterTheme.accent }}>→</span> {(flight.destination || "JEDDAH").toUpperCase()} <span style={{ color: posterTheme.accent }}>→</span> {(flight.origin || "LAHORE").toUpperCase()}</h2>
-                      <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-white/75">{title || "UMRAH PACKAGE"}</p>
+                    <div className="mx-auto flex h-[142px] w-[142px] items-center justify-center rounded-b-[28px] border-x-2 border-b-2 border-slate-300 bg-white p-3 shadow-xl">
+                      <img src="/haram-junoon-logo.png" alt="Haram Junoon Travels & Tours" crossOrigin="anonymous" className="h-full w-full rounded-full object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
                     </div>
+                    <div className="flex justify-end">
+                      <div className="rounded-full bg-[#D90000] px-7 py-3 text-[21px] font-black uppercase text-white shadow-md">LAHORE PACKAGES</div>
+                    </div>
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent" />
                   </div>
-                  <div className="flex shrink-0 items-center gap-3">
-                    <div className="rounded-lg border px-3 py-2 text-right" style={{ borderColor: `${posterTheme.accent}99`, background: "rgba(255,255,255,.10)" }}>
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-white/70">Departure Date</p>
-                      <p className="mt-0.5 text-[12px] font-black text-white">{dateText(flight.departureDate).toUpperCase()}</p>
-                    </div>
-                    <div className="rounded-lg px-3 py-2 text-center shadow-sm" style={{ background: posterTheme.accent, color: posterTheme.primary }}>
-                      <p className="text-[9px] font-black uppercase tracking-wider">Seats Available</p>
-                      <p className="mt-0.5 text-[15px] font-black">{flight.seatsAvailable || "CONTACT"}</p>
-                    </div>
-                  </div>
-                </div>
 
-                {/* FLIGHT INFORMATION AND PACKAGE 1 SHARING PRICE */}
-                <div className="grid grid-cols-[1fr_1fr_230px]" style={{ background: posterTheme.light, borderBottom: `1px solid ${posterTheme.border}` }}>
-                  <div className="px-5 py-4" style={{ borderRight: `1px solid ${posterTheme.border}` }}>
-                    <div className="mb-3 flex items-center justify-between">
-                      <span className="rounded-md px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-white" style={{ background: posterTheme.secondary }}>Outbound Flight</span>
-                      <span className="text-[11px] font-black" style={{ color: posterTheme.primary }}>{flight.flightNumber || "FLIGHT NO."}</span>
-                    </div>
-                    <div className="flex items-center justify-between gap-3">
-                      <div><p className="text-[18px] font-black" style={{ color: posterTheme.primary }}>{(flight.origin || "ORIGIN").toUpperCase()}</p><p className="mt-1 text-[11px] font-semibold text-slate-500">{timeText(flight.departureTime)}</p><p className="mt-1 text-[10px] font-bold text-slate-500">{dateText(flight.departureDate).toUpperCase()}</p></div>
-                      <div className="flex min-w-0 flex-1 items-center gap-1" style={{ color: posterTheme.secondary }}><span className="h-px flex-1 border-t border-dashed" style={{ borderColor: posterTheme.accent }} /><span className="text-xl">✈</span><span className="h-px flex-1 border-t border-dashed" style={{ borderColor: posterTheme.accent }} /></div>
-                      <div className="text-right"><p className="text-[18px] font-black" style={{ color: posterTheme.primary }}>{(flight.destination || "DESTINATION").toUpperCase()}</p><p className="mt-1 text-[11px] font-semibold text-slate-500">{flight.airline || "AIRLINE"}</p></div>
+                  {/* PACKAGE CODE */}
+                  <div className="flex justify-center pt-4">
+                    <div className="rounded-t-lg border-[5px] border-black bg-[#D90000] px-5 py-1 text-[22px] font-black text-white">HJT#45</div>
+                  </div>
+
+                  {/* FLIGHT SCHEDULE PANEL */}
+                  <div className="mx-14 rounded-xl border-[5px] border-black bg-white px-8 py-4">
+                    <div className="grid grid-cols-2 gap-16">
+                      {(schedules.some((item) => item.departureDate || item.departureTime || item.returnDate || item.returnTime) ? schedules : [{ id: "default", departureDate: flight.departureDate, departureTime: flight.departureTime, returnDate: flight.returnDate, returnTime: flight.returnTime }]).slice(0, 2).map((item, index) => (
+                        <div key={item.id} className="rounded-lg border-[5px] border-black bg-[#D90000] px-3 py-2 text-center text-white shadow-sm">
+                          <p className="text-[19px] font-black leading-tight">{flight.flightNumber || "FLIGHT"} {dateText(item.departureDate).toUpperCase()} {flight.origin.slice(0, 3).toUpperCase() || "LHE"}-{flight.destination.slice(0, 3).toUpperCase() || "JED"} {timeText(item.departureTime)}</p>
+                          <p className="mt-1 text-[19px] font-black leading-tight">{flight.returnFlight || "RETURN"} {dateText(item.returnDate).toUpperCase()} {flight.destination.slice(0, 3).toUpperCase() || "JED"}-{flight.origin.slice(0, 3).toUpperCase() || "LHE"} {timeText(item.returnTime)}</p>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  <div className="px-5 py-4" style={{ borderRight: `1px solid ${posterTheme.border}` }}>
-                    <div className="mb-3 flex items-center justify-between">
-                      <span className="rounded-md px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-white" style={{ background: posterTheme.secondary }}>Inbound Flight</span>
-                      <span className="text-[11px] font-black" style={{ color: posterTheme.primary }}>{flight.returnFlight || "FLIGHT NO."}</span>
+
+                  {/* AIRLINE, POSTER TITLE AND LICENSE */}
+                  <div className="mt-7 grid grid-cols-[1fr_1.7fr_1fr] items-center gap-4">
+                    <div className="flex min-h-[96px] items-center justify-center rounded-r-[28px] border-[5px] border-l-0 border-black bg-white px-4">
+                      <div className="flex items-center gap-3">
+                        <AirlineLogo airline={flight.airline} />
+                        <div><p className="text-[22px] font-black leading-tight text-[#08734D]">{flight.airline || "AIRLINE"}</p><p className="text-[12px] font-bold text-slate-600">Official Airline Partner</p></div>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between gap-3">
-                      <div><p className="text-[18px] font-black" style={{ color: posterTheme.primary }}>{(flight.destination || "DESTINATION").toUpperCase()}</p><p className="mt-1 text-[11px] font-semibold text-slate-500">{timeText(flight.returnTime)}</p><p className="mt-1 text-[10px] font-bold text-slate-500">{dateText(flight.returnDate).toUpperCase()}</p></div>
-                      <div className="flex min-w-0 flex-1 items-center gap-1" style={{ color: posterTheme.secondary }}><span className="h-px flex-1 border-t border-dashed" style={{ borderColor: posterTheme.accent }} /><span className="text-xl">✈</span><span className="h-px flex-1 border-t border-dashed" style={{ borderColor: posterTheme.accent }} /></div>
-                      <div className="text-right"><p className="text-[18px] font-black" style={{ color: posterTheme.primary }}>{(flight.origin || "ORIGIN").toUpperCase()}</p><p className="mt-1 text-[11px] font-semibold text-slate-500">{flight.returnAirline || flight.airline}</p></div>
+                    <div className="text-center">
+                      <div className="rounded-xl border-[5px] border-black bg-[#D90000] px-4 py-2 text-[38px] font-black uppercase leading-tight text-white shadow-md">{title || "UMRAH PACKAGES"}</div>
+                      <p className="mt-1 text-[35px] font-black italic uppercase leading-none text-[#D90000]">{packages[0]?.nights ? `${packages[0].nights} Nights` : "UMRAH"}</p>
+                    </div>
+                    <div className="flex min-h-[96px] items-center justify-center rounded-l-[28px] border-[5px] border-r-0 border-black bg-white px-4">
+                      <div className="rounded-xl border-[3px] border-black bg-[#D90000] px-5 py-3 text-center text-[24px] font-black uppercase leading-tight text-white">LICENSE NO - 12603</div>
                     </div>
                   </div>
-                  <div className="flex flex-col justify-center px-5 py-4 text-white" style={{ background: `linear-gradient(145deg, ${posterTheme.primary}, ${posterTheme.secondary})` }}>
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/75">Starting From</span>
-                    <strong className="mt-2 whitespace-nowrap text-[25px] font-black leading-none" style={{ color: posterTheme.accent }}>{airlineStartingPrice !== null ? money(airlineStartingPrice) : "CONTACT FOR PRICE"}</strong>
-                    <span className="mt-2 text-[10px] font-bold uppercase tracking-wider text-white/80">Package 1 · Per Person</span>
-                    <span className="mt-0.5 text-[10px] font-black uppercase tracking-wider" style={{ color: posterTheme.accent }}>Sharing Basis</span>
-                  </div>
-                </div>
 
-                {/* PACKAGE HIGHLIGHTS */}
-                <div className="flex flex-wrap items-center gap-x-8 gap-y-2 px-5 py-3 text-[10px] font-bold uppercase tracking-wider" style={{ background: "#FFFFFF", borderBottom: `1px solid ${posterTheme.border}`, color: posterTheme.text }}>
-                  <span>Duration: <b style={{ color: posterTheme.secondary }}>{packages[0]?.nights || "—"} Nights</b></span>
-                  <span>Airline: <b style={{ color: posterTheme.secondary }}>{flight.airline || "—"}</b></span>
-                  <span className="min-w-0 flex-1">Services: <b style={{ color: posterTheme.secondary }}>{services || "Contact for details"}</b></span>
-                </div>
-
-                {/* PACKAGE TABLE TITLE */}
-                <div className="flex items-center justify-between px-5 py-3 text-white" style={{ background: `linear-gradient(100deg, ${posterTheme.primary}, ${posterTheme.secondary})` }}>
-                  <div><p className="text-[9px] font-bold uppercase tracking-[0.25em] text-white/70">Choose your accommodation</p><h3 className="mt-0.5 text-[16px] font-black uppercase tracking-wider">Available Umrah Packages</h3></div>
-                  <span className="rounded-lg px-3 py-2 text-[11px] font-black" style={{ background: posterTheme.accent, color: posterTheme.primary }}>{packages.length} PACKAGE{packages.length === 1 ? "" : "S"}</span>
-                </div>
-
-                {/* HOTELS AND ROOM RATES */}
-                <div className="grid grid-cols-[25%_25%_12.5%_12.5%_12.5%_12.5%] items-center px-3 py-3 text-[10px] font-black uppercase tracking-wider text-white" style={{ background: posterTheme.primary }}>
-                  {["Makkah Hotel", "Madinah Hotel", "Sharing", "Quad", "Triple", "Double"].map((heading) => <div key={heading} className="px-2">{heading}</div>)}
-                </div>
-                {packages.map((pkg, index) => (
-                  <div key={pkg.id} className="grid min-h-[72px] grid-cols-[25%_25%_12.5%_12.5%_12.5%_12.5%] items-center px-3 py-3" style={{ background: index % 2 === 0 ? "#FFFFFF" : posterTheme.light, borderBottom: `1px solid ${posterTheme.border}` }}>
-                    <div className="min-w-0 px-2"><p className="break-words text-[11px] font-black leading-snug" style={{ color: posterTheme.primary }}>{(pkg.makkahHotel || `MAKKAH HOTEL ${index + 1}`).toUpperCase()}</p><p className="mt-1 text-[9px] font-semibold text-slate-500">{pkg.makkahCategory || "Hotel Accommodation"}{pkg.makkahDistance ? ` · ${pkg.makkahDistance} FROM HARAM` : ""}</p></div>
-                    <div className="min-w-0 px-2"><p className="break-words text-[11px] font-black leading-snug" style={{ color: posterTheme.primary }}>{(pkg.madinahHotel || `MADINAH HOTEL ${index + 1}`).toUpperCase()}</p><p className="mt-1 text-[9px] font-semibold text-slate-500">{pkg.madinahCategory || "Hotel Accommodation"}{pkg.madinahDistance ? ` · ${pkg.madinahDistance} FROM MASJID NABAWI` : ""}</p></div>
-                    {[pkg.sharing, pkg.quad, pkg.triple, pkg.double].map((rate, rateIndex) => (
-                      <div key={`${pkg.id}-airline-rate-${rateIndex}`} className="border-l px-1 text-center" style={{ borderColor: posterTheme.border }}>
-                        <p className="break-words text-[12px] font-black tabular-nums" style={{ color: posterTheme.primary }}>{rate ? money(rate).replace("PKR ", "") : "—"}</p>
-                        <span className="mt-1 inline-block rounded px-2 py-1 text-[8px] font-black text-white" style={{ background: posterTheme.secondary }}>{rate ? "PER PERSON" : "ASK RATE"}</span>
+                  {/* HOTEL AND PRICE TABLE */}
+                  <div className="mx-6 mt-6 overflow-hidden rounded-xl border-[5px] border-black bg-white">
+                    <div className="grid grid-cols-[25%_25%_12.5%_12.5%_12.5%_12.5%] items-center bg-[#D90000] px-3 py-3 text-center text-[23px] font-black uppercase text-white">
+                      {["MAKKAH", "MADINAH", "SHARING", "QUAD", "TRIPLE", "DOUBLE"].map((heading) => <div key={heading}>{heading}</div>)}
+                    </div>
+                    {packages.map((pkg, index) => (
+                      <div key={pkg.id} className="grid min-h-[82px] grid-cols-[25%_25%_12.5%_12.5%_12.5%_12.5%] items-center border-t-[4px] border-black bg-white px-3 py-2 text-center">
+                        <div className="min-w-0 px-1">
+                          <p className="break-words text-[25px] font-black uppercase leading-tight text-black">{(pkg.makkahHotel || `MAKKAH HOTEL ${index + 1}`).toUpperCase()}</p>
+                          <p className="mt-1 break-words text-[14px] font-black uppercase text-[#D90000]">{pkg.makkahDistance ? `${pkg.makkahDistance} ` : ""}{pkg.makkahCategory || "HOTEL"}</p>
+                        </div>
+                        <div className="min-w-0 px-1">
+                          <p className="break-words text-[25px] font-black uppercase leading-tight text-black">{(pkg.madinahHotel || `MADINAH HOTEL ${index + 1}`).toUpperCase()}</p>
+                          <p className="mt-1 break-words text-[14px] font-black uppercase text-[#D90000]">{pkg.madinahDistance ? `${pkg.madinahDistance} ` : ""}{pkg.madinahCategory || "HOTEL"}</p>
+                        </div>
+                        {[pkg.sharing, pkg.quad, pkg.triple, pkg.double].map((rate, rateIndex) => (
+                          <div key={`${pkg.id}-reference-rate-${rateIndex}`} className="min-w-0 px-1">
+                            <p className={`break-words text-[25px] font-black leading-tight tabular-nums ${rateIndex === 0 ? "text-black" : "text-[#D90000]"}`}>{rate ? `${Number(String(rate).replace(/,/g, "")).toLocaleString("en-PK")}/-` : "—"}</p>
+                          </div>
+                        ))}
                       </div>
                     ))}
                   </div>
-                ))}
 
-                {/* PREMIUM CONTACT FOOTER */}
-                <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 text-white" style={{ background: `linear-gradient(105deg, ${posterTheme.primary}, ${posterTheme.secondary})`, borderTop: `3px solid ${posterTheme.accent}` }}>
-                  <div><p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/75">HARAM JUNOON TRAVELS &amp; TOURS</p><p className="mt-1 text-[9px] font-semibold text-white/70">YOUR JOURNEY, OUR CARE · UMRAH SPECIALISTS</p></div>
-                  <div className="text-right"><p className="text-[12px] font-black tracking-wide" style={{ color: posterTheme.accent }}>03137183111 · 03216837494 · 03128992016</p><p className="mt-1 text-[10px] font-semibold text-white/85">haramjunoontravels@gmail.com</p></div>
-                </div>
-              </div>
+                  {/* PACKAGE INCLUSIONS AND TERMS */}
+                  <div className="mx-14 mt-8 grid grid-cols-[0.9fr_1.8fr] gap-0 rounded-xl border-[5px] border-black bg-[#D90000] text-white">
+                    <div className="relative px-5 py-5">
+                      <span className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border-[4px] border-black bg-white px-5 py-1 text-[15px] font-black text-black">PACKAGES INCLUDE:</span>
+                      <p className="mt-2 text-[17px] font-black italic">◆ AIR TICKET</p>
+                      <p className="mt-2 text-[17px] font-black italic">◆ ACCOMMODATION</p>
+                      <p className="mt-2 text-[17px] font-black italic">◆ TRANSPORT</p>
+                      <p className="mt-2 text-[17px] font-black italic">◆ UMRAH VISA</p>
+                    </div>
+                    <div className="relative border-l-[4px] border-black px-5 py-5">
+                      <span className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border-[4px] border-black bg-white px-5 py-1 text-[15px] font-black text-black">TERMS &amp; CONDITION</span>
+                      <p className="mt-2 text-[13px] font-bold leading-relaxed">1) VISA CASES SENT TO EMBASSY WILL BE CHARGED ADDITIONALLY</p>
+                      <p className="mt-2 text-[13px] font-bold leading-relaxed">2) ALL PRICES ARE PER PERSON</p>
+                      <p className="mt-2 text-[13px] font-bold leading-relaxed">3) AFTER CONFIRMATION PACKAGE IS NON REFUNDABLE / NON CHANGEABLE</p>
+                      <p className="mt-2 text-[13px] font-bold leading-relaxed">4) OVER STAY IS NOT PERMITTED</p>
+                    </div>
+                  </div>
+
+                  {/* CONTACT FOOTER */}
+                  <div className="mt-7 rounded-xl border-[5px] border-[#D90000] bg-white px-5 py-5">
+                    <div className="grid grid-cols-3 items-center text-center">
+                      <div className="px-2 text-[16px] font-black leading-relaxed text-black">+92 313 7183111 &nbsp; +92 321 6837494<br />+92 300 7715185 &nbsp; +92 312 8992016</div>
+                      <div className="border-x-2 border-slate-500 px-3 text-[17px] font-black uppercase leading-tight text-black">OLD JHUMRA ROAD NEAR<br />GHALLAH MANDI CHINIOT</div>
+                      <div className="px-2 text-[15px] font-black leading-relaxed text-black">haramjunoontravels@gmail.com<br />haramjunoontravelsoffice@gmail.com</div>
+                    </div>
+                  </div>
+                  <div className="h-12" />
+                </div>              </div>
             </div>
           ) : posterDesign !== "schedule" ? (
             <>
