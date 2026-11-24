@@ -1489,7 +1489,7 @@ export default function Home() {
                     label="Hotel Category"
                     value={pkg.makkahCategory}
                     onChange={(value) => updatePackage(pkg.id, "makkahCategory", value)}
-                    options={["Economy", "3 Star", "4 Star", "5 Star"]}
+                    options={["Economy","Economy Plus","01 Star", "3 Star", "4 Star", "5 Star"]}
                   />
                   <Field
                     label="Distance from Haram"
@@ -1517,7 +1517,7 @@ export default function Home() {
                     label="Hotel Category"
                     value={pkg.madinahCategory}
                     onChange={(value) => updatePackage(pkg.id, "madinahCategory", value)}
-                    options={["Economy", "3 Star", "4 Star", "5 Star"]}
+                    options={["Economy","Economy Plus","01 Star", "3 Star", "4 Star", "5 Star"]}
                   />
                   <Field
                     label="Distance from Masjid Nabawi"
